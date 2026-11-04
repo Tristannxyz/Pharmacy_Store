@@ -139,7 +139,7 @@ def seed_users():
         ("admin", hash_pw("admin123"), "System Administrator", "admin@pharmacare.local", "admin"),
         ("inventory_clerk", hash_pw("clerk123"), "Maria Santos (Clerk)", "clerk@pharmacare.local", "inventory_clerk"),
         ("sales_personnel", hash_pw("sales123"), "John Cruz (Cashier)", "sales@pharmacare.local", "sales_personnel"),
-        ("instructor", hash_pw("instructor123"), "Prof. Robert Davis", "instructor@pharmacare.local", "instructor")
+        ("instructor", hash_pw("instructor123"), "Prof. Norris Alexis Amora", "instructor@pharmacare.local", "instructor")
     ]
     query = """
         INSERT INTO users (username, password_hash, full_name, email, role)
