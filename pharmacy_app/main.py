@@ -20,13 +20,15 @@ class MainWindow(tk.Tk):
         super().__init__()
         self.title(config.APP_TITLE)
         
-        # Start maximized in full-screen windowed mode with standard window manager controls
+        # Launch fully in full-screen mode automatically
         try:
-            self.state("zoomed")
-        except Exception:
             self.attributes("-fullscreen", True)
+        except Exception:
+            self.state("zoomed")
 
-        self.bind("<Escape>", self.safeguard_fullscreen)
+        # Allow F11 to toggle fullscreen and Escape to exit fullscreen seamlessly
+        self.bind("<F11>", lambda e: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
+        self.bind("<Escape>", lambda e: self.attributes("-fullscreen", False))
         self.protocol("WM_DELETE_WINDOW", self.on_close_attempt)
 
         # Style TTK widgets
@@ -95,23 +97,6 @@ class MainWindow(tk.Tk):
 
     def close_window(self):
         self.on_close_attempt()
-
-    def safeguard_fullscreen(self, event=None):
-        """Prevent accidental exiting of fullscreen mode while providing safe confirmation."""
-        ans = messagebox.askyesno(
-            "Full-screen Safeguard", 
-            "The system is designed to run in Full-Screen mode for optimal workflow.\n\nDo you want to toggle windowed mode?"
-        )
-        if ans:
-            try:
-                if self.state() == "zoomed":
-                    self.state("normal")
-                    self.geometry("1200x800")
-                else:
-                    self.state("zoomed")
-            except Exception:
-                curr = self.attributes("-fullscreen")
-                self.attributes("-fullscreen", not curr)
 
     def on_close_attempt(self):
         if messagebox.askyesno("Exit Application", "Are you sure you want to exit the Pharmacy Management System?"):
@@ -198,22 +183,9 @@ class MainWindow(tk.Tk):
         self.menu_buttons = {}
         self.build_navigation_items(role)
 
-        # Bottom Logout & Fullscreen actions
+        # Bottom Logout action
         bottom_box = tk.Frame(self.sidebar, bg=config.COLORS["primary"])
         bottom_box.pack(side="bottom", fill="x")
-
-        btn_fs = tk.Button(
-            bottom_box,
-            text="⛶ Toggle Full-screen",
-            font=config.FONTS["small"],
-            bg=config.COLORS["primary_light"],
-            fg=config.COLORS["text_muted"],
-            relief="flat",
-            cursor="hand2",
-            pady=6,
-            command=self.safeguard_fullscreen
-        )
-        btn_fs.pack(fill="x", pady=(0, 8))
 
         btn_logout = tk.Button(
             bottom_box,
