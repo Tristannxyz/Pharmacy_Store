@@ -1,0 +1,1501 @@
+record_id,category,unit_price,cost_price,month,day_of_week,is_flu_season,is_rainy_season,is_promotion,discount_percent,stock_level,competitor_price_ratio,quantity_demanded
+1,Antibiotics & Antivirals,13.25,5.52,1,5,1,0,0,0,356,1.15,114
+2,Analgesics & Antipyretics,3.41,1.71,1,0,1,0,1,10,376,1.11,179
+3,Analgesics & Antipyretics,5.65,2.45,3,5,0,0,1,15,62,0.89,122
+4,Analgesics & Antipyretics,6.9,4.43,12,3,1,0,0,0,292,0.97,193
+5,Gastrointestinal & Digestive,1.5,0.63,10,1,0,0,0,0,50,1.19,134
+6,Respiratory & Cough Care,12.54,5.76,5,3,0,0,0,0,117,1.12,105
+7,Antibiotics & Antivirals,26.87,10.72,10,5,1,0,0,0,483,1.11,109
+8,Analgesics & Antipyretics,1.35,0.6,4,6,0,0,0,0,118,1.22,134
+9,Cardiovascular & Hypertension,16.87,10.53,11,3,1,0,0,0,145,0.91,102
+10,Vitamins & Supplements,5.71,3.0,12,4,1,0,0,0,80,1.05,98
+11,Antibiotics & Antivirals,9.8,5.43,3,5,0,0,0,0,207,1.0,152
+12,Analgesics & Antipyretics,2.26,1.39,11,5,1,0,0,0,403,1.11,131
+13,Vitamins & Supplements,2.97,1.85,9,6,0,1,0,0,162,1.19,115
+14,Gastrointestinal & Digestive,11.49,7.2,3,4,0,0,0,0,316,0.98,28
+15,Gastrointestinal & Digestive,1.64,1.01,5,1,0,0,0,0,53,1.14,117
+16,Antihistamines & Allergy,6.23,3.21,3,5,0,0,0,0,456,1.09,159
+17,Cardiovascular & Hypertension,16.97,9.36,12,2,1,0,0,0,470,1.06,38
+18,Cardiovascular & Hypertension,5.63,2.91,2,2,1,0,0,0,13,0.88,111
+19,Cardiovascular & Hypertension,30.79,11.43,2,0,1,0,1,20,119,1.07,121
+20,Topical & First Aid,10.09,4.76,4,6,0,0,1,20,191,1.02,133
+21,Antibiotics & Antivirals,26.85,15.85,1,3,1,0,1,10,107,1.06,68
+22,Topical & First Aid,16.85,8.14,4,6,0,0,0,0,291,0.89,113
+23,Analgesics & Antipyretics,10.34,4.13,2,6,1,0,0,0,119,1.2,181
+24,Respiratory & Cough Care,14.78,6.44,5,6,0,0,0,0,384,1.25,99
+25,Antihistamines & Allergy,3.39,1.25,4,2,0,0,0,0,41,1.15,52
+26,Topical & First Aid,10.97,4.03,9,6,0,1,0,0,445,0.92,119
+27,Cardiovascular & Hypertension,33.25,17.32,7,0,0,1,0,0,30,1.1,46
+28,Gastrointestinal & Digestive,8.37,3.72,5,1,0,0,0,0,77,1.12,76
+29,Gastrointestinal & Digestive,6.04,3.92,2,0,1,0,0,0,47,1.07,91
+30,Antihistamines & Allergy,10.67,4.92,6,0,0,1,1,15,323,1.24,187
+31,Vitamins & Supplements,11.33,4.42,11,0,1,0,1,5,390,1.07,161
+32,Cardiovascular & Hypertension,30.59,15.34,11,5,1,0,0,0,474,1.19,58
+33,Vitamins & Supplements,4.67,1.82,1,0,1,0,0,0,92,1.15,156
+34,Analgesics & Antipyretics,11.4,6.35,2,0,1,0,1,5,437,1.0,156
+35,Gastrointestinal & Digestive,3.31,1.41,1,2,1,0,1,20,327,1.15,168
+36,Antihistamines & Allergy,1.27,0.73,3,3,0,0,0,0,486,1.01,107
+37,Cardiovascular & Hypertension,28.62,10.95,5,1,0,0,0,0,449,1.04,41
+38,Topical & First Aid,15.31,9.36,6,2,0,1,1,10,214,0.98,147
+39,Vitamins & Supplements,6.6,3.66,6,5,0,1,0,0,179,1.23,72
+40,Antihistamines & Allergy,7.56,3.43,10,2,1,0,0,0,233,1.09,96
+41,Respiratory & Cough Care,13.63,4.78,10,1,1,0,0,0,285,1.12,202
+42,Cardiovascular & Hypertension,7.1,3.9,6,3,0,1,0,0,170,1.12,60
+43,Vitamins & Supplements,8.34,3.74,9,2,0,1,0,0,293,0.9,84
+44,Respiratory & Cough Care,16.54,8.84,11,5,1,0,0,0,290,1.18,128
+45,Gastrointestinal & Digestive,5.86,2.43,8,3,0,1,0,0,471,1.23,146
+46,Vitamins & Supplements,7.96,3.59,9,5,0,1,0,0,394,0.94,91
+47,Antihistamines & Allergy,3.69,1.82,1,0,1,0,0,0,47,1.03,131
+48,Cardiovascular & Hypertension,16.52,7.76,12,5,1,0,1,5,467,1.15,151
+49,Antihistamines & Allergy,6.11,3.16,12,4,1,0,0,0,72,1.03,127
+50,Gastrointestinal & Digestive,9.97,6.16,8,4,0,1,0,0,474,1.07,156
+51,Topical & First Aid,14.28,8.6,8,2,0,1,0,0,408,1.06,100
+52,Vitamins & Supplements,8.85,3.72,8,0,0,1,0,0,467,1.07,54
+53,Cardiovascular & Hypertension,9.58,3.97,7,5,0,1,0,0,179,1.07,91
+54,Respiratory & Cough Care,11.76,6.57,7,6,0,1,0,0,401,1.08,115
+55,Vitamins & Supplements,10.81,6.49,7,6,0,1,0,0,386,1.07,121
+56,Cardiovascular & Hypertension,19.57,9.13,5,3,0,0,0,0,418,1.01,55
+57,Topical & First Aid,11.01,6.85,3,4,0,0,0,0,349,0.86,96
+58,Antihistamines & Allergy,1.55,0.72,8,1,0,1,1,15,182,1.15,169
+59,Vitamins & Supplements,1.21,0.62,2,3,1,0,0,0,189,0.94,141
+60,Analgesics & Antipyretics,3.19,1.14,1,1,1,0,1,10,252,1.12,193
+61,Gastrointestinal & Digestive,7.68,4.41,3,4,0,0,1,10,169,0.89,69
+62,Respiratory & Cough Care,5.97,3.15,7,5,0,1,0,0,134,0.89,142
+63,Antibiotics & Antivirals,20.98,11.51,10,6,1,0,1,15,16,1.19,142
+64,Topical & First Aid,9.53,5.43,12,1,1,0,0,0,148,1.1,121
+65,Topical & First Aid,15.39,8.12,8,3,0,1,0,0,135,1.18,51
+66,Topical & First Aid,9.97,5.32,4,6,0,0,0,0,24,1.05,102
+67,Gastrointestinal & Digestive,4.08,2.16,5,2,0,0,0,0,294,0.85,140
+68,Antibiotics & Antivirals,17.19,8.88,4,5,0,0,1,20,340,1.13,115
+69,Respiratory & Cough Care,7.59,3.98,12,1,1,0,0,0,281,0.99,203
+70,Gastrointestinal & Digestive,3.98,1.69,12,3,1,0,1,10,171,0.9,134
+71,Antihistamines & Allergy,9.12,3.95,4,1,0,0,0,0,399,1.06,74
+72,Antibiotics & Antivirals,11.82,4.77,4,2,0,0,1,10,150,0.87,82
+73,Antihistamines & Allergy,9.28,3.53,11,6,1,0,1,15,250,1.04,134
+74,Topical & First Aid,3.98,1.98,2,6,1,0,0,0,361,0.87,95
+75,Vitamins & Supplements,2.3,1.33,2,1,1,0,0,0,414,1.1,157
+76,Topical & First Aid,11.83,5.66,5,6,0,0,0,0,40,1.09,142
+77,Cardiovascular & Hypertension,12.94,4.84,11,1,1,0,1,5,90,0.85,116
+78,Vitamins & Supplements,4.17,1.81,1,1,1,0,0,0,46,1.12,206
+79,Cardiovascular & Hypertension,21.34,11.62,7,0,0,1,0,0,433,0.91,36
+80,Vitamins & Supplements,11.13,5.36,10,5,0,0,0,0,165,1.13,133
+81,Topical & First Aid,11.97,7.38,8,0,0,1,0,0,319,0.95,48
+82,Analgesics & Antipyretics,3.96,1.43,11,6,1,0,0,0,250,1.06,168
+83,Respiratory & Cough Care,10.38,3.92,11,6,1,0,0,0,180,0.98,123
+84,Topical & First Aid,17.18,10.21,5,5,0,0,0,0,242,0.89,66
+85,Respiratory & Cough Care,17.82,9.75,9,6,0,1,0,0,221,0.87,96
+86,Topical & First Aid,14.4,5.92,11,3,1,0,0,0,484,0.97,117
+87,Topical & First Aid,17.6,9.37,2,0,1,0,1,10,169,1.07,111
+88,Antibiotics & Antivirals,24.43,9.68,8,0,0,1,0,0,159,1.05,54
+89,Topical & First Aid,9.85,3.87,8,1,0,1,1,10,452,0.88,153
+90,Gastrointestinal & Digestive,10.03,4.36,9,2,0,1,0,0,310,1.08,156
+91,Topical & First Aid,8.18,4.22,9,3,0,1,0,0,243,1.22,129
+92,Cardiovascular & Hypertension,28.27,10.26,10,3,1,0,0,0,371,1.22,65
+93,Antihistamines & Allergy,2.39,1.53,8,0,0,1,0,0,61,1.2,124
+94,Topical & First Aid,5.16,3.15,1,5,1,0,0,0,48,1.04,153
+95,Respiratory & Cough Care,15.78,9.56,11,0,1,0,0,0,204,1.23,167
+96,Topical & First Aid,12.26,5.15,9,0,0,1,0,0,157,1.25,100
+97,Respiratory & Cough Care,12.51,7.65,2,6,1,0,0,0,365,0.97,106
+98,Gastrointestinal & Digestive,2.6,1.32,6,3,0,1,0,0,415,0.92,109
+99,Respiratory & Cough Care,16.69,6.56,10,5,1,0,0,0,140,1.03,191
+100,Vitamins & Supplements,2.74,1.32,11,4,1,0,0,0,310,0.97,207
+101,Topical & First Aid,17.99,10.9,5,1,0,0,1,20,302,0.99,86
+102,Analgesics & Antipyretics,4.02,2.09,11,3,1,0,0,0,391,1.24,202
+103,Vitamins & Supplements,9.82,4.08,4,4,0,0,1,15,357,1.15,149
+104,Antihistamines & Allergy,10.94,5.95,11,0,1,0,0,0,235,0.86,70
+105,Antihistamines & Allergy,4.59,2.18,2,2,1,0,1,15,281,1.05,94
+106,Topical & First Aid,16.06,9.5,5,5,0,0,0,0,48,0.91,154
+107,Respiratory & Cough Care,4.35,2.04,9,2,0,1,0,0,73,1.03,129
+108,Vitamins & Supplements,11.34,4.34,10,3,0,0,1,5,327,1.2,139
+109,Cardiovascular & Hypertension,24.06,11.77,11,0,1,0,0,0,342,1.01,41
+110,Analgesics & Antipyretics,2.28,0.96,5,3,0,0,0,0,208,1.03,115
+111,Respiratory & Cough Care,16.28,8.9,10,5,0,0,0,0,325,1.01,121
+112,Gastrointestinal & Digestive,5.89,2.48,4,3,0,0,0,0,361,1.0,133
+113,Gastrointestinal & Digestive,4.03,2.58,1,3,1,0,0,0,431,1.03,114
+114,Analgesics & Antipyretics,4.67,3.02,1,6,1,0,0,0,115,0.88,199
+115,Cardiovascular & Hypertension,9.43,5.85,6,6,0,1,1,10,76,1.07,159
+116,Antihistamines & Allergy,9.69,4.08,1,2,1,0,0,0,99,0.96,58
+117,Respiratory & Cough Care,14.18,6.99,9,0,0,1,0,0,272,1.09,81
+118,Cardiovascular & Hypertension,32.26,17.67,10,0,0,0,0,0,339,1.24,13
+119,Topical & First Aid,13.29,6.61,7,3,0,1,0,0,47,1.21,79
+120,Antihistamines & Allergy,4.03,2.18,2,1,1,0,0,0,176,1.0,113
+121,Vitamins & Supplements,7.66,2.91,8,4,0,1,0,0,446,1.11,136
+122,Cardiovascular & Hypertension,31.64,15.0,7,3,0,1,0,0,214,1.02,19
+123,Respiratory & Cough Care,6.82,4.34,6,5,0,1,0,0,252,0.88,148
+124,Antibiotics & Antivirals,16.18,6.29,12,5,1,0,1,15,353,0.9,114
+125,Analgesics & Antipyretics,4.44,1.69,5,4,0,0,0,0,89,1.11,76
+126,Antibiotics & Antivirals,21.69,8.34,6,6,0,1,0,0,125,1.17,151
+127,Analgesics & Antipyretics,3.94,1.59,10,5,0,0,0,0,168,1.22,88
+128,Antihistamines & Allergy,2.56,1.38,10,5,0,0,1,10,202,1.02,127
+129,Antibiotics & Antivirals,9.72,5.2,1,1,1,0,0,0,149,1.03,84
+130,Topical & First Aid,6.23,3.14,7,2,0,1,0,0,66,0.96,108
+131,Topical & First Aid,7.63,3.18,9,5,0,1,0,0,38,0.85,75
+132,Antihistamines & Allergy,4.61,1.62,5,2,0,0,0,0,99,0.9,101
+133,Cardiovascular & Hypertension,30.0,17.76,9,4,0,1,1,5,233,0.86,139
+134,Respiratory & Cough Care,9.27,3.56,10,3,0,0,1,15,97,1.17,146
+135,Gastrointestinal & Digestive,10.29,4.35,2,3,1,0,0,0,278,0.88,118
+136,Gastrointestinal & Digestive,9.57,3.57,4,2,0,0,0,0,281,1.05,142
+137,Gastrointestinal & Digestive,11.54,6.27,6,5,0,1,1,5,84,0.95,125
+138,Topical & First Aid,11.46,6.0,8,6,0,1,0,0,461,1.08,118
+139,Gastrointestinal & Digestive,1.75,0.84,3,3,0,0,0,0,150,1.09,93
+140,Antibiotics & Antivirals,18.56,6.81,5,3,0,0,0,0,49,1.11,116
+141,Antibiotics & Antivirals,18.88,9.75,10,4,0,0,0,0,468,0.87,121
+142,Cardiovascular & Hypertension,19.27,7.62,6,4,0,1,1,5,425,1.21,111
+143,Antihistamines & Allergy,8.78,5.68,1,1,1,0,0,0,322,0.91,67
+144,Vitamins & Supplements,9.52,5.27,7,3,0,1,1,15,43,0.98,125
+145,Vitamins & Supplements,8.22,5.11,12,6,1,0,0,0,180,0.88,201
+146,Respiratory & Cough Care,13.63,5.12,3,4,0,0,0,0,339,1.17,122
+147,Antibiotics & Antivirals,17.7,8.12,11,5,1,0,0,0,102,1.23,78
+148,Cardiovascular & Hypertension,9.65,4.23,4,1,0,0,0,0,269,1.16,112
+149,Analgesics & Antipyretics,10.64,5.7,11,2,1,0,0,0,88,0.91,195
+150,Antihistamines & Allergy,1.48,0.68,12,3,1,0,0,0,237,1.09,127
+151,Topical & First Aid,6.59,4.22,4,4,0,0,0,0,472,1.18,84
+152,Topical & First Aid,7.23,3.36,8,6,0,1,0,0,92,1.18,137
+153,Vitamins & Supplements,6.29,2.9,1,5,1,0,0,0,374,1.19,192
+154,Vitamins & Supplements,2.62,1.26,8,4,0,1,0,0,123,1.18,138
+155,Analgesics & Antipyretics,5.36,2.48,7,0,0,1,0,0,51,1.0,102
+156,Gastrointestinal & Digestive,1.42,0.89,3,1,0,0,0,0,435,0.91,115
+157,Topical & First Aid,3.29,1.36,10,0,0,0,1,20,66,1.16,107
+158,Cardiovascular & Hypertension,28.82,14.04,7,5,0,1,1,20,315,1.06,137
+159,Vitamins & Supplements,7.76,3.28,7,0,0,1,0,0,350,1.12,86
+160,Gastrointestinal & Digestive,6.98,4.09,2,4,1,0,0,0,20,1.01,97
+161,Respiratory & Cough Care,14.21,6.5,6,2,0,1,1,10,385,1.11,72
+162,Gastrointestinal & Digestive,4.88,2.2,3,0,0,0,0,0,435,1.16,100
+163,Topical & First Aid,15.17,5.6,11,1,1,0,0,0,244,0.86,65
+164,Cardiovascular & Hypertension,33.0,16.65,1,2,1,0,0,0,288,1.04,12
+165,Cardiovascular & Hypertension,30.86,11.24,5,2,0,0,0,0,149,0.9,61
+166,Respiratory & Cough Care,16.42,7.65,12,3,1,0,0,0,264,1.13,144
+167,Vitamins & Supplements,5.67,2.72,2,5,1,0,0,0,102,1.07,144
+168,Vitamins & Supplements,8.89,3.56,8,4,0,1,0,0,238,0.87,142
+169,Gastrointestinal & Digestive,11.78,7.47,10,3,1,0,1,20,196,1.06,130
+170,Analgesics & Antipyretics,7.68,4.49,3,6,0,0,1,5,130,1.16,120
+171,Antihistamines & Allergy,11.44,5.28,11,3,1,0,0,0,303,0.91,69
+172,Gastrointestinal & Digestive,3.75,1.44,11,2,1,0,0,0,265,1.06,131
+173,Antibiotics & Antivirals,12.81,6.2,5,6,0,0,0,0,156,1.13,147
+174,Antihistamines & Allergy,2.9,1.64,2,3,1,0,0,0,424,1.12,135
+175,Gastrointestinal & Digestive,8.8,4.53,11,2,1,0,0,0,163,1.19,114
+176,Antihistamines & Allergy,3.47,2.24,6,4,0,1,0,0,131,1.17,97
+177,Gastrointestinal & Digestive,11.81,4.59,8,6,0,1,0,0,43,0.97,195
+178,Respiratory & Cough Care,7.76,2.89,10,0,1,0,0,0,274,0.99,211
+179,Antihistamines & Allergy,6.53,3.99,3,3,0,0,0,0,275,0.91,61
+180,Gastrointestinal & Digestive,4.81,3.04,12,1,1,0,0,0,443,0.88,90
+181,Vitamins & Supplements,4.33,2.21,3,5,0,0,0,0,96,1.09,123
+182,Gastrointestinal & Digestive,1.31,0.48,10,0,0,0,0,0,305,0.96,67
+183,Respiratory & Cough Care,16.33,8.39,10,5,1,0,0,0,164,1.04,184
+184,Antibiotics & Antivirals,9.74,4.62,12,0,1,0,0,0,184,1.09,77
+185,Gastrointestinal & Digestive,4.8,2.25,12,6,1,0,0,0,273,1.07,95
+186,Vitamins & Supplements,2.55,0.93,8,1,0,1,0,0,452,1.1,81
+187,Antihistamines & Allergy,8.93,3.63,6,4,0,1,1,20,265,1.2,145
+188,Topical & First Aid,11.75,4.28,4,1,0,0,0,0,315,1.2,102
+189,Topical & First Aid,3.12,1.19,5,4,0,0,1,15,382,1.0,99
+190,Analgesics & Antipyretics,7.09,2.64,10,4,1,0,0,0,401,1.07,176
+191,Antibiotics & Antivirals,16.82,9.9,3,0,0,0,0,0,490,1.0,45
+192,Respiratory & Cough Care,3.68,1.44,9,0,0,1,0,0,252,1.06,72
+193,Antihistamines & Allergy,4.5,2.11,6,4,0,1,0,0,441,0.97,128
+194,Topical & First Aid,7.5,4.46,12,4,1,0,0,0,354,0.89,76
+195,Vitamins & Supplements,8.57,3.07,12,6,1,0,0,0,345,1.16,202
+196,Topical & First Aid,12.44,6.67,3,4,0,0,0,0,85,1.18,66
+197,Antibiotics & Antivirals,18.23,8.67,4,0,0,0,0,0,114,1.01,100
+198,Topical & First Aid,3.93,1.54,12,5,1,0,1,15,349,1.04,148
+199,Gastrointestinal & Digestive,8.43,5.14,9,2,0,1,0,0,421,1.13,129
+200,Cardiovascular & Hypertension,13.95,8.82,5,4,0,0,0,0,404,0.97,49
+201,Topical & First Aid,8.23,5.19,6,3,0,1,0,0,150,0.97,102
+202,Respiratory & Cough Care,8.18,4.76,7,6,0,1,1,5,157,1.23,120
+203,Topical & First Aid,15.42,6.65,4,1,0,0,0,0,149,0.9,104
+204,Cardiovascular & Hypertension,25.1,12.78,4,0,0,0,0,0,36,0.89,65
+205,Topical & First Aid,14.56,5.12,2,5,1,0,0,0,485,0.91,112
+206,Topical & First Aid,5.99,3.83,8,5,0,1,0,0,340,0.87,133
+207,Cardiovascular & Hypertension,26.69,16.84,9,5,0,1,0,0,99,1.02,131
+208,Analgesics & Antipyretics,6.45,4.07,7,6,0,1,0,0,484,0.97,103
+209,Gastrointestinal & Digestive,11.88,6.09,5,3,0,0,0,0,490,0.9,93
+210,Vitamins & Supplements,2.24,0.89,4,6,0,0,0,0,141,1.14,100
+211,Vitamins & Supplements,2.93,1.78,10,5,0,0,0,0,433,1.02,103
+212,Antibiotics & Antivirals,19.32,12.19,3,1,0,0,1,20,130,1.03,91
+213,Analgesics & Antipyretics,4.96,2.09,5,5,0,0,0,0,248,0.97,113
+214,Vitamins & Supplements,8.03,5.08,12,0,1,0,0,0,123,0.94,105
+215,Gastrointestinal & Digestive,7.04,3.46,7,5,0,1,0,0,350,1.18,176
+216,Antibiotics & Antivirals,20.85,9.56,9,3,0,1,0,0,67,0.87,88
+217,Cardiovascular & Hypertension,14.84,7.51,10,4,1,0,1,10,377,1.08,70
+218,Analgesics & Antipyretics,6.65,3.24,8,1,0,1,1,20,354,1.17,185
+219,Cardiovascular & Hypertension,15.34,5.66,10,0,1,0,0,0,488,1.21,126
+220,Topical & First Aid,9.13,5.3,1,2,1,0,0,0,383,1.11,85
+221,Respiratory & Cough Care,16.76,7.76,8,6,0,1,1,10,344,1.19,125
+222,Antihistamines & Allergy,10.18,5.87,12,1,1,0,0,0,247,1.12,80
+223,Respiratory & Cough Care,9.91,3.93,4,1,0,0,1,5,26,1.17,126
+224,Analgesics & Antipyretics,1.74,0.92,4,1,0,0,0,0,354,1.13,45
+225,Analgesics & Antipyretics,3.58,1.49,7,3,0,1,0,0,38,0.91,168
+226,Gastrointestinal & Digestive,10.0,4.21,10,4,0,0,0,0,348,1.06,91
+227,Vitamins & Supplements,11.43,7.02,1,4,1,0,0,0,330,1.12,132
+228,Gastrointestinal & Digestive,5.19,2.63,11,5,1,0,0,0,219,0.91,97
+229,Topical & First Aid,6.38,3.87,4,6,0,0,1,20,478,0.87,126
+230,Respiratory & Cough Care,6.05,3.29,4,2,0,0,0,0,443,1.0,104
+231,Cardiovascular & Hypertension,16.32,8.67,1,2,1,0,1,5,106,1.17,121
+232,Cardiovascular & Hypertension,31.08,13.98,8,1,0,1,0,0,17,0.93,37
+233,Antibiotics & Antivirals,19.37,8.19,12,6,1,0,0,0,114,1.01,70
+234,Vitamins & Supplements,6.87,3.14,7,3,0,1,0,0,272,1.2,86
+235,Topical & First Aid,8.56,4.06,6,1,0,1,0,0,123,1.15,63
+236,Respiratory & Cough Care,5.94,2.49,5,1,0,0,0,0,135,1.05,115
+237,Gastrointestinal & Digestive,10.04,6.43,5,6,0,0,0,0,261,1.03,112
+238,Antihistamines & Allergy,6.37,3.98,12,4,1,0,0,0,338,1.23,99
+239,Antibiotics & Antivirals,27.93,13.23,11,0,1,0,0,0,128,0.88,31
+240,Cardiovascular & Hypertension,16.2,8.67,9,3,0,1,0,0,325,1.22,105
+241,Analgesics & Antipyretics,7.07,2.5,1,4,1,0,0,0,150,1.06,125
+242,Respiratory & Cough Care,16.77,8.51,3,0,0,0,1,15,427,0.99,127
+243,Respiratory & Cough Care,6.65,3.72,8,4,0,1,0,0,433,1.19,113
+244,Analgesics & Antipyretics,5.17,2.67,2,3,1,0,1,5,369,0.92,196
+245,Antibiotics & Antivirals,11.89,7.38,9,0,0,1,0,0,300,1.04,36
+246,Antibiotics & Antivirals,31.98,16.6,11,2,1,0,1,15,18,1.23,107
+247,Respiratory & Cough Care,5.44,2.3,2,2,1,0,0,0,209,1.12,148
+248,Antihistamines & Allergy,1.86,1.07,12,5,1,0,0,0,60,1.02,142
+249,Respiratory & Cough Care,12.51,7.32,6,0,0,1,0,0,126,0.99,144
+250,Respiratory & Cough Care,11.79,5.47,3,5,0,0,0,0,161,1.17,123
+251,Antihistamines & Allergy,9.62,3.81,7,5,0,1,0,0,194,0.89,79
+252,Vitamins & Supplements,1.96,0.94,2,1,1,0,0,0,272,1.01,113
+253,Antibiotics & Antivirals,30.91,10.93,10,4,0,0,0,0,408,0.88,120
+254,Cardiovascular & Hypertension,16.42,6.43,10,4,1,0,0,0,262,0.91,59
+255,Vitamins & Supplements,6.33,2.36,7,2,0,1,0,0,136,1.14,82
+256,Cardiovascular & Hypertension,9.06,3.19,8,0,0,1,0,0,440,1.1,117
+257,Gastrointestinal & Digestive,5.74,3.43,8,2,0,1,0,0,314,0.9,137
+258,Cardiovascular & Hypertension,10.33,4.85,8,2,0,1,0,0,386,1.13,84
+259,Cardiovascular & Hypertension,13.41,7.86,6,3,0,1,0,0,487,1.08,99
+260,Antihistamines & Allergy,7.05,4.48,11,6,1,0,0,0,372,0.93,151
+261,Antibiotics & Antivirals,19.98,10.79,7,5,0,1,1,10,376,1.02,107
+262,Respiratory & Cough Care,16.85,10.29,9,4,0,1,0,0,28,1.17,68
+263,Antibiotics & Antivirals,12.45,6.84,2,6,1,0,1,5,298,1.24,127
+264,Respiratory & Cough Care,4.48,1.87,2,0,1,0,0,0,295,1.08,151
+265,Respiratory & Cough Care,13.19,7.35,8,6,0,1,1,5,257,0.89,132
+266,Antihistamines & Allergy,4.77,2.79,6,2,0,1,0,0,188,1.04,122
+267,Gastrointestinal & Digestive,1.49,0.84,2,2,1,0,1,15,341,0.89,185
+268,Cardiovascular & Hypertension,21.56,9.69,9,1,0,1,0,0,246,0.94,56
+269,Antihistamines & Allergy,8.23,3.86,3,5,0,0,0,0,462,0.93,114
+270,Cardiovascular & Hypertension,27.57,16.34,4,2,0,0,1,5,419,1.2,66
+271,Topical & First Aid,13.06,6.49,2,2,1,0,0,0,170,1.09,109
+272,Antibiotics & Antivirals,30.37,16.25,6,2,0,1,0,0,371,1.17,94
+273,Antibiotics & Antivirals,14.4,6.07,11,1,1,0,1,15,365,0.91,117
+274,Respiratory & Cough Care,10.3,5.27,7,1,0,1,0,0,486,1.25,95
+275,Topical & First Aid,5.81,3.5,5,1,0,0,0,0,453,0.99,41
+276,Antihistamines & Allergy,5.22,2.71,4,6,0,0,0,0,219,1.12,115
+277,Topical & First Aid,11.48,6.76,3,0,0,0,1,5,150,0.94,109
+278,Topical & First Aid,4.7,1.81,9,4,0,1,0,0,431,1.25,96
+279,Analgesics & Antipyretics,7.01,4.53,12,3,1,0,1,10,162,1.2,138
+280,Antibiotics & Antivirals,34.82,20.29,8,6,0,1,1,15,450,1.13,102
+281,Cardiovascular & Hypertension,6.78,3.09,4,6,0,0,0,0,285,0.92,155
+282,Vitamins & Supplements,9.97,3.9,9,5,0,1,0,0,220,1.22,166
+283,Antihistamines & Allergy,2.46,0.97,12,6,1,0,0,0,136,1.15,146
+284,Vitamins & Supplements,5.13,1.91,11,3,1,0,0,0,403,0.89,135
+285,Gastrointestinal & Digestive,4.6,1.61,8,3,0,1,0,0,385,0.89,198
+286,Gastrointestinal & Digestive,6.88,2.86,2,6,1,0,0,0,118,1.05,76
+287,Antihistamines & Allergy,4.78,2.65,10,6,0,0,1,5,330,1.16,133
+288,Topical & First Aid,17.88,8.55,8,0,0,1,0,0,475,0.9,100
+289,Antihistamines & Allergy,8.2,3.49,5,0,0,0,0,0,472,1.11,52
+290,Vitamins & Supplements,9.31,4.46,12,5,1,0,1,5,10,0.94,155
+291,Analgesics & Antipyretics,9.99,6.46,12,2,1,0,0,0,77,1.04,102
+292,Antibiotics & Antivirals,16.03,7.05,2,2,1,0,0,0,426,1.15,44
+293,Antihistamines & Allergy,7.2,3.84,2,4,1,0,1,15,379,0.94,155
+294,Topical & First Aid,16.45,6.45,4,0,0,0,1,20,189,1.24,91
+295,Vitamins & Supplements,3.73,1.98,11,0,1,0,0,0,155,1.16,192
+296,Vitamins & Supplements,7.68,3.12,4,4,0,0,0,0,340,0.87,126
+297,Cardiovascular & Hypertension,8.38,4.19,8,3,0,1,0,0,280,1.21,53
+298,Gastrointestinal & Digestive,5.26,3.16,6,1,0,1,0,0,289,1.12,172
+299,Antibiotics & Antivirals,7.03,3.01,1,4,1,0,1,5,495,1.17,135
+300,Respiratory & Cough Care,9.03,4.9,7,5,0,1,0,0,88,0.96,96
+301,Cardiovascular & Hypertension,14.8,7.78,3,4,0,0,0,0,342,1.12,37
+302,Respiratory & Cough Care,6.58,2.79,12,6,1,0,0,0,69,1.03,171
+303,Antihistamines & Allergy,8.79,4.93,2,0,1,0,1,15,277,1.06,151
+304,Gastrointestinal & Digestive,9.59,4.13,3,5,0,0,0,0,404,1.21,97
+305,Antibiotics & Antivirals,34.25,18.44,5,5,0,0,0,0,271,0.99,80
+306,Gastrointestinal & Digestive,9.51,5.88,3,2,0,0,0,0,69,0.94,93
+307,Analgesics & Antipyretics,1.51,0.69,1,1,1,0,0,0,101,1.22,205
+308,Respiratory & Cough Care,6.72,4.2,4,2,0,0,0,0,432,0.88,78
+309,Analgesics & Antipyretics,9.85,6.35,3,1,0,0,0,0,45,1.2,130
+310,Vitamins & Supplements,7.08,2.49,6,0,0,1,1,15,388,1.1,122
+311,Topical & First Aid,16.51,9.55,4,5,0,0,1,5,487,1.01,104
+312,Analgesics & Antipyretics,9.35,4.33,6,0,0,1,0,0,167,0.89,130
+313,Topical & First Aid,13.67,5.17,1,1,1,0,0,0,469,1.19,84
+314,Gastrointestinal & Digestive,1.93,0.73,8,5,0,1,1,20,48,1.09,138
+315,Gastrointestinal & Digestive,10.15,4.55,7,5,0,1,0,0,129,0.88,135
+316,Antihistamines & Allergy,5.95,2.64,2,1,1,0,1,15,404,0.93,100
+317,Antibiotics & Antivirals,29.23,12.9,2,1,1,0,0,0,318,0.87,105
+318,Gastrointestinal & Digestive,8.82,5.65,3,0,0,0,0,0,35,1.12,67
+319,Antihistamines & Allergy,10.4,5.37,1,3,1,0,0,0,58,1.03,121
+320,Antihistamines & Allergy,1.68,0.98,2,0,1,0,1,10,431,1.01,160
+321,Antibiotics & Antivirals,29.38,10.48,10,4,1,0,1,20,424,0.9,146
+322,Gastrointestinal & Digestive,11.37,4.15,2,0,1,0,0,0,231,1.18,84
+323,Analgesics & Antipyretics,5.69,2.6,7,5,0,1,0,0,150,0.96,166
+324,Cardiovascular & Hypertension,19.97,12.28,11,2,1,0,0,0,54,0.96,61
+325,Cardiovascular & Hypertension,20.77,11.2,11,6,1,0,0,0,416,0.86,79
+326,Topical & First Aid,10.27,6.41,9,6,0,1,0,0,208,0.96,54
+327,Analgesics & Antipyretics,9.9,4.87,5,0,0,0,0,0,309,1.25,145
+328,Antibiotics & Antivirals,12.23,6.24,4,5,0,0,0,0,387,0.87,155
+329,Respiratory & Cough Care,17.87,7.19,6,6,0,1,1,15,422,1.15,126
+330,Gastrointestinal & Digestive,11.43,6.87,10,4,1,0,0,0,262,1.07,63
+331,Analgesics & Antipyretics,3.56,1.48,2,0,1,0,0,0,10,0.98,180
+332,Gastrointestinal & Digestive,11.11,6.7,12,1,1,0,0,0,21,0.91,101
+333,Antihistamines & Allergy,6.79,3.12,2,6,1,0,1,20,310,0.89,108
+334,Respiratory & Cough Care,12.74,5.12,11,3,1,0,0,0,365,1.21,144
+335,Antihistamines & Allergy,9.07,3.98,7,2,0,1,1,5,495,1.13,190
+336,Analgesics & Antipyretics,4.5,2.67,3,4,0,0,0,0,337,1.08,137
+337,Antihistamines & Allergy,1.86,0.84,6,5,0,1,0,0,335,1.2,115
+338,Gastrointestinal & Digestive,3.92,1.67,8,0,0,1,1,15,412,0.89,116
+339,Antihistamines & Allergy,10.7,4.87,7,3,0,1,0,0,434,1.04,167
+340,Cardiovascular & Hypertension,7.21,4.35,3,3,0,0,0,0,173,0.95,52
+341,Gastrointestinal & Digestive,2.77,1.03,3,3,0,0,0,0,57,0.99,139
+342,Topical & First Aid,9.47,5.17,12,0,1,0,0,0,232,0.91,55
+343,Cardiovascular & Hypertension,25.92,14.69,4,3,0,0,0,0,145,1.11,54
+344,Antibiotics & Antivirals,22.15,13.33,1,3,1,0,1,15,11,1.02,87
+345,Topical & First Aid,3.39,1.36,4,0,0,0,0,0,51,1.04,58
+346,Respiratory & Cough Care,16.42,7.05,8,3,0,1,0,0,208,0.92,121
+347,Gastrointestinal & Digestive,1.49,0.72,3,3,0,0,0,0,438,0.96,47
+348,Antibiotics & Antivirals,15.31,7.85,2,5,1,0,0,0,311,0.94,47
+349,Respiratory & Cough Care,16.0,7.88,9,5,0,1,0,0,253,0.97,90
+350,Analgesics & Antipyretics,10.91,6.44,9,4,0,1,0,0,327,0.91,164
+351,Antihistamines & Allergy,3.12,1.13,4,6,0,0,1,20,113,1.25,167
+352,Antibiotics & Antivirals,21.69,11.18,2,3,1,0,0,0,276,1.03,124
+353,Respiratory & Cough Care,5.24,2.72,2,3,1,0,0,0,491,0.89,136
+354,Vitamins & Supplements,10.66,4.58,9,2,0,1,0,0,302,1.09,44
+355,Vitamins & Supplements,7.8,4.32,7,1,0,1,0,0,212,1.21,77
+356,Cardiovascular & Hypertension,19.26,8.29,1,5,1,0,0,0,182,1.18,67
+357,Topical & First Aid,4.47,2.73,12,5,1,0,1,20,406,1.18,122
+358,Cardiovascular & Hypertension,32.4,15.3,8,1,0,1,0,0,274,1.2,92
+359,Antihistamines & Allergy,8.81,4.15,2,2,1,0,0,0,278,1.2,50
+360,Cardiovascular & Hypertension,6.73,2.42,4,6,0,0,1,15,370,0.93,120
+361,Antibiotics & Antivirals,12.26,6.09,11,0,1,0,0,0,455,1.04,97
+362,Gastrointestinal & Digestive,10.84,6.23,3,6,0,0,0,0,155,0.86,82
+363,Cardiovascular & Hypertension,11.75,4.84,4,5,0,0,0,0,272,0.86,136
+364,Analgesics & Antipyretics,8.12,4.31,8,1,0,1,1,15,321,1.17,161
+365,Respiratory & Cough Care,8.23,3.5,7,6,0,1,0,0,356,1.06,129
+366,Analgesics & Antipyretics,11.63,7.0,9,5,0,1,0,0,314,1.09,100
+367,Vitamins & Supplements,10.48,4.49,11,2,1,0,0,0,466,1.11,120
+368,Cardiovascular & Hypertension,30.72,18.22,1,6,1,0,0,0,173,1.12,107
+369,Vitamins & Supplements,5.45,3.11,5,3,0,0,0,0,302,1.18,82
+370,Cardiovascular & Hypertension,24.15,11.9,11,4,1,0,0,0,193,1.05,100
+371,Antihistamines & Allergy,6.18,3.54,5,0,0,0,0,0,296,1.16,65
+372,Gastrointestinal & Digestive,3.44,1.43,11,0,1,0,0,0,225,1.17,86
+373,Vitamins & Supplements,2.3,0.84,10,2,0,0,0,0,307,1.23,71
+374,Cardiovascular & Hypertension,31.02,14.41,9,0,0,1,0,0,37,1.2,40
+375,Cardiovascular & Hypertension,34.62,21.39,6,3,0,1,0,0,83,0.98,99
+376,Antibiotics & Antivirals,23.93,9.64,8,2,0,1,0,0,12,1.03,40
+377,Antihistamines & Allergy,9.64,5.63,10,6,1,0,1,20,334,1.02,131
+378,Cardiovascular & Hypertension,33.5,20.69,12,2,1,0,0,0,281,0.93,81
+379,Cardiovascular & Hypertension,31.31,13.89,4,5,0,0,1,15,95,0.88,100
+380,Gastrointestinal & Digestive,11.95,5.41,7,5,0,1,0,0,193,1.15,119
+381,Analgesics & Antipyretics,9.0,3.5,4,1,0,0,0,0,311,1.05,49
+382,Analgesics & Antipyretics,3.81,1.94,7,5,0,1,1,5,348,0.89,182
+383,Antibiotics & Antivirals,19.23,7.61,9,2,0,1,0,0,332,0.85,55
+384,Antibiotics & Antivirals,13.1,6.97,11,4,1,0,1,5,271,1.14,65
+385,Antibiotics & Antivirals,23.27,13.58,8,1,0,1,0,0,113,0.99,60
+386,Antihistamines & Allergy,6.46,2.66,1,4,1,0,0,0,179,0.94,50
+387,Antibiotics & Antivirals,22.22,11.07,2,6,1,0,0,0,409,1.05,111
+388,Vitamins & Supplements,6.02,3.87,11,1,1,0,0,0,35,0.89,116
+389,Vitamins & Supplements,8.44,4.03,6,6,0,1,1,5,14,1.19,151
+390,Topical & First Aid,4.39,2.61,10,2,0,0,1,20,214,1.23,98
+391,Topical & First Aid,16.29,6.52,7,5,0,1,1,5,492,1.19,98
+392,Topical & First Aid,8.7,3.98,3,4,0,0,1,10,257,1.22,87
+393,Analgesics & Antipyretics,8.2,2.9,2,2,1,0,0,0,278,1.16,150
+394,Gastrointestinal & Digestive,8.57,4.59,9,4,0,1,0,0,382,0.95,133
+395,Respiratory & Cough Care,15.4,9.51,3,6,0,0,0,0,15,1.11,84
+396,Topical & First Aid,14.27,6.37,3,0,0,0,0,0,152,0.87,55
+397,Respiratory & Cough Care,6.52,3.18,7,6,0,1,0,0,239,0.89,96
+398,Topical & First Aid,3.27,1.54,12,5,1,0,1,5,432,0.89,167
+399,Cardiovascular & Hypertension,18.69,8.45,11,5,1,0,0,0,428,0.94,93
+400,Topical & First Aid,8.45,4.1,12,5,1,0,1,10,11,0.99,192
+401,Gastrointestinal & Digestive,1.5,0.6,12,0,1,0,1,20,64,0.95,78
+402,Respiratory & Cough Care,15.37,6.26,4,3,0,0,0,0,397,1.02,120
+403,Antibiotics & Antivirals,24.75,15.76,8,3,0,1,1,20,12,1.06,73
+404,Topical & First Aid,16.82,6.78,9,6,0,1,0,0,384,1.18,65
+405,Gastrointestinal & Digestive,5.61,2.99,9,3,0,1,0,0,137,0.96,185
+406,Topical & First Aid,9.19,5.15,3,1,0,0,0,0,163,1.19,101
+407,Gastrointestinal & Digestive,11.29,6.09,12,5,1,0,1,15,361,0.99,161
+408,Antihistamines & Allergy,8.64,3.86,9,4,0,1,1,15,297,1.04,165
+409,Vitamins & Supplements,1.14,0.44,7,6,0,1,0,0,37,1.12,95
+410,Antihistamines & Allergy,3.76,2.26,5,5,0,0,0,0,161,0.93,121
+411,Topical & First Aid,16.02,9.16,2,4,1,0,0,0,390,1.11,78
+412,Vitamins & Supplements,1.52,0.71,12,5,1,0,0,0,413,1.24,144
+413,Vitamins & Supplements,10.56,6.42,4,4,0,0,0,0,125,1.21,97
+414,Gastrointestinal & Digestive,3.16,1.79,10,4,0,0,1,20,100,1.24,112
+415,Antibiotics & Antivirals,17.86,9.23,7,0,0,1,1,15,12,0.98,123
+416,Antihistamines & Allergy,1.56,0.98,6,4,0,1,0,0,348,0.97,159
+417,Antibiotics & Antivirals,20.76,13.23,12,2,1,0,0,0,412,1.05,82
+418,Respiratory & Cough Care,6.32,2.62,2,2,1,0,0,0,194,0.97,201
+419,Topical & First Aid,14.28,7.78,9,6,0,1,1,15,238,0.95,165
+420,Analgesics & Antipyretics,5.2,3.06,11,2,1,0,1,15,286,1.14,148
+421,Topical & First Aid,7.45,4.06,8,0,0,1,0,0,52,1.23,78
+422,Analgesics & Antipyretics,3.32,1.79,11,0,1,0,1,20,437,0.89,227
+423,Respiratory & Cough Care,17.1,9.82,11,6,1,0,1,20,377,0.98,135
+424,Cardiovascular & Hypertension,16.64,8.97,5,3,0,0,0,0,18,1.01,54
+425,Analgesics & Antipyretics,7.8,4.5,11,5,1,0,0,0,368,1.19,157
+426,Vitamins & Supplements,11.19,5.2,10,0,1,0,0,0,25,1.04,144
+427,Respiratory & Cough Care,17.4,6.84,9,2,0,1,0,0,478,1.24,109
+428,Gastrointestinal & Digestive,10.62,4.17,1,4,1,0,1,20,285,1.07,77
+429,Gastrointestinal & Digestive,10.96,6.64,4,3,0,0,1,10,123,1.1,93
+430,Analgesics & Antipyretics,8.09,3.01,9,3,0,1,0,0,138,0.89,135
+431,Gastrointestinal & Digestive,8.38,3.52,6,1,0,1,0,0,45,1.21,99
+432,Vitamins & Supplements,2.68,1.39,12,4,1,0,0,0,500,1.02,82
+433,Cardiovascular & Hypertension,24.23,10.49,12,5,1,0,0,0,357,1.14,124
+434,Gastrointestinal & Digestive,7.07,2.85,5,3,0,0,0,0,440,0.96,131
+435,Cardiovascular & Hypertension,31.59,11.78,5,5,0,0,1,5,444,1.05,81
+436,Cardiovascular & Hypertension,12.82,7.93,1,4,1,0,0,0,344,1.16,75
+437,Cardiovascular & Hypertension,9.02,4.51,10,5,0,0,1,15,267,0.85,149
+438,Antihistamines & Allergy,5.91,2.39,9,1,0,1,0,0,347,1.2,93
+439,Gastrointestinal & Digestive,9.38,3.94,1,1,1,0,0,0,129,0.87,50
+440,Gastrointestinal & Digestive,11.1,6.82,7,3,0,1,1,15,62,1.13,176
+441,Vitamins & Supplements,5.14,2.38,10,4,0,0,0,0,469,1.18,101
+442,Respiratory & Cough Care,9.09,5.41,4,4,0,0,0,0,415,1.04,101
+443,Antihistamines & Allergy,3.53,1.78,8,1,0,1,0,0,86,0.92,110
+444,Antibiotics & Antivirals,17.44,7.83,11,1,1,0,1,20,255,0.93,89
+445,Analgesics & Antipyretics,2.41,1.27,4,0,0,0,1,5,466,1.08,70
+446,Antihistamines & Allergy,7.59,3.94,9,3,0,1,1,15,494,0.88,185
+447,Antihistamines & Allergy,5.52,2.17,4,6,0,0,0,0,402,0.92,128
+448,Gastrointestinal & Digestive,7.5,3.14,8,4,0,1,0,0,65,0.86,135
+449,Respiratory & Cough Care,4.44,2.19,3,4,0,0,0,0,29,1.2,96
+450,Antibiotics & Antivirals,24.78,15.38,2,3,1,0,0,0,10,1.21,90
+451,Respiratory & Cough Care,8.56,3.11,9,3,0,1,0,0,127,1.23,90
+452,Respiratory & Cough Care,15.07,9.38,6,4,0,1,0,0,304,0.89,57
+453,Topical & First Aid,4.26,2.26,4,6,0,0,0,0,141,0.93,131
+454,Antibiotics & Antivirals,16.25,6.69,9,0,0,1,0,0,219,0.99,54
+455,Vitamins & Supplements,6.9,3.58,5,6,0,0,0,0,358,1.01,80
+456,Topical & First Aid,11.39,5.64,3,2,0,0,0,0,305,0.99,102
+457,Antihistamines & Allergy,9.23,4.47,11,0,1,0,0,0,92,0.89,91
+458,Gastrointestinal & Digestive,8.67,4.87,9,4,0,1,1,5,421,0.89,126
+459,Antibiotics & Antivirals,16.13,8.59,5,1,0,0,0,0,486,1.24,90
+460,Vitamins & Supplements,1.63,0.95,12,4,1,0,1,20,234,0.85,232
+461,Cardiovascular & Hypertension,22.99,11.6,1,6,1,0,1,10,355,0.86,93
+462,Vitamins & Supplements,8.37,3.95,7,2,0,1,1,5,387,1.13,164
+463,Gastrointestinal & Digestive,4.04,2.15,6,6,0,1,1,20,304,0.85,146
+464,Gastrointestinal & Digestive,6.65,2.84,2,6,1,0,0,0,416,1.08,139
+465,Topical & First Aid,8.09,4.71,4,6,0,0,0,0,469,1.08,59
+466,Antibiotics & Antivirals,28.66,11.93,7,5,0,1,0,0,419,0.98,127
+467,Analgesics & Antipyretics,3.9,1.7,12,6,1,0,0,0,393,1.18,157
+468,Gastrointestinal & Digestive,3.96,2.51,4,4,0,0,0,0,475,0.93,126
+469,Cardiovascular & Hypertension,31.18,12.85,12,1,1,0,1,10,438,1.1,46
+470,Antibiotics & Antivirals,19.78,6.96,11,5,1,0,0,0,500,0.87,92
+471,Topical & First Aid,5.74,3.33,10,6,1,0,0,0,213,0.94,112
+472,Respiratory & Cough Care,3.49,1.59,8,4,0,1,0,0,407,0.92,125
+473,Topical & First Aid,3.13,1.73,6,5,0,1,0,0,61,0.98,111
+474,Vitamins & Supplements,6.18,3.3,4,2,0,0,0,0,265,1.02,98
+475,Gastrointestinal & Digestive,5.41,2.63,6,6,0,1,0,0,304,1.12,203
+476,Respiratory & Cough Care,5.19,3.31,7,1,0,1,1,5,100,1.02,101
+477,Gastrointestinal & Digestive,3.76,2.28,8,2,0,1,1,5,363,0.92,143
+478,Antibiotics & Antivirals,15.04,6.89,8,5,0,1,0,0,487,1.17,88
+479,Gastrointestinal & Digestive,3.19,1.67,11,4,1,0,0,0,99,1.24,103
+480,Gastrointestinal & Digestive,6.36,3.63,11,4,1,0,0,0,205,1.1,100
+481,Antihistamines & Allergy,9.88,4.46,3,5,0,0,0,0,302,1.01,139
+482,Gastrointestinal & Digestive,4.49,1.96,4,2,0,0,0,0,340,1.01,126
+483,Gastrointestinal & Digestive,6.73,3.26,12,4,1,0,1,5,74,1.14,140
+484,Antibiotics & Antivirals,16.91,6.4,4,1,0,0,0,0,252,1.07,39
+485,Respiratory & Cough Care,17.94,6.84,9,6,0,1,0,0,53,1.11,126
+486,Cardiovascular & Hypertension,18.29,7.1,12,2,1,0,0,0,97,0.86,85
+487,Gastrointestinal & Digestive,11.72,6.0,8,3,0,1,0,0,237,0.9,162
+488,Topical & First Aid,12.54,6.51,11,5,1,0,0,0,337,1.06,135
+489,Cardiovascular & Hypertension,14.24,6.74,2,3,1,0,1,5,10,1.06,143
+490,Vitamins & Supplements,1.09,0.68,8,4,0,1,0,0,254,0.97,134
+491,Vitamins & Supplements,7.03,2.86,10,1,0,0,0,0,233,1.01,62
+492,Respiratory & Cough Care,6.94,3.31,7,1,0,1,1,15,155,1.11,132
+493,Cardiovascular & Hypertension,9.1,3.49,2,1,1,0,0,0,241,0.96,104
+494,Cardiovascular & Hypertension,9.56,6.13,6,0,0,1,1,5,154,0.96,141
+495,Cardiovascular & Hypertension,5.44,2.26,2,1,1,0,0,0,412,1.17,155
+496,Topical & First Aid,3.48,1.3,12,6,1,0,0,0,84,0.87,140
+497,Topical & First Aid,16.44,6.99,3,1,0,0,0,0,16,0.9,100
+498,Cardiovascular & Hypertension,34.25,14.53,7,6,0,1,0,0,111,1.03,103
+499,Cardiovascular & Hypertension,25.44,11.29,8,3,0,1,0,0,332,1.14,88
+500,Antibiotics & Antivirals,24.16,9.9,5,3,0,0,0,0,452,1.12,107
+501,Cardiovascular & Hypertension,14.74,5.9,11,3,1,0,0,0,71,1.01,68
+502,Analgesics & Antipyretics,8.57,3.4,10,6,0,0,0,0,137,0.91,88
+503,Analgesics & Antipyretics,8.09,4.53,1,2,1,0,0,0,74,1.05,124
+504,Gastrointestinal & Digestive,3.12,1.74,8,5,0,1,0,0,78,0.95,119
+505,Topical & First Aid,5.8,2.63,4,4,0,0,0,0,150,1.2,100
+506,Antihistamines & Allergy,2.71,1.19,2,4,1,0,0,0,197,1.03,122
+507,Respiratory & Cough Care,16.24,8.7,12,1,1,0,0,0,327,0.95,164
+508,Respiratory & Cough Care,13.25,7.68,4,4,0,0,1,15,175,1.01,81
+509,Antibiotics & Antivirals,33.13,13.37,1,6,1,0,1,5,258,0.93,69
+510,Topical & First Aid,13.52,5.77,9,4,0,1,0,0,320,1.14,33
+511,Cardiovascular & Hypertension,32.85,19.7,11,3,1,0,0,0,337,0.87,71
+512,Respiratory & Cough Care,13.63,8.14,6,6,0,1,0,0,30,1.14,129
+513,Cardiovascular & Hypertension,8.04,3.37,9,0,0,1,0,0,108,1.06,67
+514,Antihistamines & Allergy,7.14,4.1,9,5,0,1,0,0,305,0.99,146
+515,Antihistamines & Allergy,5.42,2.45,3,4,0,0,1,20,487,0.99,119
+516,Gastrointestinal & Digestive,9.41,4.51,6,3,0,1,0,0,321,0.95,133
+517,Vitamins & Supplements,5.92,2.78,6,3,0,1,0,0,155,1.09,101
+518,Vitamins & Supplements,11.83,4.9,1,2,1,0,0,0,405,1.18,146
+519,Antihistamines & Allergy,6.06,2.4,2,0,1,0,0,0,465,1.08,71
+520,Vitamins & Supplements,5.4,3.38,2,4,1,0,0,0,380,0.98,157
+521,Antibiotics & Antivirals,26.92,14.08,10,5,1,0,1,5,481,1.16,98
+522,Antibiotics & Antivirals,24.58,13.04,4,5,0,0,1,20,37,0.97,77
+523,Cardiovascular & Hypertension,25.21,16.37,3,0,0,0,0,0,395,1.09,67
+524,Cardiovascular & Hypertension,28.59,11.28,7,2,0,1,0,0,253,1.08,30
+525,Respiratory & Cough Care,8.98,4.31,5,0,0,0,0,0,400,0.9,91
+526,Topical & First Aid,11.57,6.0,7,5,0,1,0,0,278,0.95,55
+527,Gastrointestinal & Digestive,1.99,1.1,11,4,1,0,0,0,188,0.93,72
+528,Analgesics & Antipyretics,11.86,6.34,5,1,0,0,0,0,236,1.1,83
+529,Cardiovascular & Hypertension,16.21,9.36,4,5,0,0,0,0,67,1.15,80
+530,Antihistamines & Allergy,4.78,2.83,5,0,0,0,0,0,251,0.86,62
+531,Cardiovascular & Hypertension,20.7,8.85,4,4,0,0,0,0,383,1.25,101
+532,Analgesics & Antipyretics,10.97,5.57,7,4,0,1,0,0,40,0.96,142
+533,Analgesics & Antipyretics,11.4,4.22,8,5,0,1,0,0,349,1.19,160
+534,Respiratory & Cough Care,10.63,5.98,4,3,0,0,0,0,258,1.2,83
+535,Antihistamines & Allergy,11.63,6.03,4,4,0,0,0,0,30,0.95,86
+536,Gastrointestinal & Digestive,9.19,3.27,8,3,0,1,0,0,191,1.1,116
+537,Vitamins & Supplements,3.83,1.79,1,5,1,0,0,0,25,1.23,194
+538,Respiratory & Cough Care,4.32,2.01,11,1,1,0,0,0,323,1.2,166
+539,Antihistamines & Allergy,11.01,4.94,7,2,0,1,0,0,115,1.11,146
+540,Cardiovascular & Hypertension,25.66,15.9,3,2,0,0,0,0,230,1.25,112
+541,Antihistamines & Allergy,11.09,4.94,11,4,1,0,0,0,495,1.14,66
+542,Antihistamines & Allergy,9.42,5.78,12,0,1,0,0,0,220,0.97,105
+543,Vitamins & Supplements,3.07,1.2,3,6,0,0,1,15,320,1.08,120
+544,Gastrointestinal & Digestive,9.58,3.74,2,5,1,0,0,0,250,1.13,113
+545,Topical & First Aid,5.46,2.28,8,1,0,1,0,0,17,1.22,119
+546,Cardiovascular & Hypertension,34.65,20.0,12,5,1,0,1,20,453,1.1,137
+547,Respiratory & Cough Care,3.63,2.07,7,6,0,1,0,0,170,1.01,163
+548,Analgesics & Antipyretics,5.97,3.57,9,0,0,1,1,10,275,1.07,187
+549,Analgesics & Antipyretics,5.84,3.59,4,2,0,0,0,0,156,1.03,91
+550,Analgesics & Antipyretics,10.94,5.35,12,4,1,0,0,0,56,1.14,118
+551,Antihistamines & Allergy,4.56,1.63,7,3,0,1,0,0,469,1.14,103
+552,Vitamins & Supplements,8.13,4.58,6,5,0,1,1,5,56,0.9,130
+553,Respiratory & Cough Care,17.63,9.41,12,6,1,0,1,20,32,1.16,237
+554,Antihistamines & Allergy,8.83,4.2,3,6,0,0,0,0,403,1.23,87
+555,Antihistamines & Allergy,7.85,3.34,4,0,0,0,0,0,447,1.05,125
+556,Topical & First Aid,11.83,5.83,4,1,0,0,0,0,50,1.09,38
+557,Vitamins & Supplements,10.08,3.68,10,5,0,0,1,15,28,0.91,93
+558,Gastrointestinal & Digestive,2.2,1.43,2,0,1,0,1,15,322,1.11,148
+559,Antihistamines & Allergy,7.37,4.64,8,5,0,1,1,15,175,1.0,153
+560,Vitamins & Supplements,2.34,1.42,8,1,0,1,0,0,221,1.06,115
+561,Analgesics & Antipyretics,9.03,4.86,2,4,1,0,0,0,257,1.14,174
+562,Vitamins & Supplements,10.33,4.42,7,4,0,1,0,0,329,0.99,72
+563,Topical & First Aid,12.48,6.21,9,5,0,1,1,10,372,0.97,101
+564,Antibiotics & Antivirals,11.22,6.0,12,6,1,0,0,0,33,0.98,112
+565,Analgesics & Antipyretics,8.59,3.66,11,1,1,0,1,15,269,1.07,192
+566,Respiratory & Cough Care,12.24,4.39,12,4,1,0,1,15,436,0.99,216
+567,Antihistamines & Allergy,7.9,4.88,8,1,0,1,0,0,181,1.03,154
+568,Analgesics & Antipyretics,7.21,3.99,9,2,0,1,0,0,19,0.93,147
+569,Gastrointestinal & Digestive,4.09,1.47,2,1,1,0,0,0,330,1.06,51
+570,Respiratory & Cough Care,4.75,2.78,3,4,0,0,0,0,449,0.98,49
+571,Respiratory & Cough Care,16.16,7.46,2,3,1,0,0,0,164,0.94,105
+572,Analgesics & Antipyretics,5.88,2.1,4,0,0,0,0,0,266,0.91,94
+573,Topical & First Aid,10.85,6.32,12,6,1,0,1,5,430,1.24,151
+574,Analgesics & Antipyretics,8.85,4.48,8,3,0,1,1,5,361,1.19,197
+575,Antibiotics & Antivirals,24.77,10.99,9,6,0,1,0,0,169,1.11,65
+576,Vitamins & Supplements,4.51,2.18,5,4,0,0,1,10,90,0.96,67
+577,Antibiotics & Antivirals,15.51,6.91,4,4,0,0,1,15,303,0.95,78
+578,Gastrointestinal & Digestive,1.56,0.56,9,3,0,1,0,0,35,0.89,97
+579,Antihistamines & Allergy,10.8,5.82,12,4,1,0,0,0,238,1.1,60
+580,Cardiovascular & Hypertension,25.13,12.82,12,6,1,0,0,0,396,1.16,99
+581,Topical & First Aid,7.66,4.16,2,3,1,0,0,0,250,0.94,70
+582,Vitamins & Supplements,3.02,1.89,6,3,0,1,0,0,450,1.2,91
+583,Analgesics & Antipyretics,2.24,1.11,2,3,1,0,0,0,154,1.16,156
+584,Antibiotics & Antivirals,26.43,10.1,7,6,0,1,0,0,46,1.17,108
+585,Respiratory & Cough Care,6.66,2.65,4,4,0,0,0,0,43,0.99,126
+586,Respiratory & Cough Care,14.81,7.6,7,4,0,1,1,5,388,1.22,123
+587,Topical & First Aid,4.46,2.16,6,4,0,1,0,0,217,0.88,56
+588,Respiratory & Cough Care,12.67,4.67,6,3,0,1,1,10,464,1.08,144
+589,Antihistamines & Allergy,5.98,2.62,11,1,1,0,0,0,238,0.93,119
+590,Gastrointestinal & Digestive,9.74,5.39,5,4,0,0,0,0,489,1.02,130
+591,Gastrointestinal & Digestive,1.09,0.7,2,4,1,0,0,0,75,1.19,60
+592,Analgesics & Antipyretics,7.16,4.61,1,5,1,0,1,15,453,0.86,200
+593,Respiratory & Cough Care,11.18,6.13,7,3,0,1,0,0,106,1.07,126
+594,Gastrointestinal & Digestive,4.17,2.55,7,1,0,1,1,5,46,1.11,148
+595,Antihistamines & Allergy,8.06,3.83,2,1,1,0,0,0,413,1.13,142
+596,Antihistamines & Allergy,5.67,3.38,8,4,0,1,0,0,125,0.92,139
+597,Cardiovascular & Hypertension,13.08,8.21,12,4,1,0,0,0,27,1.24,91
+598,Gastrointestinal & Digestive,6.3,3.51,2,4,1,0,1,15,248,1.06,123
+599,Cardiovascular & Hypertension,27.25,17.39,8,5,0,1,1,15,323,0.87,107
+600,Topical & First Aid,8.29,5.33,10,5,1,0,0,0,95,0.86,157
+601,Vitamins & Supplements,6.2,2.48,1,5,1,0,1,15,424,1.14,143
+602,Vitamins & Supplements,7.77,3.36,5,1,0,0,0,0,389,0.89,55
+603,Antihistamines & Allergy,5.07,2.04,11,3,1,0,0,0,130,1.04,132
+604,Analgesics & Antipyretics,11.64,6.15,6,0,0,1,0,0,438,1.05,189
+605,Cardiovascular & Hypertension,26.78,10.72,11,3,1,0,0,0,441,0.99,87
+606,Antibiotics & Antivirals,18.92,9.33,1,1,1,0,0,0,495,1.15,98
+607,Respiratory & Cough Care,8.85,3.79,11,5,1,0,0,0,232,0.85,202
+608,Analgesics & Antipyretics,8.01,5.1,2,4,1,0,0,0,480,1.11,108
+609,Antibiotics & Antivirals,22.53,11.0,5,5,0,0,0,0,133,1.14,83
+610,Gastrointestinal & Digestive,11.93,5.3,11,5,1,0,1,5,435,0.88,143
+611,Gastrointestinal & Digestive,4.12,1.68,4,5,0,0,1,5,39,1.23,182
+612,Antibiotics & Antivirals,7.59,4.03,12,0,1,0,0,0,401,1.21,99
+613,Antihistamines & Allergy,3.03,1.33,2,5,1,0,0,0,48,1.11,155
+614,Respiratory & Cough Care,14.55,6.5,12,5,1,0,1,5,151,1.16,156
+615,Vitamins & Supplements,1.76,1.13,3,3,0,0,1,20,101,1.11,114
+616,Respiratory & Cough Care,12.65,7.89,4,4,0,0,0,0,62,0.86,48
+617,Vitamins & Supplements,10.86,4.29,8,0,0,1,0,0,487,0.87,80
+618,Antihistamines & Allergy,10.95,5.72,12,2,1,0,0,0,491,1.16,93
+619,Respiratory & Cough Care,15.18,5.63,12,6,1,0,1,20,498,1.13,211
+620,Gastrointestinal & Digestive,5.41,2.92,11,2,1,0,0,0,56,1.0,131
+621,Gastrointestinal & Digestive,6.06,3.51,2,6,1,0,0,0,100,1.07,153
+622,Vitamins & Supplements,10.86,5.86,12,3,1,0,0,0,53,1.2,131
+623,Analgesics & Antipyretics,8.92,4.71,4,0,0,0,0,0,42,1.17,120
+624,Topical & First Aid,15.18,9.71,9,6,0,1,1,15,38,0.99,156
+625,Topical & First Aid,16.11,6.36,11,6,1,0,0,0,483,0.88,136
+626,Analgesics & Antipyretics,1.5,0.84,8,4,0,1,1,10,333,0.87,151
+627,Antihistamines & Allergy,2.17,1.08,10,0,0,0,0,0,122,0.88,64
+628,Gastrointestinal & Digestive,5.42,2.09,12,5,1,0,0,0,289,0.9,149
+629,Analgesics & Antipyretics,2.33,0.91,10,1,1,0,0,0,366,1.0,114
+630,Analgesics & Antipyretics,9.7,5.23,3,0,0,0,0,0,90,0.86,98
+631,Analgesics & Antipyretics,11.19,6.29,1,1,1,0,0,0,155,1.02,175
+632,Antihistamines & Allergy,8.04,4.08,4,1,0,0,0,0,490,0.92,123
+633,Antihistamines & Allergy,7.73,2.91,12,3,1,0,0,0,164,0.99,45
+634,Cardiovascular & Hypertension,34.6,22.25,4,0,0,0,0,0,451,1.15,61
+635,Cardiovascular & Hypertension,23.79,9.81,8,6,0,1,1,5,417,0.91,158
+636,Antihistamines & Allergy,1.59,0.73,11,0,1,0,1,15,181,1.1,153
+637,Antibiotics & Antivirals,32.75,13.19,12,0,1,0,0,0,258,1.06,29
+638,Cardiovascular & Hypertension,22.78,10.2,12,3,1,0,1,15,127,1.16,77
+639,Respiratory & Cough Care,16.37,6.09,4,3,0,0,0,0,37,1.21,39
+640,Topical & First Aid,8.6,4.19,3,3,0,0,1,15,148,0.93,82
+641,Analgesics & Antipyretics,2.22,1.09,5,1,0,0,0,0,399,0.99,134
+642,Antihistamines & Allergy,10.96,5.74,11,4,1,0,0,0,127,0.88,137
+643,Topical & First Aid,10.1,4.94,4,4,0,0,1,20,386,1.2,92
+644,Cardiovascular & Hypertension,31.95,15.19,10,1,0,0,1,20,385,1.16,39
+645,Topical & First Aid,4.47,2.23,12,6,1,0,1,5,364,1.14,171
+646,Antibiotics & Antivirals,25.07,9.99,1,3,1,0,0,0,302,1.15,25
+647,Topical & First Aid,5.08,2.85,8,6,0,1,1,15,330,1.04,139
+648,Gastrointestinal & Digestive,4.26,2.45,9,0,0,1,0,0,323,1.07,169
+649,Antibiotics & Antivirals,6.64,4.21,10,2,0,0,0,0,464,0.87,82
+650,Topical & First Aid,5.63,2.91,10,0,1,0,1,10,80,1.24,95
+651,Topical & First Aid,11.7,7.46,12,6,1,0,1,10,174,0.99,131
+652,Antibiotics & Antivirals,18.57,9.29,6,2,0,1,0,0,250,1.13,106
+653,Vitamins & Supplements,5.05,2.79,8,4,0,1,0,0,491,1.2,65
+654,Topical & First Aid,8.86,3.58,2,0,1,0,0,0,49,0.89,62
+655,Antihistamines & Allergy,10.62,5.38,8,1,0,1,0,0,160,1.02,176
+656,Topical & First Aid,9.66,5.25,6,3,0,1,0,0,42,0.86,120
+657,Gastrointestinal & Digestive,4.77,2.59,7,4,0,1,0,0,313,1.12,136
+658,Topical & First Aid,4.98,2.92,5,4,0,0,1,15,126,1.04,179
+659,Analgesics & Antipyretics,4.13,2.63,3,2,0,0,0,0,92,1.13,79
+660,Antihistamines & Allergy,10.95,6.44,12,5,1,0,1,5,31,1.25,139
+661,Cardiovascular & Hypertension,6.04,2.69,9,5,0,1,0,0,200,1.03,154
+662,Antibiotics & Antivirals,32.93,19.12,1,3,1,0,0,0,485,0.98,12
+663,Gastrointestinal & Digestive,4.25,2.63,11,5,1,0,0,0,396,1.24,116
+664,Topical & First Aid,4.68,2.31,6,5,0,1,1,5,167,0.86,141
+665,Gastrointestinal & Digestive,8.05,4.23,1,4,1,0,1,15,110,0.86,119
+666,Antibiotics & Antivirals,10.83,4.82,9,3,0,1,0,0,493,0.87,106
+667,Respiratory & Cough Care,15.81,7.29,3,5,0,0,0,0,155,0.99,80
+668,Antibiotics & Antivirals,31.63,18.11,4,5,0,0,0,0,236,0.97,130
+669,Respiratory & Cough Care,5.09,2.68,12,3,1,0,1,10,165,1.04,206
+670,Respiratory & Cough Care,9.14,5.71,2,0,1,0,0,0,294,1.03,183
+671,Cardiovascular & Hypertension,16.45,8.49,3,6,0,0,1,15,437,1.08,143
+672,Analgesics & Antipyretics,4.3,2.33,3,2,0,0,0,0,73,1.11,118
+673,Respiratory & Cough Care,16.6,9.02,3,3,0,0,1,15,262,1.25,76
+674,Topical & First Aid,12.42,6.12,10,3,0,0,0,0,71,1.0,107
+675,Analgesics & Antipyretics,7.4,2.91,5,1,0,0,0,0,364,0.9,50
+676,Vitamins & Supplements,8.0,5.09,6,3,0,1,1,15,281,1.11,67
+677,Antihistamines & Allergy,9.28,4.76,2,4,1,0,0,0,433,1.19,111
+678,Vitamins & Supplements,8.57,3.25,11,5,1,0,0,0,431,0.91,141
+679,Respiratory & Cough Care,4.54,1.8,6,1,0,1,1,10,417,1.21,155
+680,Antibiotics & Antivirals,32.48,12.5,7,3,0,1,1,5,255,0.99,111
+681,Topical & First Aid,8.13,4.58,10,4,0,0,1,5,123,0.9,153
+682,Vitamins & Supplements,2.43,0.91,3,1,0,0,0,0,411,0.89,45
+683,Topical & First Aid,5.95,2.14,7,0,0,1,0,0,313,0.87,55
+684,Vitamins & Supplements,4.32,1.53,1,0,1,0,1,5,481,1.09,189
+685,Analgesics & Antipyretics,10.3,6.52,2,1,1,0,0,0,188,0.99,184
+686,Cardiovascular & Hypertension,7.05,4.2,9,4,0,1,0,0,280,0.94,70
+687,Vitamins & Supplements,6.91,4.44,3,6,0,0,1,10,481,1.05,157
+688,Topical & First Aid,5.71,2.61,11,0,1,0,0,0,119,1.06,84
+689,Gastrointestinal & Digestive,2.21,0.86,2,3,1,0,0,0,370,0.97,127
+690,Antibiotics & Antivirals,8.47,3.69,6,3,0,1,0,0,169,1.12,128
+691,Cardiovascular & Hypertension,13.72,8.32,9,3,0,1,1,5,468,1.19,116
+692,Antihistamines & Allergy,6.41,2.45,1,5,1,0,0,0,347,1.12,84
+693,Antibiotics & Antivirals,6.94,4.46,12,1,1,0,0,0,314,1.19,76
+694,Cardiovascular & Hypertension,19.97,11.57,7,5,0,1,0,0,313,0.96,131
+695,Respiratory & Cough Care,13.0,8.26,6,3,0,1,0,0,271,0.96,117
+696,Antibiotics & Antivirals,19.68,8.25,2,2,1,0,0,0,25,0.89,34
+697,Antibiotics & Antivirals,5.8,2.34,8,5,0,1,0,0,177,0.91,121
+698,Antibiotics & Antivirals,20.6,10.25,11,6,1,0,0,0,160,1.11,81
+699,Gastrointestinal & Digestive,1.19,0.69,9,4,0,1,0,0,460,1.22,127
+700,Respiratory & Cough Care,3.54,1.43,8,3,0,1,0,0,409,0.97,116
+701,Topical & First Aid,7.69,3.59,7,1,0,1,0,0,301,1.12,104
+702,Topical & First Aid,15.82,7.94,8,4,0,1,0,0,263,1.09,80
+703,Gastrointestinal & Digestive,1.68,0.89,5,2,0,0,1,15,188,1.17,141
+704,Gastrointestinal & Digestive,5.71,3.7,7,0,0,1,0,0,38,1.11,100
+705,Antibiotics & Antivirals,31.07,11.94,12,0,1,0,1,15,29,1.03,119
+706,Respiratory & Cough Care,13.44,7.07,5,0,0,0,0,0,203,1.08,74
+707,Antibiotics & Antivirals,25.73,10.59,8,0,0,1,0,0,425,1.16,46
+708,Vitamins & Supplements,3.22,1.74,6,3,0,1,0,0,48,1.19,116
+709,Vitamins & Supplements,4.27,2.23,5,0,0,0,0,0,329,1.15,42
+710,Antibiotics & Antivirals,21.99,11.2,10,2,1,0,0,0,187,1.17,104
+711,Vitamins & Supplements,4.3,2.36,9,6,0,1,0,0,222,1.01,128
+712,Antihistamines & Allergy,8.74,5.32,1,5,1,0,0,0,119,1.11,146
+713,Vitamins & Supplements,9.9,6.0,11,4,1,0,0,0,488,1.08,157
+714,Gastrointestinal & Digestive,3.64,2.09,8,1,0,1,0,0,442,1.02,129
+715,Antibiotics & Antivirals,30.38,13.07,11,1,1,0,0,0,92,0.95,75
+716,Respiratory & Cough Care,5.25,1.88,4,0,0,0,0,0,168,1.04,111
+717,Respiratory & Cough Care,16.58,6.81,7,5,0,1,0,0,24,0.95,132
+718,Antihistamines & Allergy,1.46,0.83,11,6,1,0,0,0,38,1.19,81
+719,Antibiotics & Antivirals,25.15,15.49,7,2,0,1,0,0,439,1.14,35
+720,Antibiotics & Antivirals,8.62,4.73,10,5,0,0,0,0,406,1.22,91
+721,Cardiovascular & Hypertension,14.4,8.64,10,0,0,0,0,0,422,1.15,63
+722,Respiratory & Cough Care,4.6,1.91,4,1,0,0,0,0,219,0.95,92
+723,Topical & First Aid,13.49,5.18,9,2,0,1,0,0,253,1.12,120
+724,Antihistamines & Allergy,8.87,5.29,6,3,0,1,1,5,440,1.15,190
+725,Cardiovascular & Hypertension,16.54,8.96,5,4,0,0,0,0,472,1.17,48
+726,Cardiovascular & Hypertension,5.24,3.34,8,3,0,1,0,0,479,0.95,56
+727,Cardiovascular & Hypertension,30.78,12.25,5,1,0,0,0,0,172,1.2,91
+728,Respiratory & Cough Care,16.0,9.55,1,2,1,0,0,0,251,1.14,177
+729,Respiratory & Cough Care,5.41,2.32,2,6,1,0,1,20,318,1.14,203
+730,Antihistamines & Allergy,9.7,3.79,11,3,1,0,0,0,331,0.97,92
+731,Antibiotics & Antivirals,20.49,13.13,3,1,0,0,0,0,400,0.9,88
+732,Respiratory & Cough Care,10.18,5.81,6,3,0,1,0,0,361,1.09,66
+733,Vitamins & Supplements,5.56,2.25,4,0,0,0,0,0,493,1.18,106
+734,Analgesics & Antipyretics,8.12,4.37,1,4,1,0,0,0,246,0.93,141
+735,Respiratory & Cough Care,5.24,3.34,10,3,0,0,1,5,17,1.14,141
+736,Topical & First Aid,4.78,2.7,11,3,1,0,1,15,157,1.15,117
+737,Cardiovascular & Hypertension,13.49,7.46,10,1,0,0,0,0,219,1.17,44
+738,Vitamins & Supplements,5.96,2.53,4,4,0,0,0,0,341,1.03,57
+739,Antihistamines & Allergy,5.37,2.22,6,5,0,1,0,0,226,1.14,120
+740,Gastrointestinal & Digestive,10.99,7.13,4,3,0,0,0,0,420,1.09,121
+741,Analgesics & Antipyretics,6.55,3.04,1,2,1,0,0,0,353,1.0,185
+742,Antihistamines & Allergy,6.54,4.11,5,1,0,0,0,0,77,0.89,104
+743,Respiratory & Cough Care,4.75,1.73,3,2,0,0,1,15,392,0.99,127
+744,Vitamins & Supplements,3.9,1.73,10,6,0,0,0,0,171,1.14,121
+745,Topical & First Aid,5.23,2.19,1,1,1,0,1,15,93,1.13,139
+746,Topical & First Aid,8.35,4.7,1,3,1,0,0,0,262,0.89,108
+747,Antihistamines & Allergy,2.03,1.24,2,2,1,0,1,10,393,1.05,122
+748,Cardiovascular & Hypertension,22.12,10.51,10,0,0,0,1,20,356,0.89,77
+749,Antibiotics & Antivirals,22.71,14.43,7,2,0,1,0,0,88,0.86,67
+750,Topical & First Aid,17.33,9.15,8,5,0,1,1,5,345,1.1,134
+751,Antihistamines & Allergy,1.54,0.84,4,6,0,0,0,0,38,1.15,117
+752,Antibiotics & Antivirals,10.34,6.61,7,2,0,1,0,0,55,0.86,52
+753,Respiratory & Cough Care,12.71,8.09,7,2,0,1,1,15,261,1.17,145
+754,Antihistamines & Allergy,2.06,0.95,6,5,0,1,1,20,463,1.01,159
+755,Gastrointestinal & Digestive,5.69,2.06,10,1,0,0,0,0,247,1.12,102
+756,Antihistamines & Allergy,7.93,4.02,8,4,0,1,0,0,233,0.88,172
+757,Antihistamines & Allergy,10.26,5.2,11,2,1,0,0,0,34,1.07,134
+758,Antibiotics & Antivirals,17.39,8.51,9,3,0,1,0,0,426,0.95,60
+759,Antibiotics & Antivirals,8.42,4.62,9,0,0,1,1,10,441,1.01,87
+760,Vitamins & Supplements,8.97,5.18,6,4,0,1,0,0,423,0.96,142
+761,Antihistamines & Allergy,1.86,1.2,4,1,0,0,0,0,354,0.89,99
+762,Analgesics & Antipyretics,1.15,0.63,7,0,0,1,0,0,217,1.2,184
+763,Topical & First Aid,15.2,8.13,5,4,0,0,0,0,363,1.12,134
+764,Antibiotics & Antivirals,5.42,2.08,3,1,0,0,1,10,449,0.86,113
+765,Cardiovascular & Hypertension,23.78,13.96,7,6,0,1,1,15,404,1.04,109
+766,Antihistamines & Allergy,5.9,2.92,12,5,1,0,1,20,309,0.95,126
+767,Gastrointestinal & Digestive,7.93,4.47,1,0,1,0,0,0,444,1.05,100
+768,Vitamins & Supplements,5.4,2.72,1,3,1,0,0,0,488,1.12,197
+769,Analgesics & Antipyretics,5.64,2.51,9,0,0,1,1,20,465,1.04,164
+770,Respiratory & Cough Care,7.32,2.98,1,1,1,0,0,0,128,1.05,182
+771,Topical & First Aid,13.84,6.46,3,2,0,0,0,0,491,1.12,114
+772,Topical & First Aid,6.11,3.4,3,4,0,0,1,20,76,0.92,88
+773,Respiratory & Cough Care,6.52,3.37,8,2,0,1,0,0,193,1.2,86
+774,Antihistamines & Allergy,10.45,5.24,3,6,0,0,0,0,182,1.02,121
+775,Cardiovascular & Hypertension,34.81,20.38,8,2,0,1,0,0,404,1.2,44
+776,Antihistamines & Allergy,6.67,3.67,12,6,1,0,0,0,484,1.23,135
+777,Antibiotics & Antivirals,23.32,13.63,2,6,1,0,0,0,431,1.07,82
+778,Antibiotics & Antivirals,9.71,4.25,4,2,0,0,0,0,269,1.05,124
+779,Antihistamines & Allergy,4.68,1.83,11,2,1,0,0,0,234,1.24,122
+780,Analgesics & Antipyretics,9.9,4.48,4,6,0,0,0,0,53,0.96,132
+781,Cardiovascular & Hypertension,27.61,13.16,3,6,0,0,1,20,221,1.22,170
+782,Gastrointestinal & Digestive,2.6,0.92,1,3,1,0,0,0,493,0.88,73
+783,Respiratory & Cough Care,3.92,2.26,3,3,0,0,0,0,338,0.91,108
+784,Vitamins & Supplements,10.74,6.02,7,3,0,1,0,0,379,1.15,133
+785,Analgesics & Antipyretics,7.71,3.04,5,4,0,0,0,0,339,0.93,102
+786,Topical & First Aid,16.32,9.54,12,2,1,0,0,0,111,1.2,52
+787,Gastrointestinal & Digestive,8.91,5.47,7,5,0,1,0,0,286,0.96,114
+788,Antihistamines & Allergy,10.79,5.52,1,0,1,0,0,0,436,1.16,115
+789,Antibiotics & Antivirals,30.25,12.94,12,0,1,0,0,0,73,0.87,80
+790,Antibiotics & Antivirals,22.17,7.79,8,2,0,1,0,0,130,1.17,109
+791,Cardiovascular & Hypertension,13.54,7.93,6,2,0,1,0,0,354,0.91,78
+792,Cardiovascular & Hypertension,20.49,8.36,2,2,1,0,0,0,242,0.89,100
+793,Respiratory & Cough Care,3.93,2.42,2,0,1,0,0,0,238,0.88,170
+794,Respiratory & Cough Care,10.48,5.0,5,4,0,0,0,0,486,1.23,102
+795,Respiratory & Cough Care,10.59,5.25,3,1,0,0,0,0,370,1.06,84
+796,Cardiovascular & Hypertension,5.98,2.37,8,3,0,1,0,0,481,1.23,113
+797,Respiratory & Cough Care,8.54,3.73,2,0,1,0,0,0,70,1.0,187
+798,Topical & First Aid,5.14,3.01,1,6,1,0,0,0,489,1.21,152
+799,Topical & First Aid,11.21,4.15,1,0,1,0,1,20,303,0.97,110
+800,Respiratory & Cough Care,13.8,7.34,8,6,0,1,0,0,268,1.1,131
+801,Antihistamines & Allergy,1.98,1.06,12,2,1,0,0,0,208,0.94,98
+802,Analgesics & Antipyretics,9.1,4.95,11,3,1,0,0,0,372,0.86,170
+803,Vitamins & Supplements,2.36,1.22,9,5,0,1,1,5,500,1.08,124
+804,Antibiotics & Antivirals,10.39,3.7,11,4,1,0,0,0,135,1.18,119
+805,Topical & First Aid,11.0,4.91,2,6,1,0,0,0,261,1.19,57
+806,Respiratory & Cough Care,10.92,5.07,1,6,1,0,1,5,287,0.92,132
+807,Respiratory & Cough Care,3.88,2.48,11,1,1,0,1,5,162,1.01,161
+808,Respiratory & Cough Care,6.04,3.48,2,0,1,0,0,0,262,1.05,170
+809,Vitamins & Supplements,6.11,2.88,1,2,1,0,0,0,218,1.1,180
+810,Antibiotics & Antivirals,21.64,12.67,4,6,0,0,0,0,218,1.03,120
+811,Antihistamines & Allergy,11.84,6.92,6,4,0,1,0,0,226,1.23,113
+812,Topical & First Aid,5.51,2.03,10,2,0,0,0,0,149,1.09,125
+813,Respiratory & Cough Care,12.48,6.56,6,6,0,1,0,0,33,0.91,113
+814,Antibiotics & Antivirals,8.69,3.41,7,5,0,1,0,0,153,1.2,84
+815,Gastrointestinal & Digestive,7.99,5.14,11,2,1,0,0,0,149,0.95,147
+816,Gastrointestinal & Digestive,11.55,5.18,4,3,0,0,0,0,78,1.11,29
+817,Topical & First Aid,13.09,6.2,1,0,1,0,0,0,370,1.05,79
+818,Antibiotics & Antivirals,7.33,2.63,11,5,1,0,0,0,353,1.03,90
+819,Respiratory & Cough Care,15.59,9.25,10,2,1,0,0,0,73,1.04,181
+820,Cardiovascular & Hypertension,27.75,15.38,12,0,1,0,0,0,108,0.89,89
+821,Vitamins & Supplements,3.58,1.78,12,1,1,0,0,0,153,1.05,176
+822,Analgesics & Antipyretics,8.02,3.07,4,6,0,0,0,0,266,1.05,129
+823,Antihistamines & Allergy,2.41,0.89,2,4,1,0,0,0,301,1.19,154
+824,Vitamins & Supplements,8.46,5.48,4,6,0,0,0,0,282,1.1,130
+825,Analgesics & Antipyretics,8.4,4.58,7,5,0,1,0,0,175,1.02,184
+826,Topical & First Aid,10.76,3.91,8,2,0,1,0,0,34,0.96,94
+827,Topical & First Aid,8.88,4.0,6,0,0,1,0,0,423,0.86,127
+828,Respiratory & Cough Care,5.95,2.67,2,1,1,0,1,5,24,1.04,216
+829,Gastrointestinal & Digestive,2.19,0.92,5,1,0,0,0,0,37,1.18,98
+830,Cardiovascular & Hypertension,23.0,11.08,2,6,1,0,1,20,306,0.9,176
+831,Antibiotics & Antivirals,32.57,15.72,3,0,0,0,0,0,330,1.02,15
+832,Analgesics & Antipyretics,4.24,1.97,9,0,0,1,1,20,129,1.2,185
+833,Topical & First Aid,12.29,5.55,7,4,0,1,0,0,410,0.86,81
+834,Cardiovascular & Hypertension,5.37,3.03,2,0,1,0,0,0,440,0.93,97
+835,Vitamins & Supplements,6.3,3.38,6,3,0,1,1,10,418,0.87,92
+836,Gastrointestinal & Digestive,10.74,6.26,5,4,0,0,1,15,318,0.99,94
+837,Antihistamines & Allergy,6.58,3.95,1,1,1,0,0,0,226,0.99,152
+838,Cardiovascular & Hypertension,10.68,5.26,2,2,1,0,0,0,249,1.09,66
+839,Gastrointestinal & Digestive,2.79,1.36,10,2,0,0,0,0,31,1.05,147
+840,Cardiovascular & Hypertension,19.0,7.86,12,1,1,0,0,0,403,1.23,62
+841,Respiratory & Cough Care,5.76,3.73,4,3,0,0,0,0,47,0.99,100
+842,Antihistamines & Allergy,3.14,1.65,5,3,0,0,0,0,32,1.24,76
+843,Vitamins & Supplements,10.74,6.08,3,1,0,0,0,0,293,0.95,52
+844,Antihistamines & Allergy,1.23,0.68,5,0,0,0,0,0,413,1.2,89
+845,Cardiovascular & Hypertension,12.2,7.23,5,3,0,0,0,0,491,1.06,118
+846,Respiratory & Cough Care,4.78,2.94,12,0,1,0,1,10,108,1.06,196
+847,Cardiovascular & Hypertension,23.48,9.55,1,6,1,0,0,0,414,0.91,72
+848,Vitamins & Supplements,6.59,3.46,3,6,0,0,0,0,382,0.88,131
+849,Antibiotics & Antivirals,16.64,10.23,3,4,0,0,0,0,201,1.05,74
+850,Gastrointestinal & Digestive,6.78,3.36,12,2,1,0,0,0,252,0.96,81
+851,Analgesics & Antipyretics,10.84,5.26,4,1,0,0,1,10,166,1.02,93
+852,Gastrointestinal & Digestive,1.93,1.11,5,4,0,0,0,0,275,0.99,104
+853,Topical & First Aid,8.05,3.91,9,4,0,1,0,0,198,1.17,70
+854,Respiratory & Cough Care,9.63,4.14,1,1,1,0,1,5,160,1.19,204
+855,Cardiovascular & Hypertension,7.14,2.58,2,0,1,0,1,10,355,0.98,126
+856,Vitamins & Supplements,7.64,2.99,4,5,0,0,0,0,376,1.15,138
+857,Vitamins & Supplements,4.81,3.12,5,6,0,0,0,0,430,1.08,122
+858,Antihistamines & Allergy,3.5,2.01,7,1,0,1,0,0,274,1.08,141
+859,Topical & First Aid,4.29,2.59,6,6,0,1,0,0,492,1.13,82
+860,Analgesics & Antipyretics,7.35,2.86,6,1,0,1,0,0,14,1.05,144
+861,Cardiovascular & Hypertension,25.57,12.04,7,3,0,1,0,0,285,0.97,82
+862,Analgesics & Antipyretics,11.75,7.62,3,1,0,0,0,0,419,1.09,87
+863,Respiratory & Cough Care,17.23,6.36,7,1,0,1,0,0,253,0.89,101
+864,Topical & First Aid,4.4,1.68,11,2,1,0,0,0,26,1.18,121
+865,Analgesics & Antipyretics,1.76,1.12,3,1,0,0,0,0,129,0.97,98
+866,Topical & First Aid,10.78,4.33,1,2,1,0,0,0,220,1.01,133
+867,Antihistamines & Allergy,6.26,2.32,9,3,0,1,0,0,453,0.93,162
+868,Topical & First Aid,11.63,5.15,3,4,0,0,1,20,151,0.93,166
+869,Respiratory & Cough Care,7.93,4.13,10,6,1,0,0,0,246,1.08,192
+870,Topical & First Aid,15.64,9.19,6,5,0,1,0,0,431,1.17,83
+871,Respiratory & Cough Care,16.66,6.75,8,3,0,1,0,0,211,1.13,38
+872,Antihistamines & Allergy,6.92,3.81,5,5,0,0,1,10,475,1.05,191
+873,Antibiotics & Antivirals,28.0,12.54,2,4,1,0,0,0,139,0.93,15
+874,Analgesics & Antipyretics,8.64,4.97,2,5,1,0,0,0,391,1.01,108
+875,Antihistamines & Allergy,9.24,4.58,6,5,0,1,1,10,375,1.23,154
+876,Analgesics & Antipyretics,2.37,1.36,10,0,1,0,1,5,356,0.96,188
+877,Cardiovascular & Hypertension,6.43,3.48,8,5,0,1,0,0,349,1.14,144
+878,Vitamins & Supplements,7.58,2.76,8,0,0,1,0,0,113,1.22,83
+879,Cardiovascular & Hypertension,5.48,1.96,4,0,0,0,1,10,358,1.12,111
+880,Antihistamines & Allergy,1.48,0.75,12,1,1,0,0,0,175,1.07,81
+881,Cardiovascular & Hypertension,33.17,12.81,9,3,0,1,1,15,175,0.92,98
+882,Respiratory & Cough Care,6.3,3.45,4,3,0,0,0,0,329,1.0,50
+883,Cardiovascular & Hypertension,28.03,14.01,7,2,0,1,0,0,374,1.06,112
+884,Antihistamines & Allergy,7.6,4.9,5,0,0,0,0,0,357,1.22,128
+885,Antihistamines & Allergy,7.99,4.92,6,1,0,1,0,0,445,1.12,78
+886,Topical & First Aid,12.61,5.29,7,4,0,1,0,0,16,0.94,113
+887,Antibiotics & Antivirals,27.14,15.66,5,1,0,0,0,0,40,0.91,74
+888,Cardiovascular & Hypertension,11.13,4.02,3,3,0,0,0,0,316,1.25,81
+889,Gastrointestinal & Digestive,4.49,2.63,3,2,0,0,1,20,341,1.18,148
+890,Gastrointestinal & Digestive,3.26,1.19,6,1,0,1,0,0,137,1.17,153
+891,Respiratory & Cough Care,5.75,3.1,9,2,0,1,1,20,45,1.23,104
+892,Cardiovascular & Hypertension,10.21,5.25,3,0,0,0,0,0,114,0.94,54
+893,Topical & First Aid,13.83,5.86,5,1,0,0,1,10,165,0.96,124
+894,Vitamins & Supplements,11.46,5.25,8,0,0,1,0,0,251,1.03,99
+895,Respiratory & Cough Care,17.31,8.56,3,6,0,0,0,0,228,1.19,141
+896,Antihistamines & Allergy,2.93,1.36,9,5,0,1,0,0,155,1.0,148
+897,Topical & First Aid,16.74,5.88,4,1,0,0,0,0,383,1.14,80
+898,Respiratory & Cough Care,8.6,4.27,7,5,0,1,0,0,311,0.88,155
+899,Antibiotics & Antivirals,9.87,5.71,7,4,0,1,0,0,404,1.22,121
+900,Topical & First Aid,8.52,3.13,11,5,1,0,0,0,227,1.14,72
+901,Gastrointestinal & Digestive,8.44,4.72,11,5,1,0,0,0,143,1.09,150
+902,Cardiovascular & Hypertension,30.25,10.7,10,4,0,0,0,0,339,1.13,52
+903,Antibiotics & Antivirals,31.28,12.5,9,1,0,1,0,0,364,0.97,110
+904,Respiratory & Cough Care,14.29,8.96,10,2,0,0,0,0,65,1.1,122
+905,Gastrointestinal & Digestive,9.24,5.81,3,2,0,0,0,0,167,0.85,61
+906,Topical & First Aid,4.05,2.26,1,0,1,0,0,0,345,0.97,91
+907,Antihistamines & Allergy,8.74,3.58,6,1,0,1,1,5,240,1.08,117
+908,Cardiovascular & Hypertension,17.26,9.29,5,6,0,0,0,0,454,1.1,59
+909,Antibiotics & Antivirals,15.26,8.02,5,0,0,0,0,0,354,1.15,43
+910,Vitamins & Supplements,7.41,4.79,1,5,1,0,1,5,202,1.09,286
+911,Gastrointestinal & Digestive,8.5,3.85,10,3,1,0,0,0,132,1.23,106
+912,Respiratory & Cough Care,16.1,9.53,10,0,0,0,1,20,381,1.18,141
+913,Antibiotics & Antivirals,33.53,19.29,9,2,0,1,1,20,326,1.12,130
+914,Cardiovascular & Hypertension,33.73,20.03,1,5,1,0,1,15,457,0.87,145
+915,Topical & First Aid,12.19,4.56,7,5,0,1,0,0,486,1.23,105
+916,Antibiotics & Antivirals,13.82,5.65,12,3,1,0,1,5,75,1.05,89
+917,Topical & First Aid,17.33,8.57,3,3,0,0,0,0,134,0.93,111
+918,Antibiotics & Antivirals,34.8,12.49,2,3,1,0,0,0,177,1.21,88
+919,Cardiovascular & Hypertension,24.98,15.87,12,2,1,0,0,0,350,0.9,72
+920,Topical & First Aid,13.38,8.18,2,6,1,0,0,0,402,1.22,62
+921,Respiratory & Cough Care,14.78,9.46,11,5,1,0,0,0,129,0.94,107
+922,Cardiovascular & Hypertension,22.19,8.61,12,0,1,0,0,0,204,1.08,20
+923,Analgesics & Antipyretics,5.27,2.51,10,4,1,0,0,0,418,1.12,184
+924,Cardiovascular & Hypertension,5.28,3.2,2,3,1,0,0,0,427,1.23,123
+925,Topical & First Aid,5.21,2.27,11,3,1,0,0,0,444,1.17,125
+926,Gastrointestinal & Digestive,11.89,4.6,5,4,0,0,0,0,371,1.08,88
+927,Cardiovascular & Hypertension,26.12,12.09,8,2,0,1,0,0,180,0.91,87
+928,Cardiovascular & Hypertension,6.58,4.01,12,5,1,0,1,20,382,1.01,201
+929,Analgesics & Antipyretics,4.71,2.61,9,3,0,1,0,0,397,1.01,110
+930,Vitamins & Supplements,8.71,4.48,12,1,1,0,1,15,395,1.17,207
+931,Vitamins & Supplements,2.8,1.1,8,5,0,1,0,0,159,1.21,89
+932,Cardiovascular & Hypertension,5.27,2.99,12,5,1,0,0,0,357,1.16,161
+933,Respiratory & Cough Care,5.52,2.03,11,6,1,0,0,0,252,0.92,141
+934,Respiratory & Cough Care,13.84,5.86,3,5,0,0,1,20,260,0.97,119
+935,Antibiotics & Antivirals,29.55,13.73,8,6,0,1,0,0,237,1.0,46
+936,Topical & First Aid,16.63,6.94,11,5,1,0,0,0,303,1.04,108
+937,Antihistamines & Allergy,12.0,6.73,7,3,0,1,0,0,74,0.89,86
+938,Antihistamines & Allergy,8.71,4.08,7,6,0,1,0,0,411,1.17,151
+939,Antibiotics & Antivirals,31.93,12.91,4,5,0,0,0,0,102,0.85,76
+940,Analgesics & Antipyretics,3.27,1.3,3,4,0,0,0,0,445,1.15,55
+941,Antibiotics & Antivirals,15.91,8.17,9,2,0,1,0,0,493,1.11,49
+942,Analgesics & Antipyretics,4.23,2.16,9,6,0,1,1,20,365,0.98,244
+943,Antibiotics & Antivirals,6.34,2.29,11,6,1,0,1,10,500,0.9,152
+944,Respiratory & Cough Care,6.82,3.17,2,4,1,0,0,0,214,1.03,201
+945,Antihistamines & Allergy,1.78,1.01,9,1,0,1,0,0,366,1.11,172
+946,Antihistamines & Allergy,2.69,1.74,7,6,0,1,0,0,23,1.24,113
+947,Respiratory & Cough Care,12.6,5.78,2,2,1,0,0,0,149,0.91,151
+948,Antibiotics & Antivirals,16.36,6.24,7,1,0,1,0,0,99,1.06,113
+949,Topical & First Aid,8.23,4.29,2,4,1,0,0,0,148,1.09,130
+950,Antihistamines & Allergy,5.29,2.4,6,6,0,1,0,0,413,1.06,170
+951,Antihistamines & Allergy,8.55,4.82,5,0,0,0,0,0,83,1.0,113
+952,Analgesics & Antipyretics,11.72,6.59,12,5,1,0,1,20,371,1.03,180
+953,Respiratory & Cough Care,16.22,9.64,9,5,0,1,0,0,449,0.88,76
+954,Antibiotics & Antivirals,7.3,3.08,11,0,1,0,1,5,53,1.15,140
+955,Analgesics & Antipyretics,6.6,3.76,7,5,0,1,0,0,273,1.12,159
+956,Analgesics & Antipyretics,9.21,5.2,10,1,0,0,0,0,393,0.99,147
+957,Analgesics & Antipyretics,8.42,5.17,10,3,0,0,0,0,125,0.92,83
+958,Antihistamines & Allergy,11.48,5.47,9,2,0,1,0,0,201,1.24,117
+959,Antibiotics & Antivirals,19.49,8.37,5,2,0,0,1,20,121,1.22,168
+960,Analgesics & Antipyretics,10.33,3.79,8,4,0,1,1,20,178,0.97,124
+961,Respiratory & Cough Care,4.52,2.25,6,0,0,1,1,10,220,0.9,121
+962,Vitamins & Supplements,5.35,2.35,4,3,0,0,0,0,103,1.06,85
+963,Topical & First Aid,9.59,3.76,11,6,1,0,0,0,12,0.99,141
+964,Cardiovascular & Hypertension,9.01,4.29,5,0,0,0,0,0,26,0.91,69
+965,Topical & First Aid,4.78,2.37,11,2,1,0,0,0,359,1.14,79
+966,Respiratory & Cough Care,16.85,10.16,9,5,0,1,0,0,66,1.23,134
+967,Gastrointestinal & Digestive,9.44,3.97,9,0,0,1,0,0,185,1.02,115
+968,Topical & First Aid,10.29,5.95,5,2,0,0,1,10,383,1.05,119
+969,Vitamins & Supplements,8.33,3.99,12,1,1,0,0,0,410,1.17,169
+970,Antihistamines & Allergy,7.5,4.05,4,6,0,0,1,10,215,0.87,188
+971,Cardiovascular & Hypertension,6.53,3.08,2,6,1,0,0,0,334,1.24,86
+972,Analgesics & Antipyretics,8.08,3.57,9,3,0,1,0,0,153,1.23,135
+973,Analgesics & Antipyretics,1.01,0.55,3,0,0,0,0,0,156,1.04,147
+974,Antibiotics & Antivirals,12.57,6.25,7,1,0,1,0,0,67,0.89,36
+975,Antihistamines & Allergy,9.15,4.19,6,2,0,1,0,0,280,1.09,91
+976,Respiratory & Cough Care,4.96,2.84,2,0,1,0,1,10,108,1.13,192
+977,Gastrointestinal & Digestive,6.22,3.6,5,5,0,0,0,0,88,0.87,80
+978,Vitamins & Supplements,10.84,5.25,9,2,0,1,0,0,476,1.02,68
+979,Analgesics & Antipyretics,4.02,2.57,3,4,0,0,0,0,499,1.08,113
+980,Cardiovascular & Hypertension,16.92,9.4,12,6,1,0,0,0,48,0.92,128
+981,Respiratory & Cough Care,7.07,2.86,7,4,0,1,1,10,313,1.13,175
+982,Topical & First Aid,13.81,5.91,9,5,0,1,0,0,161,1.13,107
+983,Analgesics & Antipyretics,4.21,2.28,9,1,0,1,0,0,152,1.22,112
+984,Cardiovascular & Hypertension,8.49,4.62,4,4,0,0,0,0,198,0.98,134
+985,Vitamins & Supplements,5.49,2.93,12,1,1,0,0,0,39,1.1,100
+986,Vitamins & Supplements,11.69,5.98,3,2,0,0,0,0,408,1.23,87
+987,Respiratory & Cough Care,16.05,8.67,11,2,1,0,0,0,428,1.03,123
+988,Respiratory & Cough Care,6.48,3.68,3,3,0,0,0,0,471,1.04,101
+989,Topical & First Aid,15.94,6.48,3,6,0,0,0,0,383,0.92,76
+990,Antihistamines & Allergy,7.69,2.85,7,5,0,1,1,10,242,1.21,213
+991,Analgesics & Antipyretics,1.23,0.74,10,0,1,0,0,0,339,1.22,137
+992,Vitamins & Supplements,7.6,4.47,3,5,0,0,1,5,287,1.14,111
+993,Topical & First Aid,7.61,3.76,10,3,0,0,1,15,331,1.07,62
+994,Vitamins & Supplements,10.75,5.1,2,4,1,0,1,10,22,0.94,148
+995,Respiratory & Cough Care,15.34,5.89,11,5,1,0,1,5,124,0.89,216
+996,Antibiotics & Antivirals,9.53,4.56,1,4,1,0,0,0,102,1.12,56
+997,Vitamins & Supplements,10.63,4.59,10,6,1,0,0,0,198,1.22,212
+998,Analgesics & Antipyretics,8.21,3.66,3,6,0,0,0,0,379,1.17,165
+999,Antibiotics & Antivirals,13.35,5.03,10,3,0,0,0,0,103,1.16,68
+1000,Topical & First Aid,13.4,6.35,7,3,0,1,0,0,180,0.91,133
+1001,Cardiovascular & Hypertension,21.48,10.99,7,3,0,1,0,0,284,1.18,77
+1002,Respiratory & Cough Care,14.65,8.69,9,4,0,1,1,5,130,0.99,105
+1003,Gastrointestinal & Digestive,11.53,7.22,9,3,0,1,1,15,194,1.19,192
+1004,Antihistamines & Allergy,3.67,2.2,9,3,0,1,1,10,70,1.23,159
+1005,Respiratory & Cough Care,13.52,7.42,6,0,0,1,1,10,25,0.91,80
+1006,Analgesics & Antipyretics,2.65,1.07,10,6,0,0,0,0,393,1.06,162
+1007,Gastrointestinal & Digestive,8.09,2.86,8,6,0,1,1,5,461,1.11,171
+1008,Respiratory & Cough Care,11.31,6.77,11,3,1,0,0,0,266,0.97,145
+1009,Vitamins & Supplements,5.15,3.27,2,4,1,0,0,0,215,1.1,121
+1010,Antibiotics & Antivirals,19.32,10.55,12,3,1,0,0,0,204,0.92,104
+1011,Respiratory & Cough Care,4.63,1.73,4,2,0,0,0,0,443,0.98,83
+1012,Antihistamines & Allergy,1.72,0.91,9,0,0,1,0,0,168,0.93,122
+1013,Cardiovascular & Hypertension,34.3,17.82,5,0,0,0,0,0,414,1.04,35
+1014,Antibiotics & Antivirals,34.42,19.81,5,0,0,0,0,0,266,0.93,80
+1015,Gastrointestinal & Digestive,8.42,3.78,3,5,0,0,0,0,267,0.89,148
+1016,Respiratory & Cough Care,16.03,5.79,8,4,0,1,1,20,50,1.2,83
+1017,Cardiovascular & Hypertension,9.23,5.22,11,5,1,0,0,0,266,1.06,128
+1018,Gastrointestinal & Digestive,2.44,1.07,8,6,0,1,0,0,491,1.02,192
+1019,Cardiovascular & Hypertension,9.57,5.15,10,4,1,0,0,0,422,0.86,114
+1020,Vitamins & Supplements,11.66,6.81,9,6,0,1,1,5,242,0.98,167
+1021,Gastrointestinal & Digestive,1.78,1.0,6,0,0,1,0,0,252,1.24,163
+1022,Antihistamines & Allergy,6.37,2.92,2,4,1,0,0,0,219,1.19,130
+1023,Antihistamines & Allergy,6.64,3.57,8,2,0,1,0,0,52,1.12,123
+1024,Analgesics & Antipyretics,9.7,5.43,10,5,1,0,0,0,89,1.19,146
+1025,Antibiotics & Antivirals,31.22,17.19,4,3,0,0,0,0,249,1.11,117
+1026,Topical & First Aid,5.7,2.18,2,0,1,0,0,0,213,1.16,71
+1027,Gastrointestinal & Digestive,4.77,2.53,2,2,1,0,1,20,68,0.96,73
+1028,Topical & First Aid,6.2,3.23,3,5,0,0,0,0,406,1.0,153
+1029,Respiratory & Cough Care,3.81,2.33,8,1,0,1,0,0,360,1.02,79
+1030,Antihistamines & Allergy,1.76,0.83,2,1,1,0,0,0,374,1.03,85
+1031,Cardiovascular & Hypertension,10.52,3.85,11,2,1,0,0,0,229,0.99,112
+1032,Antihistamines & Allergy,11.36,5.62,4,2,0,0,0,0,411,0.91,94
+1033,Gastrointestinal & Digestive,5.28,1.86,12,4,1,0,0,0,315,0.93,121
+1034,Antihistamines & Allergy,11.85,7.49,6,5,0,1,0,0,387,1.14,118
+1035,Topical & First Aid,14.88,8.22,6,0,0,1,0,0,379,0.85,76
+1036,Antihistamines & Allergy,8.03,4.2,11,3,1,0,1,10,225,1.13,165
+1037,Cardiovascular & Hypertension,33.57,21.54,6,1,0,1,0,0,17,1.0,39
+1038,Vitamins & Supplements,10.01,3.88,5,4,0,0,0,0,243,1.02,65
+1039,Respiratory & Cough Care,8.04,5.05,9,6,0,1,0,0,201,0.92,122
+1040,Respiratory & Cough Care,12.89,7.14,5,6,0,0,0,0,369,1.1,159
+1041,Antibiotics & Antivirals,24.49,13.1,2,0,1,0,0,0,264,1.15,98
+1042,Antibiotics & Antivirals,20.1,11.89,11,3,1,0,0,0,446,1.02,48
+1043,Topical & First Aid,4.72,2.86,9,3,0,1,0,0,189,1.24,145
+1044,Respiratory & Cough Care,14.77,6.92,11,5,1,0,0,0,410,0.94,152
+1045,Respiratory & Cough Care,3.06,1.91,11,1,1,0,1,5,88,1.17,225
+1046,Gastrointestinal & Digestive,11.55,7.48,6,1,0,1,1,20,108,1.1,150
+1047,Respiratory & Cough Care,8.86,5.04,3,5,0,0,0,0,172,1.06,103
+1048,Antihistamines & Allergy,7.95,4.65,9,0,0,1,0,0,331,1.22,137
+1049,Gastrointestinal & Digestive,2.03,0.98,4,0,0,0,0,0,313,0.91,123
+1050,Antibiotics & Antivirals,27.03,17.44,10,3,1,0,0,0,408,0.99,56
+1051,Cardiovascular & Hypertension,21.06,8.92,5,1,0,0,0,0,412,1.0,49
+1052,Analgesics & Antipyretics,11.28,6.07,5,0,0,0,0,0,306,1.2,55
+1053,Antibiotics & Antivirals,13.47,8.33,2,1,1,0,1,20,442,0.99,149
+1054,Topical & First Aid,4.1,2.61,1,3,1,0,1,20,202,1.21,141
+1055,Antihistamines & Allergy,1.11,0.45,3,2,0,0,0,0,320,1.19,60
+1056,Gastrointestinal & Digestive,11.94,6.33,6,3,0,1,1,15,484,0.9,159
+1057,Antihistamines & Allergy,5.01,3.1,4,6,0,0,1,10,122,0.88,147
+1058,Cardiovascular & Hypertension,26.24,14.32,2,2,1,0,0,0,424,1.05,82
+1059,Respiratory & Cough Care,5.59,3.11,4,2,0,0,0,0,153,1.23,62
+1060,Vitamins & Supplements,3.26,1.85,3,6,0,0,0,0,238,1.02,141
+1061,Antibiotics & Antivirals,22.01,10.17,10,3,0,0,0,0,42,1.03,119
+1062,Vitamins & Supplements,10.09,5.48,10,3,1,0,0,0,190,1.01,102
+1063,Respiratory & Cough Care,6.68,2.77,3,2,0,0,0,0,84,1.16,68
+1064,Gastrointestinal & Digestive,8.88,3.68,12,0,1,0,0,0,174,1.21,84
+1065,Respiratory & Cough Care,6.18,2.57,5,4,0,0,0,0,376,1.09,129
+1066,Antibiotics & Antivirals,27.69,12.33,10,5,0,0,0,0,110,0.87,70
+1067,Vitamins & Supplements,2.37,0.95,7,0,0,1,0,0,206,0.94,44
+1068,Analgesics & Antipyretics,10.42,6.74,11,6,1,0,0,0,155,0.9,198
+1069,Analgesics & Antipyretics,1.18,0.58,6,5,0,1,0,0,222,1.14,135
+1070,Gastrointestinal & Digestive,1.52,0.67,8,4,0,1,0,0,262,1.19,171
+1071,Gastrointestinal & Digestive,1.53,0.54,10,0,1,0,1,15,451,1.13,114
+1072,Cardiovascular & Hypertension,16.07,9.98,12,6,1,0,0,0,488,1.13,68
+1073,Analgesics & Antipyretics,11.42,4.25,2,0,1,0,0,0,323,1.17,144
+1074,Antihistamines & Allergy,4.51,1.78,10,3,1,0,0,0,445,1.24,79
+1075,Topical & First Aid,10.83,4.57,11,0,1,0,0,0,260,1.24,81
+1076,Topical & First Aid,6.96,3.05,4,0,0,0,1,10,347,1.11,160
+1077,Antibiotics & Antivirals,11.37,6.27,8,0,0,1,0,0,207,0.93,39
+1078,Cardiovascular & Hypertension,30.75,17.78,10,6,0,0,0,0,242,1.11,107
+1079,Antihistamines & Allergy,5.24,2.55,4,2,0,0,0,0,113,1.16,79
+1080,Vitamins & Supplements,8.55,5.43,7,1,0,1,0,0,62,0.91,135
+1081,Antibiotics & Antivirals,31.82,12.92,4,0,0,0,1,20,190,0.96,120
+1082,Respiratory & Cough Care,8.95,4.29,4,1,0,0,0,0,235,0.96,51
+1083,Respiratory & Cough Care,5.91,2.4,12,3,1,0,1,15,281,1.09,151
+1084,Cardiovascular & Hypertension,8.46,5.23,2,1,1,0,0,0,132,0.88,71
+1085,Cardiovascular & Hypertension,16.76,6.38,10,5,0,0,0,0,460,1.13,98
+1086,Cardiovascular & Hypertension,13.64,7.21,6,5,0,1,0,0,58,0.92,148
+1087,Vitamins & Supplements,2.87,1.59,12,1,1,0,1,15,470,1.03,244
+1088,Analgesics & Antipyretics,10.69,4.29,3,2,0,0,0,0,14,1.09,136
+1089,Analgesics & Antipyretics,3.72,1.42,8,6,0,1,0,0,300,1.12,120
+1090,Antihistamines & Allergy,4.35,2.48,2,0,1,0,0,0,386,0.99,100
+1091,Topical & First Aid,9.88,5.91,5,2,0,0,0,0,180,1.21,116
+1092,Topical & First Aid,13.29,7.55,2,2,1,0,1,20,448,0.94,159
+1093,Analgesics & Antipyretics,9.15,5.87,4,4,0,0,0,0,391,0.89,137
+1094,Respiratory & Cough Care,17.48,10.72,11,0,1,0,0,0,470,1.21,203
+1095,Antihistamines & Allergy,4.84,2.17,5,5,0,0,0,0,493,1.25,95
+1096,Gastrointestinal & Digestive,6.01,3.85,10,0,0,0,0,0,157,0.89,48
+1097,Antihistamines & Allergy,2.65,1.7,8,5,0,1,0,0,350,0.92,135
+1098,Topical & First Aid,7.25,3.83,1,1,1,0,1,15,12,1.02,108
+1099,Vitamins & Supplements,10.67,6.25,3,2,0,0,0,0,500,1.16,64
+1100,Antibiotics & Antivirals,9.28,5.29,12,2,1,0,0,0,480,0.88,67
+1101,Topical & First Aid,15.18,8.21,6,1,0,1,0,0,472,0.89,70
+1102,Vitamins & Supplements,5.79,3.55,10,2,1,0,0,0,81,1.12,85
+1103,Cardiovascular & Hypertension,7.57,3.94,5,2,0,0,0,0,289,0.92,137
+1104,Respiratory & Cough Care,10.9,6.08,2,1,1,0,0,0,360,1.14,140
+1105,Respiratory & Cough Care,3.42,1.77,7,3,0,1,0,0,225,0.89,73
+1106,Vitamins & Supplements,6.63,2.57,4,4,0,0,0,0,299,1.2,44
+1107,Respiratory & Cough Care,13.05,6.38,3,3,0,0,0,0,275,1.03,49
+1108,Analgesics & Antipyretics,11.85,4.53,5,6,0,0,0,0,430,0.97,93
+1109,Analgesics & Antipyretics,7.43,3.74,2,5,1,0,0,0,369,0.93,141
+1110,Cardiovascular & Hypertension,30.57,13.46,11,5,1,0,0,0,489,0.85,100
+1111,Antibiotics & Antivirals,9.59,5.89,2,0,1,0,0,0,136,0.93,87
+1112,Topical & First Aid,16.89,7.43,7,0,0,1,0,0,104,1.18,116
+1113,Vitamins & Supplements,8.24,3.19,10,5,0,0,1,5,104,0.91,163
+1114,Cardiovascular & Hypertension,13.7,7.54,8,3,0,1,0,0,262,1.0,69
+1115,Respiratory & Cough Care,4.61,2.19,12,6,1,0,0,0,24,0.96,133
+1116,Analgesics & Antipyretics,10.83,5.8,11,5,1,0,1,15,81,1.04,221
+1117,Cardiovascular & Hypertension,20.75,10.46,6,5,0,1,1,10,190,1.11,154
+1118,Antihistamines & Allergy,9.39,4.14,5,6,0,0,0,0,479,1.19,114
+1119,Antihistamines & Allergy,9.53,4.84,10,5,0,0,1,15,311,1.23,128
+1120,Analgesics & Antipyretics,9.06,3.8,1,6,1,0,0,0,265,1.22,192
+1121,Cardiovascular & Hypertension,26.84,12.49,2,1,1,0,0,0,482,0.88,90
+1122,Antibiotics & Antivirals,27.5,13.27,1,6,1,0,0,0,333,1.19,134
+1123,Topical & First Aid,17.83,9.31,7,1,0,1,1,15,261,1.03,87
+1124,Antihistamines & Allergy,6.81,4.0,7,6,0,1,1,5,332,1.23,97
+1125,Respiratory & Cough Care,8.11,4.5,10,4,0,0,0,0,382,1.11,105
+1126,Cardiovascular & Hypertension,15.56,8.33,10,6,0,0,0,0,80,1.17,88
+1127,Antibiotics & Antivirals,20.52,7.8,10,0,1,0,0,0,36,1.09,64
+1128,Cardiovascular & Hypertension,12.54,7.03,5,6,0,0,1,10,157,0.88,153
+1129,Vitamins & Supplements,1.62,0.91,7,4,0,1,1,20,489,1.22,93
+1130,Gastrointestinal & Digestive,3.21,1.98,7,2,0,1,1,10,290,1.18,170
+1131,Analgesics & Antipyretics,1.8,1.14,4,3,0,0,0,0,369,1.18,132
+1132,Gastrointestinal & Digestive,7.58,4.05,2,3,1,0,1,20,494,0.9,136
+1133,Topical & First Aid,12.76,6.12,9,1,0,1,0,0,445,1.2,74
+1134,Analgesics & Antipyretics,9.6,3.92,1,6,1,0,0,0,204,1.12,188
+1135,Respiratory & Cough Care,9.45,4.52,12,1,1,0,1,20,70,1.21,207
+1136,Respiratory & Cough Care,6.48,3.41,1,1,1,0,1,5,420,0.86,212
+1137,Antihistamines & Allergy,4.11,1.83,8,1,0,1,0,0,465,0.95,126
+1138,Topical & First Aid,12.85,4.79,11,0,1,0,0,0,115,1.05,100
+1139,Gastrointestinal & Digestive,8.84,5.59,4,3,0,0,0,0,159,1.2,72
+1140,Vitamins & Supplements,6.96,2.65,6,5,0,1,0,0,220,1.13,126
+1141,Cardiovascular & Hypertension,34.28,14.37,3,6,0,0,0,0,117,0.9,102
+1142,Analgesics & Antipyretics,5.84,3.38,4,5,0,0,0,0,20,1.05,76
+1143,Respiratory & Cough Care,17.48,6.43,5,6,0,0,0,0,206,1.05,131
+1144,Analgesics & Antipyretics,5.17,2.83,4,1,0,0,0,0,348,0.97,101
+1145,Gastrointestinal & Digestive,9.3,4.19,1,4,1,0,0,0,144,1.17,99
+1146,Analgesics & Antipyretics,10.12,4.86,6,5,0,1,0,0,383,1.22,177
+1147,Vitamins & Supplements,5.66,3.2,9,3,0,1,0,0,143,0.92,76
+1148,Cardiovascular & Hypertension,13.42,7.45,3,0,0,0,0,0,137,1.16,55
+1149,Respiratory & Cough Care,7.11,3.06,1,4,1,0,0,0,344,1.17,158
+1150,Gastrointestinal & Digestive,2.97,1.45,5,6,0,0,0,0,248,0.86,98
+1151,Cardiovascular & Hypertension,22.39,8.37,7,0,0,1,0,0,292,0.98,26
+1152,Antihistamines & Allergy,9.65,4.13,5,6,0,0,0,0,126,1.1,59
+1153,Analgesics & Antipyretics,8.2,3.32,4,0,0,0,0,0,235,1.08,44
+1154,Cardiovascular & Hypertension,34.76,22.34,1,5,1,0,1,15,286,1.14,96
+1155,Topical & First Aid,4.16,1.71,2,4,1,0,0,0,434,1.18,103
+1156,Respiratory & Cough Care,3.37,1.79,5,1,0,0,0,0,218,1.21,95
+1157,Vitamins & Supplements,1.49,0.94,10,0,1,0,0,0,23,0.89,117
+1158,Gastrointestinal & Digestive,10.14,3.65,4,3,0,0,0,0,205,1.16,123
+1159,Antibiotics & Antivirals,20.1,10.5,4,4,0,0,0,0,224,1.07,50
+1160,Analgesics & Antipyretics,6.72,2.99,10,3,0,0,1,15,476,0.95,105
+1161,Gastrointestinal & Digestive,4.46,2.86,4,3,0,0,0,0,237,1.14,113
+1162,Gastrointestinal & Digestive,7.17,2.67,2,2,1,0,0,0,257,1.09,107
+1163,Respiratory & Cough Care,15.42,9.96,4,4,0,0,0,0,135,1.16,64
+1164,Antihistamines & Allergy,4.76,1.83,10,2,0,0,0,0,268,1.24,91
+1165,Cardiovascular & Hypertension,5.47,2.11,3,3,0,0,0,0,293,1.13,101
+1166,Antibiotics & Antivirals,6.02,2.89,3,6,0,0,0,0,47,0.9,173
+1167,Respiratory & Cough Care,9.03,4.67,6,1,0,1,0,0,70,0.98,134
+1168,Gastrointestinal & Digestive,11.94,4.34,10,4,0,0,0,0,191,1.23,132
+1169,Topical & First Aid,9.54,5.51,12,6,1,0,0,0,385,0.92,145
+1170,Antibiotics & Antivirals,22.81,10.51,3,0,0,0,0,0,204,0.98,51
+1171,Vitamins & Supplements,4.27,1.93,2,1,1,0,0,0,469,1.06,181
+1172,Vitamins & Supplements,4.5,1.82,6,3,0,1,1,10,230,1.06,140
+1173,Antibiotics & Antivirals,9.97,4.35,6,2,0,1,0,0,124,1.2,71
+1174,Vitamins & Supplements,3.55,1.54,10,6,1,0,1,10,24,1.09,173
+1175,Topical & First Aid,6.05,3.83,1,2,1,0,0,0,384,1.03,54
+1176,Topical & First Aid,13.74,8.6,5,0,0,0,1,20,262,0.96,163
+1177,Antibiotics & Antivirals,7.37,4.33,6,6,0,1,0,0,177,0.91,81
+1178,Antibiotics & Antivirals,14.44,9.06,12,5,1,0,0,0,487,1.13,99
+1179,Analgesics & Antipyretics,1.09,0.43,11,5,1,0,0,0,492,0.94,138
+1180,Antihistamines & Allergy,4.11,1.68,12,3,1,0,0,0,496,1.06,110
+1181,Cardiovascular & Hypertension,7.02,3.63,1,3,1,0,1,10,29,1.02,99
+1182,Cardiovascular & Hypertension,19.53,10.68,11,2,1,0,1,15,440,0.94,100
+1183,Respiratory & Cough Care,7.43,3.09,10,2,0,0,0,0,469,1.15,81
+1184,Topical & First Aid,12.94,4.98,6,1,0,1,0,0,173,1.11,60
+1185,Respiratory & Cough Care,14.61,7.23,12,1,1,0,0,0,260,1.09,131
+1186,Vitamins & Supplements,10.79,6.31,9,1,0,1,1,15,143,1.12,128
+1187,Respiratory & Cough Care,16.69,7.18,7,2,0,1,0,0,183,1.1,31
+1188,Topical & First Aid,11.59,4.64,7,1,0,1,1,5,495,1.24,116
+1189,Analgesics & Antipyretics,9.83,3.71,12,0,1,0,0,0,477,0.99,158
+1190,Analgesics & Antipyretics,4.98,2.04,9,1,0,1,1,20,450,1.14,120
+1191,Respiratory & Cough Care,14.0,8.85,4,4,0,0,1,5,396,1.23,76
+1192,Topical & First Aid,7.25,2.59,1,1,1,0,0,0,362,0.95,62
+1193,Antibiotics & Antivirals,17.02,10.14,7,5,0,1,0,0,451,0.88,58
+1194,Respiratory & Cough Care,14.14,7.25,1,0,1,0,0,0,58,1.14,160
+1195,Vitamins & Supplements,6.64,2.37,6,3,0,1,0,0,113,0.89,126
+1196,Topical & First Aid,9.44,3.93,7,2,0,1,0,0,152,1.04,133
+1197,Cardiovascular & Hypertension,34.79,19.77,7,0,0,1,0,0,400,1.07,23
+1198,Cardiovascular & Hypertension,11.96,5.51,10,0,1,0,0,0,339,0.97,59
+1199,Antibiotics & Antivirals,10.08,6.14,2,4,1,0,0,0,137,0.88,83
+1200,Topical & First Aid,15.59,9.01,9,5,0,1,1,20,139,1.01,168
+1201,Respiratory & Cough Care,13.36,7.7,1,2,1,0,0,0,289,1.05,177
+1202,Topical & First Aid,10.72,6.51,12,3,1,0,0,0,51,1.22,79
+1203,Antibiotics & Antivirals,27.71,11.05,7,1,0,1,0,0,95,0.93,105
+1204,Antibiotics & Antivirals,19.86,10.68,1,3,1,0,0,0,81,1.15,87
+1205,Respiratory & Cough Care,4.76,3.09,1,2,1,0,0,0,460,1.12,162
+1206,Gastrointestinal & Digestive,4.19,2.33,10,5,1,0,0,0,497,1.14,113
+1207,Topical & First Aid,16.91,9.57,4,2,0,0,0,0,79,0.92,97
+1208,Topical & First Aid,9.24,3.65,1,2,1,0,1,5,169,1.13,75
+1209,Topical & First Aid,3.92,1.92,6,0,0,1,1,15,335,1.07,94
+1210,Cardiovascular & Hypertension,29.62,18.08,5,2,0,0,0,0,166,1.0,106
+1211,Vitamins & Supplements,8.06,3.31,9,4,0,1,0,0,62,1.14,62
+1212,Vitamins & Supplements,6.75,3.67,10,0,1,0,0,0,304,1.16,145
+1213,Topical & First Aid,3.04,1.28,4,1,0,0,1,10,83,0.92,153
+1214,Analgesics & Antipyretics,9.88,4.72,3,4,0,0,0,0,164,1.05,61
+1215,Respiratory & Cough Care,8.78,4.32,7,6,0,1,0,0,277,0.98,69
+1216,Cardiovascular & Hypertension,30.01,16.91,3,5,0,0,0,0,296,1.03,109
+1217,Antibiotics & Antivirals,24.56,9.91,9,3,0,1,0,0,447,1.04,84
+1218,Respiratory & Cough Care,11.4,7.4,4,4,0,0,0,0,205,1.0,132
+1219,Analgesics & Antipyretics,4.97,2.03,4,3,0,0,0,0,178,0.89,77
+1220,Vitamins & Supplements,7.67,2.76,9,0,0,1,0,0,255,1.01,158
+1221,Vitamins & Supplements,1.63,0.85,5,5,0,0,1,20,321,1.1,142
+1222,Antibiotics & Antivirals,5.87,3.63,1,2,1,0,1,10,455,1.19,98
+1223,Antibiotics & Antivirals,24.12,8.89,1,3,1,0,1,15,446,0.93,105
+1224,Gastrointestinal & Digestive,10.96,5.77,12,1,1,0,0,0,274,0.86,108
+1225,Respiratory & Cough Care,3.92,1.6,11,5,1,0,0,0,85,1.14,126
+1226,Cardiovascular & Hypertension,17.28,9.34,12,4,1,0,0,0,491,0.85,59
+1227,Gastrointestinal & Digestive,6.13,3.68,2,2,1,0,1,20,55,0.9,93
+1228,Antihistamines & Allergy,7.89,2.81,6,4,0,1,1,5,121,1.11,178
+1229,Vitamins & Supplements,11.37,6.93,11,5,1,0,0,0,387,0.9,134
+1230,Antihistamines & Allergy,10.19,4.4,10,2,0,0,1,15,142,1.13,115
+1231,Gastrointestinal & Digestive,8.06,3.91,6,6,0,1,0,0,435,0.92,181
+1232,Cardiovascular & Hypertension,15.41,9.14,12,3,1,0,0,0,116,0.99,118
+1233,Vitamins & Supplements,9.51,4.07,2,4,1,0,0,0,26,1.22,155
+1234,Topical & First Aid,11.8,5.45,3,3,0,0,0,0,311,1.21,92
+1235,Antibiotics & Antivirals,31.08,10.95,11,2,1,0,0,0,181,0.98,97
+1236,Antihistamines & Allergy,2.79,1.43,6,2,0,1,0,0,234,1.17,145
+1237,Respiratory & Cough Care,10.1,4.27,12,3,1,0,0,0,317,0.99,169
+1238,Cardiovascular & Hypertension,17.63,10.26,9,0,0,1,0,0,215,1.09,45
+1239,Antihistamines & Allergy,11.62,7.35,5,4,0,0,1,10,76,1.12,137
+1240,Antibiotics & Antivirals,27.97,16.51,5,6,0,0,0,0,94,1.03,110
+1241,Antihistamines & Allergy,1.88,0.79,5,2,0,0,1,5,380,0.95,155
+1242,Gastrointestinal & Digestive,2.75,1.04,1,3,1,0,0,0,211,1.13,137
+1243,Respiratory & Cough Care,6.64,4.15,8,5,0,1,0,0,172,1.16,77
+1244,Vitamins & Supplements,10.6,5.61,11,5,1,0,0,0,187,1.05,179
+1245,Antihistamines & Allergy,4.99,2.5,4,2,0,0,1,20,478,0.88,96
+1246,Analgesics & Antipyretics,5.79,2.62,4,2,0,0,0,0,227,0.91,68
+1247,Topical & First Aid,17.38,8.28,1,2,1,0,1,5,248,1.17,104
+1248,Respiratory & Cough Care,7.79,4.07,1,1,1,0,0,0,242,0.85,167
+1249,Respiratory & Cough Care,9.37,5.37,1,2,1,0,1,20,267,1.0,172
+1250,Gastrointestinal & Digestive,2.97,1.42,2,6,1,0,0,0,455,1.12,68
+1251,Vitamins & Supplements,9.94,5.65,4,4,0,0,0,0,34,1.04,50
+1252,Topical & First Aid,3.75,1.99,8,2,0,1,0,0,227,0.98,85
+1253,Analgesics & Antipyretics,2.97,1.36,9,2,0,1,1,15,162,1.1,139
+1254,Respiratory & Cough Care,4.26,1.61,4,1,0,0,0,0,334,1.05,138
+1255,Gastrointestinal & Digestive,7.79,4.87,8,5,0,1,0,0,487,1.14,150
+1256,Gastrointestinal & Digestive,7.7,4.37,1,1,1,0,0,0,61,1.0,129
+1257,Antibiotics & Antivirals,27.48,13.1,6,5,0,1,1,15,379,1.11,176
+1258,Antibiotics & Antivirals,12.83,5.66,4,4,0,0,0,0,447,1.17,109
+1259,Analgesics & Antipyretics,6.2,3.58,6,4,0,1,0,0,392,1.13,95
+1260,Analgesics & Antipyretics,8.46,3.65,10,3,0,0,0,0,19,1.16,107
+1261,Vitamins & Supplements,7.59,4.88,5,3,0,0,0,0,123,0.94,118
+1262,Cardiovascular & Hypertension,13.63,7.68,2,4,1,0,0,0,311,1.02,96
+1263,Respiratory & Cough Care,3.19,1.44,8,4,0,1,0,0,237,0.91,137
+1264,Topical & First Aid,13.47,7.43,4,4,0,0,0,0,26,1.11,86
+1265,Antibiotics & Antivirals,21.84,9.91,11,3,1,0,1,15,165,0.97,95
+1266,Analgesics & Antipyretics,7.43,3.99,3,4,0,0,0,0,222,1.25,37
+1267,Vitamins & Supplements,6.4,2.69,9,5,0,1,0,0,77,1.0,148
+1268,Respiratory & Cough Care,17.88,9.32,4,1,0,0,1,10,402,1.16,123
+1269,Respiratory & Cough Care,6.27,3.89,6,6,0,1,0,0,404,1.0,75
+1270,Gastrointestinal & Digestive,6.86,2.86,9,4,0,1,0,0,397,1.04,169
+1271,Antihistamines & Allergy,1.04,0.62,7,2,0,1,0,0,345,0.92,180
+1272,Respiratory & Cough Care,5.83,2.09,7,3,0,1,1,5,316,1.08,107
+1273,Cardiovascular & Hypertension,23.76,13.19,3,4,0,0,0,0,21,1.15,102
+1274,Respiratory & Cough Care,15.95,9.65,9,4,0,1,1,15,380,1.2,93
+1275,Cardiovascular & Hypertension,13.79,8.53,6,1,0,1,1,20,245,0.95,150
+1276,Antihistamines & Allergy,8.06,4.76,8,4,0,1,0,0,456,1.22,95
+1277,Antibiotics & Antivirals,5.97,3.3,1,5,1,0,0,0,250,1.19,89
+1278,Vitamins & Supplements,2.33,1.36,12,4,1,0,0,0,283,1.14,169
+1279,Analgesics & Antipyretics,5.38,3.21,5,6,0,0,0,0,196,1.01,158
+1280,Topical & First Aid,4.86,1.91,7,6,0,1,0,0,432,1.08,143
+1281,Gastrointestinal & Digestive,4.74,2.96,7,5,0,1,0,0,117,0.96,139
+1282,Topical & First Aid,6.9,3.03,4,6,0,0,0,0,413,1.03,84
+1283,Analgesics & Antipyretics,6.74,2.41,3,1,0,0,0,0,298,1.0,80
+1284,Antihistamines & Allergy,8.84,4.88,10,5,1,0,1,10,85,1.09,170
+1285,Cardiovascular & Hypertension,5.36,2.46,10,2,1,0,0,0,455,1.25,81
+1286,Antihistamines & Allergy,2.71,1.64,6,5,0,1,0,0,201,1.0,192
+1287,Topical & First Aid,16.46,5.83,3,3,0,0,0,0,185,0.94,40
+1288,Antihistamines & Allergy,9.56,5.61,5,4,0,0,0,0,192,1.05,102
+1289,Analgesics & Antipyretics,10.01,5.87,12,6,1,0,0,0,389,0.93,162
+1290,Gastrointestinal & Digestive,3.99,2.55,9,0,0,1,0,0,285,1.2,147
+1291,Cardiovascular & Hypertension,28.92,11.71,4,2,0,0,0,0,449,0.95,89
+1292,Topical & First Aid,17.69,7.6,3,0,0,0,0,0,390,0.93,133
+1293,Antibiotics & Antivirals,14.08,5.81,3,4,0,0,1,20,247,0.89,138
+1294,Antibiotics & Antivirals,8.49,3.18,4,3,0,0,1,10,316,1.04,138
+1295,Antibiotics & Antivirals,28.32,11.57,12,3,1,0,0,0,324,1.15,116
+1296,Vitamins & Supplements,3.98,2.15,7,4,0,1,0,0,257,1.06,140
+1297,Vitamins & Supplements,6.85,3.1,5,6,0,0,0,0,267,0.97,121
+1298,Antihistamines & Allergy,4.51,2.9,8,0,0,1,0,0,93,0.92,160
+1299,Antibiotics & Antivirals,24.14,12.35,8,2,0,1,1,5,400,0.94,82
+1300,Topical & First Aid,7.5,4.0,2,5,1,0,0,0,89,0.98,83
+1301,Antihistamines & Allergy,8.29,3.71,3,4,0,0,0,0,252,1.11,115
+1302,Vitamins & Supplements,6.19,3.76,4,2,0,0,0,0,84,0.97,125
+1303,Gastrointestinal & Digestive,5.68,2.66,8,2,0,1,0,0,400,1.23,84
+1304,Antihistamines & Allergy,4.02,2.39,8,6,0,1,1,15,160,1.18,124
+1305,Cardiovascular & Hypertension,20.09,12.19,4,4,0,0,1,10,92,0.98,117
+1306,Topical & First Aid,12.89,7.17,1,6,1,0,0,0,259,0.95,145
+1307,Analgesics & Antipyretics,8.04,3.48,2,0,1,0,0,0,482,0.96,165
+1308,Antibiotics & Antivirals,26.97,16.11,6,6,0,1,0,0,311,0.97,53
+1309,Cardiovascular & Hypertension,21.4,11.73,6,4,0,1,0,0,428,0.97,40
+1310,Antibiotics & Antivirals,27.17,17.31,12,5,1,0,0,0,405,1.03,123
+1311,Topical & First Aid,8.43,3.45,4,3,0,0,0,0,142,0.95,116
+1312,Analgesics & Antipyretics,8.06,3.85,3,0,0,0,0,0,418,0.87,102
+1313,Gastrointestinal & Digestive,5.81,2.09,1,4,1,0,0,0,418,0.98,110
+1314,Vitamins & Supplements,9.08,4.72,10,2,0,0,0,0,409,0.89,64
+1315,Antibiotics & Antivirals,34.79,20.02,10,3,0,0,0,0,230,1.18,58
+1316,Antihistamines & Allergy,1.8,0.98,11,2,1,0,0,0,280,1.16,113
+1317,Respiratory & Cough Care,11.62,4.09,1,3,1,0,0,0,19,0.85,105
+1318,Cardiovascular & Hypertension,20.97,11.45,10,5,0,0,1,15,467,1.2,151
+1319,Cardiovascular & Hypertension,8.03,4.1,5,1,0,0,0,0,30,1.16,92
+1320,Antibiotics & Antivirals,14.46,6.06,6,6,0,1,1,15,93,1.02,118
+1321,Gastrointestinal & Digestive,10.65,6.74,1,1,1,0,1,20,23,1.03,151
+1322,Respiratory & Cough Care,9.58,3.92,1,3,1,0,0,0,312,1.18,99
+1323,Antibiotics & Antivirals,11.29,7.14,3,6,0,0,0,0,193,1.15,84
+1324,Antibiotics & Antivirals,19.34,9.72,9,2,0,1,0,0,18,0.85,112
+1325,Respiratory & Cough Care,8.41,3.73,2,2,1,0,1,15,127,1.25,144
+1326,Topical & First Aid,13.94,8.63,1,2,1,0,1,10,100,1.08,54
+1327,Topical & First Aid,11.94,4.93,1,0,1,0,0,0,160,1.0,73
+1328,Antihistamines & Allergy,2.92,1.48,7,1,0,1,1,10,196,1.2,116
+1329,Vitamins & Supplements,5.11,3.08,7,5,0,1,0,0,24,1.16,94
+1330,Analgesics & Antipyretics,2.59,1.22,12,6,1,0,0,0,400,1.09,159
+1331,Cardiovascular & Hypertension,34.65,13.3,2,3,1,0,0,0,222,1.19,77
+1332,Antihistamines & Allergy,4.43,2.17,10,6,0,0,0,0,75,0.98,135
+1333,Antibiotics & Antivirals,27.46,16.63,8,3,0,1,1,10,273,0.9,132
+1334,Antibiotics & Antivirals,26.52,11.53,12,0,1,0,0,0,137,0.94,53
+1335,Vitamins & Supplements,11.71,6.45,6,5,0,1,0,0,305,1.25,91
+1336,Gastrointestinal & Digestive,8.27,4.33,7,2,0,1,0,0,27,1.15,157
+1337,Cardiovascular & Hypertension,9.29,3.35,3,0,0,0,0,0,92,1.01,40
+1338,Topical & First Aid,8.16,4.4,8,6,0,1,0,0,305,1.01,154
+1339,Vitamins & Supplements,2.3,1.0,9,3,0,1,0,0,483,0.98,144
+1340,Antihistamines & Allergy,9.88,4.9,5,2,0,0,0,0,349,0.89,126
+1341,Vitamins & Supplements,5.02,2.72,2,6,1,0,0,0,74,0.89,227
+1342,Vitamins & Supplements,4.82,2.34,3,6,0,0,0,0,491,0.88,149
+1343,Respiratory & Cough Care,5.13,2.84,9,1,0,1,0,0,111,1.14,86
+1344,Antihistamines & Allergy,1.52,0.78,10,6,0,0,0,0,365,1.23,129
+1345,Antibiotics & Antivirals,24.05,14.61,11,1,1,0,1,10,286,1.23,132
+1346,Vitamins & Supplements,4.26,2.64,1,3,1,0,0,0,467,1.04,136
+1347,Vitamins & Supplements,3.76,1.94,1,0,1,0,0,0,482,1.14,124
+1348,Respiratory & Cough Care,10.21,4.06,3,1,0,0,0,0,496,1.24,87
+1349,Antihistamines & Allergy,5.3,2.16,11,3,1,0,0,0,46,0.94,128
+1350,Antihistamines & Allergy,8.99,4.73,7,0,0,1,0,0,115,1.03,149
+1351,Analgesics & Antipyretics,6.73,3.41,11,0,1,0,0,0,316,1.04,149
+1352,Antibiotics & Antivirals,23.3,9.23,9,5,0,1,0,0,396,1.21,59
+1353,Analgesics & Antipyretics,10.8,4.15,7,6,0,1,0,0,309,0.92,177
+1354,Vitamins & Supplements,2.13,1.38,4,4,0,0,0,0,316,1.2,81
+1355,Topical & First Aid,9.33,5.05,12,3,1,0,0,0,153,1.19,109
+1356,Vitamins & Supplements,4.62,2.54,11,4,1,0,0,0,192,0.88,110
+1357,Cardiovascular & Hypertension,18.01,7.74,10,3,1,0,0,0,433,1.13,82
+1358,Respiratory & Cough Care,13.01,4.72,10,4,0,0,1,5,304,0.89,157
+1359,Respiratory & Cough Care,14.16,6.43,7,5,0,1,0,0,446,1.03,119
+1360,Respiratory & Cough Care,14.66,8.07,11,5,1,0,1,10,22,1.1,156
+1361,Topical & First Aid,15.28,6.93,5,2,0,0,0,0,137,0.96,111
+1362,Gastrointestinal & Digestive,11.9,5.1,8,5,0,1,0,0,117,1.07,188
+1363,Gastrointestinal & Digestive,6.5,2.45,3,6,0,0,0,0,285,1.15,141
+1364,Vitamins & Supplements,1.99,0.94,2,5,1,0,0,0,337,0.92,149
+1365,Gastrointestinal & Digestive,5.82,2.67,6,6,0,1,1,10,175,0.86,155
+1366,Vitamins & Supplements,2.96,1.59,9,4,0,1,1,5,56,1.13,172
+1367,Vitamins & Supplements,4.74,2.16,3,5,0,0,1,20,63,1.19,182
+1368,Antibiotics & Antivirals,18.28,6.62,6,1,0,1,0,0,351,1.25,28
+1369,Cardiovascular & Hypertension,12.36,5.16,12,1,1,0,0,0,120,0.91,65
+1370,Analgesics & Antipyretics,5.56,2.87,10,3,0,0,0,0,221,0.92,91
+1371,Respiratory & Cough Care,16.33,10.51,11,4,1,0,0,0,371,1.17,140
+1372,Respiratory & Cough Care,16.5,10.41,6,2,0,1,0,0,192,0.88,115
+1373,Gastrointestinal & Digestive,9.75,5.11,12,1,1,0,1,20,284,0.98,142
+1374,Gastrointestinal & Digestive,8.09,4.18,12,5,1,0,0,0,248,0.96,129
+1375,Topical & First Aid,9.54,6.07,8,4,0,1,1,20,296,1.11,170
+1376,Antihistamines & Allergy,4.9,3.12,2,5,1,0,0,0,139,1.23,137
+1377,Topical & First Aid,14.47,5.64,7,5,0,1,0,0,348,1.03,104
+1378,Gastrointestinal & Digestive,9.78,4.91,4,4,0,0,0,0,402,1.07,116
+1379,Gastrointestinal & Digestive,1.58,0.91,1,4,1,0,0,0,406,1.24,107
+1380,Respiratory & Cough Care,13.99,5.94,12,1,1,0,0,0,398,1.25,169
+1381,Topical & First Aid,7.98,3.02,12,0,1,0,0,0,368,1.23,88
+1382,Respiratory & Cough Care,10.12,6.11,7,5,0,1,1,15,191,0.92,114
+1383,Vitamins & Supplements,3.49,2.25,7,1,0,1,0,0,183,1.03,77
+1384,Vitamins & Supplements,1.67,0.86,1,4,1,0,0,0,58,0.92,199
+1385,Analgesics & Antipyretics,4.37,2.58,6,3,0,1,0,0,201,1.19,172
+1386,Topical & First Aid,6.28,2.85,3,4,0,0,0,0,477,0.91,85
+1387,Antihistamines & Allergy,10.31,6.0,8,5,0,1,0,0,426,1.18,95
+1388,Antibiotics & Antivirals,8.23,4.57,5,2,0,0,0,0,95,1.21,105
+1389,Antihistamines & Allergy,11.21,5.77,10,2,0,0,0,0,239,1.23,105
+1390,Antibiotics & Antivirals,15.97,6.74,6,1,0,1,0,0,106,1.17,34
+1391,Analgesics & Antipyretics,10.28,5.63,8,6,0,1,0,0,312,0.89,150
+1392,Respiratory & Cough Care,6.01,2.68,9,5,0,1,0,0,111,0.97,118
+1393,Respiratory & Cough Care,3.36,1.28,2,3,1,0,0,0,322,1.01,185
+1394,Vitamins & Supplements,1.61,0.96,11,5,1,0,1,5,167,1.21,221
+1395,Analgesics & Antipyretics,1.52,0.67,9,0,0,1,1,5,431,1.18,206
+1396,Antihistamines & Allergy,8.49,3.09,9,2,0,1,1,20,496,0.92,133
+1397,Topical & First Aid,12.61,4.47,4,4,0,0,0,0,115,1.21,40
+1398,Vitamins & Supplements,8.26,5.16,1,1,1,0,0,0,100,1.24,168
+1399,Respiratory & Cough Care,5.13,2.17,1,1,1,0,0,0,461,1.22,190
+1400,Vitamins & Supplements,9.1,3.93,4,5,0,0,0,0,222,1.18,97
+1401,Cardiovascular & Hypertension,23.0,12.37,8,2,0,1,0,0,366,1.16,31
+1402,Cardiovascular & Hypertension,8.43,3.35,2,5,1,0,0,0,44,0.92,104
+1403,Vitamins & Supplements,11.24,5.28,11,5,1,0,0,0,155,1.19,161
+1404,Cardiovascular & Hypertension,30.39,12.47,2,4,1,0,0,0,28,1.04,35
+1405,Cardiovascular & Hypertension,16.64,6.24,1,6,1,0,0,0,44,0.95,118
+1406,Antihistamines & Allergy,9.46,5.19,8,4,0,1,0,0,106,1.16,128
+1407,Analgesics & Antipyretics,10.45,4.44,3,2,0,0,1,20,112,1.21,63
+1408,Vitamins & Supplements,3.48,1.87,9,0,0,1,0,0,379,1.03,146
+1409,Antibiotics & Antivirals,20.86,10.79,4,4,0,0,1,15,39,0.89,64
+1410,Analgesics & Antipyretics,11.26,5.19,10,5,1,0,1,5,360,0.94,197
+1411,Antibiotics & Antivirals,23.85,12.38,4,6,0,0,1,20,489,1.08,125
+1412,Cardiovascular & Hypertension,23.38,10.6,11,3,1,0,0,0,242,1.04,117
+1413,Topical & First Aid,6.36,2.77,9,2,0,1,0,0,208,1.25,135
+1414,Gastrointestinal & Digestive,5.75,2.53,12,0,1,0,1,20,373,1.2,191
+1415,Antihistamines & Allergy,3.29,1.55,11,2,1,0,0,0,245,1.14,88
+1416,Respiratory & Cough Care,8.07,4.44,8,2,0,1,1,10,135,0.94,92
+1417,Gastrointestinal & Digestive,10.49,6.16,8,4,0,1,0,0,167,0.94,80
+1418,Topical & First Aid,17.34,10.6,5,6,0,0,0,0,112,0.94,101
+1419,Respiratory & Cough Care,5.7,2.75,9,3,0,1,0,0,207,1.08,77
+1420,Antihistamines & Allergy,7.33,4.33,11,3,1,0,1,15,249,0.95,158
+1421,Topical & First Aid,17.0,9.07,6,4,0,1,0,0,458,0.86,48
+1422,Antibiotics & Antivirals,5.26,3.2,2,0,1,0,1,5,170,1.22,128
+1423,Cardiovascular & Hypertension,6.98,3.75,5,6,0,0,0,0,473,1.18,109
+1424,Vitamins & Supplements,9.83,3.91,5,0,0,0,0,0,93,1.02,87
+1425,Respiratory & Cough Care,11.28,5.54,3,4,0,0,0,0,363,1.19,57
+1426,Antibiotics & Antivirals,32.28,12.24,11,1,1,0,1,20,252,1.0,32
+1427,Gastrointestinal & Digestive,7.29,3.53,8,4,0,1,1,20,494,1.12,143
+1428,Gastrointestinal & Digestive,2.48,1.09,2,1,1,0,0,0,86,0.89,132
+1429,Cardiovascular & Hypertension,13.77,8.09,11,2,1,0,0,0,191,1.09,113
+1430,Analgesics & Antipyretics,2.86,1.73,10,4,0,0,1,15,276,1.21,76
+1431,Antihistamines & Allergy,3.63,1.6,1,5,1,0,0,0,231,0.99,104
+1432,Topical & First Aid,7.99,2.87,11,0,1,0,0,0,484,1.1,122
+1433,Analgesics & Antipyretics,3.2,1.57,5,3,0,0,0,0,365,1.12,124
+1434,Gastrointestinal & Digestive,6.64,4.3,6,6,0,1,0,0,372,0.99,192
+1435,Topical & First Aid,4.25,2.06,5,2,0,0,0,0,422,1.12,79
+1436,Antibiotics & Antivirals,8.86,5.13,1,6,1,0,1,10,201,0.88,134
+1437,Antibiotics & Antivirals,5.4,3.2,1,5,1,0,0,0,326,0.88,126
+1438,Topical & First Aid,7.96,4.37,11,6,1,0,0,0,38,1.13,98
+1439,Antibiotics & Antivirals,26.55,10.02,3,0,0,0,0,0,361,0.94,32
+1440,Antibiotics & Antivirals,23.76,9.69,7,2,0,1,0,0,372,1.25,90
+1441,Antihistamines & Allergy,9.05,4.77,8,2,0,1,0,0,236,0.92,75
+1442,Cardiovascular & Hypertension,31.35,16.38,5,1,0,0,1,5,369,1.15,85
+1443,Cardiovascular & Hypertension,24.06,12.7,3,3,0,0,0,0,269,1.11,48
+1444,Vitamins & Supplements,3.65,1.29,6,5,0,1,0,0,359,0.95,123
+1445,Antibiotics & Antivirals,32.08,11.81,8,2,0,1,0,0,230,0.88,92
+1446,Topical & First Aid,13.12,5.85,1,5,1,0,0,0,478,0.99,119
+1447,Antibiotics & Antivirals,14.57,6.66,10,2,0,0,0,0,199,1.05,106
+1448,Gastrointestinal & Digestive,3.09,1.63,9,5,0,1,1,15,219,1.04,213
+1449,Topical & First Aid,5.29,3.02,8,3,0,1,0,0,496,0.86,72
+1450,Gastrointestinal & Digestive,7.95,3.74,7,6,0,1,1,10,87,1.09,125
+1451,Gastrointestinal & Digestive,6.47,2.57,4,0,0,0,0,0,447,1.07,71
+1452,Topical & First Aid,9.53,5.77,10,5,0,0,0,0,350,0.87,160
+1453,Gastrointestinal & Digestive,7.69,3.02,12,3,1,0,0,0,263,1.17,87
+1454,Analgesics & Antipyretics,2.74,1.48,5,5,0,0,0,0,229,1.09,147
+1455,Gastrointestinal & Digestive,9.88,6.02,12,2,1,0,0,0,252,0.88,90
+1456,Respiratory & Cough Care,17.17,9.55,4,1,0,0,0,0,472,0.98,107
+1457,Topical & First Aid,8.11,4.77,5,4,0,0,0,0,471,0.9,82
+1458,Cardiovascular & Hypertension,23.28,13.83,12,4,1,0,1,20,465,0.86,97
+1459,Antihistamines & Allergy,6.4,3.4,10,2,1,0,0,0,500,1.14,64
+1460,Respiratory & Cough Care,14.55,8.2,4,6,0,0,0,0,408,0.87,86
+1461,Gastrointestinal & Digestive,7.83,4.06,6,6,0,1,0,0,499,0.98,194
+1462,Cardiovascular & Hypertension,27.0,15.41,10,4,1,0,1,15,137,1.17,93
+1463,Analgesics & Antipyretics,3.25,1.43,5,2,0,0,1,20,50,1.0,168
+1464,Topical & First Aid,11.33,5.98,11,3,1,0,0,0,65,1.22,78
+1465,Cardiovascular & Hypertension,18.6,7.42,12,4,1,0,1,5,73,0.87,88
+1466,Antihistamines & Allergy,8.93,4.6,6,6,0,1,0,0,340,0.98,126
+1467,Vitamins & Supplements,9.32,3.37,6,4,0,1,0,0,380,1.14,70
+1468,Antibiotics & Antivirals,9.55,4.84,2,1,1,0,0,0,130,0.89,81
+1469,Gastrointestinal & Digestive,5.54,3.19,6,0,0,1,0,0,289,0.87,122
+1470,Antihistamines & Allergy,1.98,0.82,9,6,0,1,1,15,126,0.95,193
+1471,Cardiovascular & Hypertension,6.27,3.62,8,0,0,1,0,0,498,1.2,105
+1472,Gastrointestinal & Digestive,7.98,3.74,7,6,0,1,0,0,158,1.05,163
+1473,Analgesics & Antipyretics,1.4,0.59,4,4,0,0,0,0,188,1.13,107
+1474,Gastrointestinal & Digestive,2.81,1.16,9,6,0,1,0,0,478,1.1,154
+1475,Respiratory & Cough Care,6.02,3.2,3,6,0,0,0,0,177,1.21,99
+1476,Topical & First Aid,12.05,6.57,1,3,1,0,0,0,217,0.93,56
+1477,Respiratory & Cough Care,17.0,7.0,2,5,1,0,0,0,386,1.15,201
+1478,Vitamins & Supplements,1.6,0.86,6,3,0,1,0,0,462,1.19,77
+1479,Analgesics & Antipyretics,3.38,1.37,5,0,0,0,0,0,265,1.23,81
+1480,Gastrointestinal & Digestive,7.62,3.04,8,3,0,1,0,0,297,1.09,158
+1481,Cardiovascular & Hypertension,8.22,2.88,2,4,1,0,1,5,448,0.85,92
+1482,Topical & First Aid,11.52,4.58,7,5,0,1,1,10,340,0.93,131
+1483,Respiratory & Cough Care,7.46,2.69,11,0,1,0,1,10,144,1.03,270
+1484,Antibiotics & Antivirals,33.57,19.73,11,5,1,0,0,0,487,1.04,24
+1485,Cardiovascular & Hypertension,31.59,17.64,8,6,0,1,0,0,21,1.13,85
+1486,Antihistamines & Allergy,5.37,2.49,4,0,0,0,1,20,435,1.04,88
+1487,Analgesics & Antipyretics,11.55,7.08,11,0,1,0,0,0,378,1.04,142
+1488,Vitamins & Supplements,8.59,5.09,4,1,0,0,0,0,32,1.2,110
+1489,Respiratory & Cough Care,10.33,4.33,9,5,0,1,0,0,34,0.96,54
+1490,Topical & First Aid,8.6,5.34,9,1,0,1,0,0,286,0.91,125
+1491,Gastrointestinal & Digestive,7.38,3.41,7,1,0,1,0,0,402,0.97,162
+1492,Topical & First Aid,9.12,5.82,11,4,1,0,1,15,463,0.91,187
+1493,Topical & First Aid,13.21,8.15,9,6,0,1,0,0,480,1.19,113
+1494,Antihistamines & Allergy,9.72,5.81,10,1,0,0,0,0,431,1.02,55
+1495,Analgesics & Antipyretics,7.33,3.13,9,0,0,1,0,0,492,0.92,121
+1496,Gastrointestinal & Digestive,4.58,2.75,8,0,0,1,0,0,489,1.01,160
+1497,Gastrointestinal & Digestive,8.57,5.54,12,3,1,0,1,20,89,1.18,167
+1498,Analgesics & Antipyretics,2.19,0.86,9,6,0,1,1,15,133,1.15,176
+1499,Cardiovascular & Hypertension,5.93,2.29,1,0,1,0,1,5,44,0.95,174
+1500,Gastrointestinal & Digestive,1.12,0.59,11,3,1,0,0,0,201,0.93,99
