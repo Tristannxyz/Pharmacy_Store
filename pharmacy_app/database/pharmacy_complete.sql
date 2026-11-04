@@ -166,8 +166,8 @@ INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `phone`, `email`, `addr
 -- Data for table `users`
 INSERT INTO `users` (`id`, `username`, `password_hash`, `full_name`, `email`, `role`, `failed_attempts`, `locked_until`, `is_active`, `created_at`, `last_login`) VALUES
   (1, 'admin', '$2b$12$nNzd86tdpM7s/tfENdw3buHWflqU93gNoQF/3Y7Gd3EluwP33Uiru', 'System Administrator', 'admin@pharmacare.local', 'admin', 0, NULL, 1, '2026-11-03 22:06:16', NULL),
-  (2, 'inventory_clerk', '$2b$12$euVMKs7JVRMsJ4xIMpHAo.cRd4JrAh6GKfe98ZzNbnQLEYFDxYzwS', 'Maria Santos (Clerk)', 'clerk@pharmacare.local', 'inventory_clerk', 0, NULL, 1, '2026-11-03 22:06:16', NULL),
-  (3, 'sales_personnel', '$2b$12$ecmrj7.4dPfdQEsStAi/y.Hpwr336LoT5JX.9CuJwM3y42y0gYSFa', 'John Cruz (Cashier)', 'sales@pharmacare.local', 'sales_personnel', 0, NULL, 1, '2026-11-03 22:06:16', NULL),
+  (2, 'inventory_clerk', '$2b$12$euVMKs7JVRMsJ4xIMpHAo.cRd4JrAh6GKfe98ZzNbnQLEYFDxYzwS', 'Lebron James', 'clerk@pharmacare.local', 'inventory_clerk', 0, NULL, 1, '2026-11-03 22:06:16', NULL),
+  (3, 'sales_personnel', '$2b$12$ecmrj7.4dPfdQEsStAi/y.Hpwr336LoT5JX.9CuJwM3y42y0gYSFa', 'Steph Curry', 'sales@pharmacare.local', 'sales_personnel', 0, NULL, 1, '2026-11-03 22:06:16', NULL),
   (4, 'instructor', '$2b$12$9RIwtj.G9mRtffFNBTbbUuK8US6FZJBXnwbhmCaFbV/LIJDdH6lVq', 'Prof. Norris Alexis Amora', 'instructor@pharmacare.local', 'instructor', 0, NULL, 1, '2026-11-03 22:06:16', NULL);
 
 -- Data for table `products`
