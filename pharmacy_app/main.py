@@ -20,13 +20,11 @@ class MainWindow(tk.Tk):
         super().__init__()
         self.title(config.APP_TITLE)
         
-        # Window configuration per spec: 1280x800, centered, minsize 1000x700
-        self.minsize(1000, 700)
-        sw = self.winfo_screenwidth()
-        sh = self.winfo_screenheight()
-        x = max(0, (sw - 1280) // 2)
-        y = max(0, (sh - 800) // 2)
-        self.geometry(f"1280x800+{x}+{y}")
+        # Launch fully in full-screen mode automatically
+        try:
+            self.attributes("-fullscreen", True)
+        except Exception:
+            self.state("zoomed")
 
         # Allow F11 to toggle fullscreen and Escape to exit fullscreen seamlessly
         self.bind("<F11>", lambda e: self.attributes("-fullscreen", not self.attributes("-fullscreen")))
@@ -119,10 +117,6 @@ class MainWindow(tk.Tk):
         login_view.pack(fill="both", expand=True)
 
     def on_login_success(self, user_data):
-        try:
-            self.state("zoomed")
-        except Exception:
-            pass
         self.build_app_shell()
         self.navigate_to("dashboard")
 
