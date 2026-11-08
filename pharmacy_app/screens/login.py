@@ -76,9 +76,8 @@ class LoginScreen(tk.Frame):
     # LEFT PANEL (Hero, Logo, Headline & 4 Feature Items)
     # ──────────────────────────────────────────────────────────────────────────
     def _build_left_panel(self, parent):
-        left_frame = tk.Frame(parent, bg=_PANEL_L, width=450, padx=40, pady=38)
+        left_frame = tk.Frame(parent, bg=_PANEL_L, padx=40, pady=34)
         left_frame.pack(side="left", fill="both", expand=True)
-        left_frame.pack_propagate(False)
 
         # ── 1. Brand Logo + Name ──────────────────────────────────────────────
         brand_row = tk.Frame(left_frame, bg=_PANEL_L)
@@ -208,9 +207,8 @@ class LoginScreen(tk.Frame):
     # RIGHT PANEL (Form, Inputs, Lime CTA, Quick Access)
     # ──────────────────────────────────────────────────────────────────────────
     def _build_right_panel(self, parent):
-        right = tk.Frame(parent, bg=_PANEL_R, width=430)
+        right = tk.Frame(parent, bg=_PANEL_R)
         right.pack(side="right", fill="both", expand=True)
-        right.pack_propagate(False)
 
         form = tk.Frame(right, bg=_PANEL_R, padx=40, pady=32)
         form.pack(fill="both", expand=True)
