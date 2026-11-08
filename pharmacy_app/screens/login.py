@@ -337,19 +337,19 @@ class LoginScreen(tk.Frame):
             highlightbackground="#e2e8f0",
             highlightthickness=1,
             cursor="hand2",
-            padx=12,
-            pady=8
+            padx=15,
+            pady=11
         )
-        pill.grid(row=r, column=c, sticky="nsew", padx=4, pady=4)
+        pill.grid(row=r, column=c, sticky="nsew", padx=5, pady=5)
         parent.grid_columnconfigure(c, weight=1)
 
-        dot = tk.Label(pill, text="●", font=("Segoe UI", 10), bg="#ffffff", fg=dot_col, cursor="hand2")
-        dot.pack(side="left", padx=(0, 7))
+        dot = tk.Label(pill, text="●", font=("Segoe UI", 12), bg="#ffffff", fg=dot_col, cursor="hand2")
+        dot.pack(side="left", padx=(0, 9))
 
         text_lbl = tk.Label(
             pill,
             text=label_text,
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg="#ffffff",
             fg="#1e293b",
             cursor="hand2"
