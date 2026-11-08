@@ -102,30 +102,20 @@ class LoginScreen(tk.Frame):
             fg="#ffffff"
         ).pack(side="left")
 
-        # ── 2. Headline with highlighted "need" keyword ───────────────────────
-        head_row1 = tk.Frame(left_frame, bg=_PANEL_L)
-        head_row1.pack(anchor="w")
+        # ── 2. Headline ───────────────────────────────────────────────────────
+        head_row = tk.Frame(left_frame, bg=_PANEL_L)
+        head_row.pack(anchor="w", pady=(0, 16))
         tk.Label(
-            head_row1,
-            text="Know what you'll ",
-            font=("Segoe UI", 23, "bold"),
-            bg=_PANEL_L,
-            fg="#ffffff"
-        ).pack(side="left")
-        tk.Label(
-            head_row1,
-            text="need",
-            font=("Segoe UI", 23, "bold"),
+            head_row,
+            text="SMART ",
+            font=("Segoe UI", 20, "bold"),
             bg=_PANEL_L,
             fg=_LIME
         ).pack(side="left")
-
-        head_row2 = tk.Frame(left_frame, bg=_PANEL_L)
-        head_row2.pack(anchor="w", pady=(0, 14))
         tk.Label(
-            head_row2,
-            text="before the shelf runs out.",
-            font=("Segoe UI", 23, "bold"),
+            head_row,
+            text="PHARMACY OPERATIONS",
+            font=("Segoe UI", 20, "bold"),
             bg=_PANEL_L,
             fg="#ffffff"
         ).pack(side="left")
