@@ -8,12 +8,21 @@ os.environ.setdefault("MPLCONFIGDIR", tempfile.gettempdir())
 
 import tkinter as tk
 from tkinter import ttk, messagebox
+from PIL import Image, ImageTk, ImageDraw, ImageFont
 
 import config
 import db
 import auth
 from screens.login import LoginScreen
 from screens.dashboard import DashboardScreen
+
+_ASSETS_DIR = Path(__file__).resolve().parent / "assets"
+_SIDEBAR_BG = "#071d32"
+_USER_CHIP_BG = "#0c263e"
+_USER_CHIP_BORDER = "#143657"
+_LIME = "#a3e635"
+_NAV_INACTIVE_FG = "#8ea3b8"
+_NAV_HOVER_BG = "#0d2742"
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -120,6 +129,36 @@ class MainWindow(tk.Tk):
         self.build_app_shell()
         self.navigate_to("dashboard")
 
+    def _make_circle_avatar(self, initials, size=36, bg_color=_LIME, text_color="#071d32"):
+        """Generates supersampled circular avatar image with user initials."""
+        scale = 3
+        s = size * scale
+        img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.ellipse([0, 0, s - 1, s - 1], fill=bg_color)
+
+        font_path = _ASSETS_DIR / "fonts" / "SpaceGrotesk-Bold.ttf"
+        if not font_path.exists():
+            font_path = _ASSETS_DIR / "fonts" / "Inter.ttf"
+
+        try:
+            font = ImageFont.truetype(str(font_path), int(13 * scale))
+        except Exception:
+            font = ImageFont.load_default()
+
+        bbox = d.textbbox((0, 0), initials, font=font)
+        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        tx = (s - tw) / 2 - bbox[0]
+        ty = (s - th) / 2 - bbox[1]
+        d.text((tx, ty), initials, fill=text_color, font=font)
+
+        final_img = img.resize((size, size), Image.LANCZOS)
+        photo = ImageTk.PhotoImage(final_img)
+        if not hasattr(self, "_avatar_photos"):
+            self._avatar_photos = []
+        self._avatar_photos.append(photo)
+        return photo
+
     def build_app_shell(self):
         self.clear_view()
 
@@ -127,159 +166,190 @@ class MainWindow(tk.Tk):
         shell = tk.Frame(self.main_container, bg=config.COLORS["background"])
         shell.pack(fill="both", expand=True)
 
-        # Sidebar (Left)
-        self.sidebar = tk.Frame(shell, bg=config.COLORS["primary"], width=260, padx=15, pady=20)
+        # ── Sidebar (Left) Matching Reference ─────────────────────────────────
+        self.sidebar = tk.Frame(shell, bg=_SIDEBAR_BG, width=260, padx=16, pady=20)
         self.sidebar.pack(side="left", fill="y")
         self.sidebar.pack_propagate(False)
 
-        # Brand Logo / App Title
-        brand_frame = tk.Frame(self.sidebar, bg=config.COLORS["primary"])
-        brand_frame.pack(fill="x", pady=(0, 25))
+        # ── Brand Header ──────────────────────────────────────────────────────
+        brand_frame = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
+        brand_frame.pack(fill="x", pady=(0, 22))
 
-        lbl_logo = tk.Label(
-            brand_frame, 
-            text="⚕ PharmaCare", 
-            font=("Segoe UI", 16, "bold"), 
-            bg=config.COLORS["primary"], 
-            fg="white"
-        )
-        lbl_logo.pack(anchor="w")
+        logo_path = _ASSETS_DIR / "logo.png"
+        self._sidebar_logo_photo = None
+        if logo_path.exists():
+            try:
+                _img = Image.open(logo_path).convert("RGBA").resize((32, 32), Image.LANCZOS)
+                self._sidebar_logo_photo = ImageTk.PhotoImage(_img)
+                tk.Label(brand_frame, image=self._sidebar_logo_photo, bg=_SIDEBAR_BG, bd=0).pack(side="left", padx=(0, 10))
+            except Exception:
+                pass
 
-        lbl_sub = tk.Label(
-            brand_frame, 
-            text="Pharmacy & Knowledge Studio", 
-            font=("Segoe UI", 8), 
-            bg=config.COLORS["primary"], 
-            fg=config.COLORS["text_muted"]
-        )
-        lbl_sub.pack(anchor="w")
+        brand_text_box = tk.Frame(brand_frame, bg=_SIDEBAR_BG)
+        brand_text_box.pack(side="left", fill="x", expand=True)
 
-        # User Info Chip
+        tk.Label(
+            brand_text_box,
+            text="PharmaCare",
+            font=("Segoe UI", 16, "bold"),
+            bg=_SIDEBAR_BG,
+            fg="#ffffff"
+        ).pack(anchor="w")
+
+        tk.Label(
+            brand_text_box,
+            text="Pharmacy & Knowledge Studio",
+            font=("Segoe UI", 8),
+            bg=_SIDEBAR_BG,
+            fg=_NAV_INACTIVE_FG
+        ).pack(anchor="w")
+
+        # ── User Profile Chip ─────────────────────────────────────────────────
         user = auth.SessionManager.get_user() or {}
         role = user.get("role", config.ROLE_ADMIN)
         role_label = config.ROLE_DISPLAY_NAMES.get(role, role)
 
-        user_chip = tk.Frame(self.sidebar, bg=config.COLORS["primary_light"], padx=10, pady=10)
-        user_chip.pack(fill="x", pady=(0, 20))
+        user_chip = tk.Frame(
+            self.sidebar,
+            bg=_USER_CHIP_BG,
+            padx=12,
+            pady=10,
+            highlightbackground=_USER_CHIP_BORDER,
+            highlightthickness=1
+        )
+        user_chip.pack(fill="x", pady=(0, 22))
+
+        # Determine user initials
+        full_name = user.get("full_name", "System Administrator")
+        words = full_name.split()
+        initials = "".join(w[0].upper() for w in words[:2]) if words else "SA"
+
+        avatar_photo = self._make_circle_avatar(initials, size=36)
+        tk.Label(user_chip, image=avatar_photo, bg=_USER_CHIP_BG, bd=0).pack(side="left", padx=(0, 10))
+
+        user_text_box = tk.Frame(user_chip, bg=_USER_CHIP_BG)
+        user_text_box.pack(side="left", fill="x", expand=True)
 
         tk.Label(
-            user_chip, 
-            text=user.get("full_name", "User"), 
-            font=config.FONTS["body_bold"], 
-            bg=config.COLORS["primary_light"], 
-            fg="white"
+            user_text_box,
+            text=full_name,
+            font=("Segoe UI", 9, "bold"),
+            bg=_USER_CHIP_BG,
+            fg="#ffffff"
         ).pack(anchor="w")
 
-        role_tag = tk.Label(
-            user_chip, 
-            text=f"● {role_label}", 
-            font=("Segoe UI", 8, "bold"), 
-            bg=config.COLORS["primary_light"], 
-            fg=config.COLORS["secondary"]
-        )
-        role_tag.pack(anchor="w", pady=(2, 0))
+        tk.Label(
+            user_text_box,
+            text=role_label,
+            font=("Segoe UI", 8),
+            bg=_USER_CHIP_BG,
+            fg=_NAV_INACTIVE_FG
+        ).pack(anchor="w", pady=(1, 0))
 
-        # Navigation Menu Items Based on Role
+        # ── Navigation Menu Items ─────────────────────────────────────────────
         self.menu_buttons = {}
+        self.active_key = None
         self.build_navigation_items(role)
 
-        # Bottom Logout action
-        bottom_box = tk.Frame(self.sidebar, bg=config.COLORS["primary"])
+        # ── Bottom Logout Action ──────────────────────────────────────────────
+        bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
         bottom_box.pack(side="bottom", fill="x")
 
         btn_logout = tk.Button(
             bottom_box,
-            text="⏻ Logout",
-            font=config.FONTS["body_bold"],
-            bg=config.COLORS["danger"],
-            fg="white",
+            text="⏻  Sign Out",
+            font=("Segoe UI", 9, "bold"),
+            bg="#0c263e",
+            fg=_NAV_INACTIVE_FG,
+            activebackground="#1e293b",
+            activeforeground="#ef4444",
             relief="flat",
             cursor="hand2",
+            padx=12,
             pady=8,
+            highlightbackground=_USER_CHIP_BORDER,
+            highlightthickness=1,
             command=self.handle_logout
         )
         btn_logout.pack(fill="x")
 
-        # Right Container (Top Bar + Content Area)
-        right_container = tk.Frame(shell, bg=config.COLORS["background"])
-        right_container.pack(side="right", fill="both", expand=True)
-
-        # Global Top Bar with System Status & Window Controls (Minimize, Maximize, Close)
-        app_topbar = tk.Frame(right_container, bg=config.COLORS["surface"], height=38, highlightbackground=config.COLORS["border"], highlightthickness=1)
-        app_topbar.pack(fill="x", side="top")
-
-        # Left status
-        db_badge = tk.Frame(app_topbar, bg=config.COLORS["surface"], padx=15, pady=6)
-        db_badge.pack(side="left")
-        tk.Label(
-            db_badge,
-            text=f"● Database: Connected ({config.DB_NAME})  |  User: {user.get('username')} ({role_label})",
-            font=("Segoe UI", 9),
-            bg=config.COLORS["surface"],
-            fg=config.COLORS["secondary"]
-        ).pack(side="left")
-
-        # Content Area
-        self.content_area = tk.Frame(right_container, bg=config.COLORS["background"])
-        self.content_area.pack(fill="both", expand=True)
+        # ── Right Content Area ────────────────────────────────────────────────
+        self.content_area = tk.Frame(shell, bg=config.COLORS["background"])
+        self.content_area.pack(side="right", fill="both", expand=True)
 
     def build_navigation_items(self, role):
-        """Constructs role-tailored sidebar menu items."""
-        # Common to all roles
+        """Constructs role-tailored sidebar menu items with sleek pill highlights."""
         items = [
-            ("dashboard", "📊  Dashboard")
+            ("dashboard", "⊞   Dashboard")
         ]
 
-        # Inventory Management
         if role in [config.ROLE_INVENTORY_CLERK, config.ROLE_INSTRUCTOR]:
-            items.append(("inventory", "📦  Inventory Management"))
+            items.append(("inventory", "◫   Inventory Management"))
         elif role == config.ROLE_ADMIN:
-            items.append(("inventory", "📦  Inventory Catalog"))
+            items.append(("inventory", "◫   Inventory Catalog"))
 
-        # Sales Module
         if role in [config.ROLE_SALES_PERSONNEL, config.ROLE_INSTRUCTOR]:
-            items.append(("sales", "💳  Point of Sale (POS)"))
+            items.append(("sales", "💳   Point of Sale (POS)"))
         elif role == config.ROLE_ADMIN:
-            items.append(("sales", "💳  Sales History"))
+            items.append(("sales", "💳   Sales History"))
 
-        # Users Management
         if role in [config.ROLE_ADMIN, config.ROLE_INSTRUCTOR]:
-            items.append(("users", "👥  User Management & Logs"))
+            items.append(("users", "👥   User Management & Logs"))
 
-        # Knowledge Analysis
         if role == config.ROLE_ADMIN:
-            items.append(("analysis", "🧠  Knowledge Analysis (Predict)"))
+            items.append(("analysis", "📈   Knowledge Analysis (Predict)"))
         elif role == config.ROLE_INSTRUCTOR:
-            items.append(("analysis", "🧠  Knowledge Analysis Studio"))
+            items.append(("analysis", "📈   Knowledge Analysis Studio"))
 
-        # Add Profile
-        items.append(("profile", "👤  My Profile"))
+        items.append(("profile", "👤   My Profile"))
 
         for key, label in items:
             btn = tk.Button(
                 self.sidebar,
                 text=label,
-                font=config.FONTS["body_bold"],
-                bg=config.COLORS["primary"],
-                fg="#cbd5e1",
-                activebackground=config.COLORS["secondary"],
-                activeforeground="white",
+                font=("Segoe UI", 9, "bold"),
+                bg=_SIDEBAR_BG,
+                fg=_NAV_INACTIVE_FG,
+                activebackground=_NAV_HOVER_BG,
+                activeforeground="#ffffff",
                 relief="flat",
                 cursor="hand2",
                 anchor="w",
                 padx=14,
-                pady=10,
+                pady=9,
                 command=lambda k=key: self.navigate_to(k)
             )
             btn.pack(fill="x", pady=2)
+
+            # Hover animations
+            def on_enter(e, b=btn, k=key):
+                if self.active_key != k:
+                    b.config(bg=_NAV_HOVER_BG, fg="#ffffff")
+            def on_leave(e, b=btn, k=key):
+                if self.active_key != k:
+                    b.config(bg=_SIDEBAR_BG, fg=_NAV_INACTIVE_FG)
+
+            btn.bind("<Enter>", on_enter)
+            btn.bind("<Leave>", on_leave)
+
             self.menu_buttons[key] = btn
 
     def set_active_menu(self, active_key):
+        self.active_key = active_key
         for key, btn in self.menu_buttons.items():
             if key == active_key:
-                btn.config(bg=config.COLORS["secondary"], fg="white")
+                # Active item styled as vibrant lime pill with dark text
+                btn.config(
+                    bg=_LIME,
+                    fg="#071d32",
+                    font=("Segoe UI", 9, "bold")
+                )
             else:
-                btn.config(bg=config.COLORS["primary"], fg="#cbd5e1")
+                btn.config(
+                    bg=_SIDEBAR_BG,
+                    fg=_NAV_INACTIVE_FG,
+                    font=("Segoe UI", 9, "bold")
+                )
 
     def navigate_to(self, screen_name):
         """Routes and displays the requested screen inside content_area with RBAC enforcement."""
