@@ -76,19 +76,19 @@ class LoginScreen(tk.Frame):
     # LEFT PANEL (Hero, Logo, Headline & 4 Feature Items)
     # ──────────────────────────────────────────────────────────────────────────
     def _build_left_panel(self, parent):
-        left_frame = tk.Frame(parent, bg=_PANEL_L, padx=40, pady=34)
+        left_frame = tk.Frame(parent, bg=_PANEL_L, padx=52, pady=44)
         left_frame.pack(side="left", fill="both", expand=True)
 
         # ── 1. Brand Logo + Name ──────────────────────────────────────────────
         brand_row = tk.Frame(left_frame, bg=_PANEL_L)
-        brand_row.pack(anchor="w", pady=(0, 22))
+        brand_row.pack(anchor="w", pady=(0, 24))
 
         logo_path = _ASSETS_DIR / "logo.png"
         if _PIL_AVAILABLE and logo_path.exists():
             try:
-                _img = Image.open(logo_path).convert("RGBA").resize((34, 34), Image.LANCZOS)
+                _img = Image.open(logo_path).convert("RGBA").resize((42, 42), Image.LANCZOS)
                 self._logo_photo = ImageTk.PhotoImage(_img)
-                tk.Label(brand_row, image=self._logo_photo, bg=_PANEL_L, bd=0).pack(side="left", padx=(0, 10))
+                tk.Label(brand_row, image=self._logo_photo, bg=_PANEL_L, bd=0).pack(side="left", padx=(0, 12))
             except Exception:
                 self._fallback_logo(brand_row)
         else:
@@ -97,7 +97,7 @@ class LoginScreen(tk.Frame):
         tk.Label(
             brand_row,
             text="PharmaCare",
-            font=("Segoe UI", 21, "bold"),
+            font=("Segoe UI", 25, "bold"),
             bg=_PANEL_L,
             fg="#ffffff"
         ).pack(side="left")
@@ -108,24 +108,24 @@ class LoginScreen(tk.Frame):
         tk.Label(
             head_row1,
             text="Know what you'll ",
-            font=("Segoe UI", 20, "bold"),
+            font=("Segoe UI", 23, "bold"),
             bg=_PANEL_L,
             fg="#ffffff"
         ).pack(side="left")
         tk.Label(
             head_row1,
             text="need",
-            font=("Segoe UI", 20, "bold"),
+            font=("Segoe UI", 23, "bold"),
             bg=_PANEL_L,
             fg=_LIME
         ).pack(side="left")
 
         head_row2 = tk.Frame(left_frame, bg=_PANEL_L)
-        head_row2.pack(anchor="w", pady=(0, 12))
+        head_row2.pack(anchor="w", pady=(0, 14))
         tk.Label(
             head_row2,
             text="before the shelf runs out.",
-            font=("Segoe UI", 20, "bold"),
+            font=("Segoe UI", 23, "bold"),
             bg=_PANEL_L,
             fg="#ffffff"
         ).pack(side="left")
@@ -134,12 +134,12 @@ class LoginScreen(tk.Frame):
         tk.Label(
             left_frame,
             text="Pharmacy store management and knowledge analytics, with ML-powered forecasting and real-time inventory health.",
-            font=("Segoe UI", 9),
+            font=("Segoe UI", 10),
             bg=_PANEL_L,
             fg=_TEXT_MUTED,
-            wraplength=370,
+            wraplength=430,
             justify="left"
-        ).pack(anchor="w", pady=(0, 20))
+        ).pack(anchor="w", pady=(0, 24))
 
         # ── 4. Four Feature Items with Dividers ────────────────────────────────
         features = [
@@ -151,24 +151,24 @@ class LoginScreen(tk.Frame):
 
         for i, (icon, icon_col, title, subtitle) in enumerate(features):
             item_row = tk.Frame(left_frame, bg=_PANEL_L)
-            item_row.pack(fill="x", pady=4)
+            item_row.pack(fill="x", pady=6)
 
             # Icon Badge Box (Dark rounded square)
             icon_box = tk.Frame(
                 item_row,
                 bg="#0c253d",
-                width=38,
-                height=38,
+                width=44,
+                height=44,
                 highlightbackground="#143657",
                 highlightthickness=1
             )
-            icon_box.pack(side="left", padx=(0, 12))
+            icon_box.pack(side="left", padx=(0, 15))
             icon_box.pack_propagate(False)
 
             tk.Label(
                 icon_box,
                 text=icon,
-                font=("Segoe UI Symbol", 13),
+                font=("Segoe UI Symbol", 15),
                 bg="#0c253d",
                 fg=icon_col
             ).place(relx=0.5, rely=0.5, anchor="center")
@@ -180,7 +180,7 @@ class LoginScreen(tk.Frame):
             tk.Label(
                 text_stack,
                 text=title,
-                font=("Segoe UI", 10, "bold"),
+                font=("Segoe UI", 11, "bold"),
                 bg=_PANEL_L,
                 fg="#ffffff",
                 anchor="w"
@@ -189,7 +189,7 @@ class LoginScreen(tk.Frame):
             tk.Label(
                 text_stack,
                 text=subtitle,
-                font=("Segoe UI", 8),
+                font=("Segoe UI", 9),
                 bg=_PANEL_L,
                 fg=_TEXT_MUTED,
                 anchor="w"
@@ -197,13 +197,13 @@ class LoginScreen(tk.Frame):
 
             # Subtle horizontal divider between items
             if i < len(features) - 1:
-                tk.Frame(left_frame, bg="#0d263e", height=1).pack(fill="x", pady=4)
+                tk.Frame(left_frame, bg="#0d263e", height=1).pack(fill="x", pady=5)
 
     def _fallback_logo(self, parent):
-        f = tk.Frame(parent, bg="#064e3b", width=34, height=34)
-        f.pack(side="left", padx=(0, 10))
+        f = tk.Frame(parent, bg="#064e3b", width=42, height=42)
+        f.pack(side="left", padx=(0, 12))
         f.pack_propagate(False)
-        tk.Label(f, text="⚕", font=("Segoe UI Symbol", 16, "bold"), bg="#064e3b", fg="#10b981").place(relx=0.5, rely=0.5, anchor="center")
+        tk.Label(f, text="⚕", font=("Segoe UI Symbol", 20, "bold"), bg="#064e3b", fg="#10b981").place(relx=0.5, rely=0.5, anchor="center")
 
     # ──────────────────────────────────────────────────────────────────────────
     # RIGHT PANEL (Form, Inputs, Lime CTA, Quick Access)
@@ -212,14 +212,14 @@ class LoginScreen(tk.Frame):
         right = tk.Frame(parent, bg=_PANEL_R)
         right.pack(side="right", fill="both", expand=True)
 
-        form = tk.Frame(right, bg=_PANEL_R, padx=40, pady=32)
+        form = tk.Frame(right, bg=_PANEL_R, padx=50, pady=40)
         form.pack(fill="both", expand=True)
 
         # ── 1. Welcome Back Heading ───────────────────────────────────────────
         tk.Label(
             form,
             text="Welcome back",
-            font=("Segoe UI", 24, "bold"),
+            font=("Segoe UI", 28, "bold"),
             bg=_PANEL_R,
             fg="#0f172a"
         ).pack(anchor="w")
@@ -227,32 +227,32 @@ class LoginScreen(tk.Frame):
         tk.Label(
             form,
             text="Sign in to access your designated workspace.",
-            font=("Segoe UI", 9),
+            font=("Segoe UI", 10),
             bg=_PANEL_R,
             fg="#64748b"
-        ).pack(anchor="w", pady=(2, 18))
+        ).pack(anchor="w", pady=(3, 20))
 
         # ── 3. Username Field ─────────────────────────────────────────────────
         tk.Label(
             form,
             text="Username",
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg=_PANEL_R,
             fg="#334155"
-        ).pack(anchor="w", pady=(0, 5))
+        ).pack(anchor="w", pady=(0, 6))
 
         self.ent_user = self._styled_entry(form)
-        self.ent_user.pack(fill="x", pady=(0, 12))
+        self.ent_user.pack(fill="x", pady=(0, 14))
         self.ent_user.focus_set()
 
         # ── 4. Password Field + Eye Toggle Button ─────────────────────────────
         tk.Label(
             form,
             text="Password",
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg=_PANEL_R,
             fg="#334155"
-        ).pack(anchor="w", pady=(0, 5))
+        ).pack(anchor="w", pady=(0, 6))
 
         pwd_row = tk.Frame(form, bg=_PANEL_R)
         pwd_row.pack(fill="x", pady=(0, 4))
@@ -264,7 +264,7 @@ class LoginScreen(tk.Frame):
         self.btn_eye = tk.Button(
             pwd_row,
             text="👁",
-            font=("Segoe UI Symbol", 10),
+            font=("Segoe UI Symbol", 11),
             bg=_FIELD_BG,
             fg="#64748b",
             activebackground="#e2e8f0",
@@ -274,11 +274,11 @@ class LoginScreen(tk.Frame):
             highlightbackground=_FIELD_BORDER,
             highlightthickness=1,
             cursor="hand2",
-            padx=10,
-            pady=6,
+            padx=12,
+            pady=7,
             command=self._toggle_pwd
         )
-        self.btn_eye.pack(side="right", padx=(6, 0))
+        self.btn_eye.pack(side="right", padx=(8, 0))
         self.btn_eye.bind("<Enter>", lambda e: self.btn_eye.config(bg="#e2e8f0"))
         self.btn_eye.bind("<Leave>", lambda e: self.btn_eye.config(bg="#ecfdf5" if self.is_pwd_visible else _FIELD_BG))
 
@@ -286,19 +286,19 @@ class LoginScreen(tk.Frame):
         self.lbl_msg = tk.Label(
             form,
             text="",
-            font=("Segoe UI", 9),
+            font=("Segoe UI", 10),
             bg=_PANEL_R,
             fg=config.COLORS["danger"],
-            wraplength=340,
+            wraplength=400,
             justify="left"
         )
-        self.lbl_msg.pack(anchor="w", pady=(2, 6))
+        self.lbl_msg.pack(anchor="w", pady=(2, 8))
 
         # ── 6. Vibrant Lime Sign-In Button ────────────────────────────────────
         self.btn_login = tk.Button(
             form,
             text="Sign in to system   ➔",
-            font=("Segoe UI", 11, "bold"),
+            font=("Segoe UI", 12, "bold"),
             bg=_LIME,
             fg="#0f172a",
             activebackground=_LIME_HOVER,
@@ -306,18 +306,18 @@ class LoginScreen(tk.Frame):
             relief="flat",
             bd=0,
             cursor="hand2",
-            pady=11,
+            pady=13,
             command=self.handle_login
         )
-        self.btn_login.pack(fill="x", pady=(0, 14))
+        self.btn_login.pack(fill="x", pady=(0, 16))
         self.btn_login.bind("<Enter>", lambda e: self.btn_login.config(bg=_LIME_HOVER))
         self.btn_login.bind("<Leave>", lambda e: self.btn_login.config(bg=_LIME))
 
         # ── 7. Quick Access Divider ───────────────────────────────────────────
         div_row = tk.Frame(form, bg=_PANEL_R)
-        div_row.pack(fill="x", pady=(0, 10))
+        div_row.pack(fill="x", pady=(0, 12))
         tk.Frame(div_row, bg="#e2e8f0", height=1).pack(side="left", fill="x", expand=True, pady=6)
-        tk.Label(div_row, text="   Quick access   ", font=("Segoe UI", 8), bg=_PANEL_R, fg="#94a3b8").pack(side="left")
+        tk.Label(div_row, text="   Quick access   ", font=("Segoe UI", 9), bg=_PANEL_R, fg="#94a3b8").pack(side="left")
         tk.Frame(div_row, bg="#e2e8f0", height=1).pack(side="left", fill="x", expand=True, pady=6)
 
         # ── 8. Quick Access Demo Pills (2x2 Grid) ─────────────────────────────
@@ -347,19 +347,19 @@ class LoginScreen(tk.Frame):
             highlightbackground="#e2e8f0",
             highlightthickness=1,
             cursor="hand2",
-            padx=10,
-            pady=6
+            padx=12,
+            pady=8
         )
-        pill.grid(row=r, column=c, sticky="nsew", padx=3, pady=3)
+        pill.grid(row=r, column=c, sticky="nsew", padx=4, pady=4)
         parent.grid_columnconfigure(c, weight=1)
 
-        dot = tk.Label(pill, text="●", font=("Segoe UI", 9), bg="#ffffff", fg=dot_col, cursor="hand2")
-        dot.pack(side="left", padx=(0, 6))
+        dot = tk.Label(pill, text="●", font=("Segoe UI", 10), bg="#ffffff", fg=dot_col, cursor="hand2")
+        dot.pack(side="left", padx=(0, 7))
 
         text_lbl = tk.Label(
             pill,
             text=label_text,
-            font=("Segoe UI", 8, "bold"),
+            font=("Segoe UI", 9, "bold"),
             bg="#ffffff",
             fg="#1e293b",
             cursor="hand2"
@@ -395,7 +395,7 @@ class LoginScreen(tk.Frame):
             lightcolor=_FIELD_BORDER,
             darkcolor=_FIELD_BORDER,
             insertcolor="#0f172a",
-            padding=(10, 7)
+            padding=(12, 9)
         )
         style.map(
             "LoginModern.TEntry",
@@ -403,7 +403,7 @@ class LoginScreen(tk.Frame):
             lightcolor=[("focus", _FIELD_FOCUS)],
             darkcolor=[("focus", _FIELD_FOCUS)]
         )
-        kw = dict(font=("Segoe UI", 10), style="LoginModern.TEntry")
+        kw = dict(font=("Segoe UI", 11), style="LoginModern.TEntry", width=30)
         if show:
             kw["show"] = show
         return ttk.Entry(parent, **kw)
