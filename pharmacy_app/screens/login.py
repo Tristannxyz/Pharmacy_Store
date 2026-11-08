@@ -215,26 +215,7 @@ class LoginScreen(tk.Frame):
         form = tk.Frame(right, bg=_PANEL_R, padx=40, pady=32)
         form.pack(fill="both", expand=True)
 
-        # ── 1. Secure Portal Badge ────────────────────────────────────────────
-        badge = tk.Frame(
-            form,
-            bg="#ecfdf5",
-            highlightbackground="#a7f3d0",
-            highlightthickness=1,
-            padx=9,
-            pady=3
-        )
-        badge.pack(anchor="w", pady=(0, 12))
-
-        tk.Label(
-            badge,
-            text="🔒  Secure portal",
-            font=("Segoe UI", 8, "bold"),
-            bg="#ecfdf5",
-            fg="#059669"
-        ).pack()
-
-        # ── 2. Welcome Back Heading ───────────────────────────────────────────
+        # ── 1. Welcome Back Heading ───────────────────────────────────────────
         tk.Label(
             form,
             text="Welcome back",
