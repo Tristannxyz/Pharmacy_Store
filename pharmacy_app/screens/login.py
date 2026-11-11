@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
 try:
-    from PIL import Image, ImageTk
+    from PIL import Image, ImageTk, ImageDraw
     _PIL_AVAILABLE = True
 except ImportError:
     _PIL_AVAILABLE = False
@@ -30,6 +30,7 @@ class LoginScreen(tk.Frame):
         self.parent = parent
         self.on_login_success = on_login_success
         self._logo_photo = None  # Pillow GC protection
+        self._feature_photos = []  # Pillow GC protection for feature icons
 
         self.setup_ui()
 
@@ -73,14 +74,17 @@ class LoginScreen(tk.Frame):
         self._build_right_panel(split_box)
 
     # ──────────────────────────────────────────────────────────────────────────
-    # LEFT PANEL (Hero, Logo, Headline & 4 Feature Items)
+    # LEFT PANEL (Hero, Logo, Headline & Description)
     # ──────────────────────────────────────────────────────────────────────────
     def _build_left_panel(self, parent):
         left_frame = tk.Frame(parent, bg=_PANEL_L, padx=52, pady=44)
         left_frame.pack(side="left", fill="both", expand=True)
 
+        hero_box = tk.Frame(left_frame, bg=_PANEL_L)
+        hero_box.pack(expand=True, fill="x")
+
         # ── 1. Brand Logo + Name ──────────────────────────────────────────────
-        brand_row = tk.Frame(left_frame, bg=_PANEL_L)
+        brand_row = tk.Frame(hero_box, bg=_PANEL_L)
         brand_row.pack(anchor="w", pady=(0, 24))
 
         logo_path = _ASSETS_DIR / "logo.png"
@@ -103,7 +107,7 @@ class LoginScreen(tk.Frame):
         ).pack(side="left")
 
         # ── 2. Headline ───────────────────────────────────────────────────────
-        head_row = tk.Frame(left_frame, bg=_PANEL_L)
+        head_row = tk.Frame(hero_box, bg=_PANEL_L)
         head_row.pack(anchor="w", pady=(0, 16))
         tk.Label(
             head_row,
@@ -122,48 +126,45 @@ class LoginScreen(tk.Frame):
 
         # ── 3. Subtitle / Description ─────────────────────────────────────────
         tk.Label(
-            left_frame,
-            text="Pharmacy store management and knowledge analytics, with ML-powered forecasting and real-time inventory health.",
+            hero_box,
+            text="Pharmacy Store Management and Knowledge Analytics",
             font=("Segoe UI", 10),
             bg=_PANEL_L,
             fg=_TEXT_MUTED,
             wraplength=430,
             justify="left"
-        ).pack(anchor="w", pady=(0, 24))
+        ).pack(anchor="w", pady=(0, 22))
 
-        # ── 4. Four Feature Items with Dividers ────────────────────────────────
+        # ── 4. Feature Highlights ─────────────────────────────────────────────
         features = [
-            ("📈", "#2dd4bf", "ML Forecasting", "Predictive demand analysis"),
-            ("⊞",  "#38bdf8", "Live Dashboard", "Real-time inventory health"),
-            ("🛡", "#fbbf24", "Role-Based Auth", "The right access for every role"),
-            ("📦", "#a3e635", "Smart Inventory", "Reorder before the shelf runs out")
+            ("trend",     "Demand Insights", "See what will sell next week, before it does."),
+            ("stopwatch", "Expiry Guard",    "Batch and expiry alerts that cut waste."),
+            ("pulse",     "Stock Pulse",     "Live shelf levels across every branch."),
+            ("shield",    "Team Access",     "Each role sees only what it needs."),
         ]
 
-        for i, (icon, icon_col, title, subtitle) in enumerate(features):
-            item_row = tk.Frame(left_frame, bg=_PANEL_L)
-            item_row.pack(fill="x", pady=6)
+        divider_col = "#0f2c47"
+        tk.Frame(hero_box, bg=divider_col, height=1).pack(fill="x")
 
-            # Icon Badge Box (Dark rounded square)
-            icon_box = tk.Frame(
-                item_row,
-                bg="#0c253d",
-                width=44,
-                height=44,
-                highlightbackground="#143657",
-                highlightthickness=1
-            )
-            icon_box.pack(side="left", padx=(0, 15))
-            icon_box.pack_propagate(False)
+        for icon_key, title, subtitle in features:
+            item_row = tk.Frame(hero_box, bg=_PANEL_L)
+            item_row.pack(fill="x", pady=8)
 
-            tk.Label(
-                icon_box,
-                text=icon,
-                font=("Segoe UI Symbol", 15),
-                bg="#0c253d",
-                fg=icon_col
-            ).place(relx=0.5, rely=0.5, anchor="center")
+            icon_photo = self._draw_feature_icon(icon_key)
+            if icon_photo is not None:
+                self._feature_photos.append(icon_photo)
+                tk.Label(item_row, image=icon_photo, bg=_PANEL_L, bd=0).pack(side="left", padx=(4, 16))
+            else:
+                glyphs = {"trend": "↗", "stopwatch": "⏱", "pulse": "∿", "shield": "🛡"}
+                tk.Label(
+                    item_row,
+                    text=glyphs.get(icon_key, "•"),
+                    font=("Segoe UI Symbol", 14, "bold"),
+                    bg=_PANEL_L,
+                    fg=_LIME,
+                    width=2,
+                ).pack(side="left", padx=(2, 14))
 
-            # Title & Subtitle Stack aligned directly beside the icon
             text_stack = tk.Frame(item_row, bg=_PANEL_L)
             text_stack.pack(side="left", anchor="w")
 
@@ -185,9 +186,41 @@ class LoginScreen(tk.Frame):
                 anchor="w"
             ).pack(anchor="w")
 
-            # Subtle horizontal divider between items
-            if i < len(features) - 1:
-                tk.Frame(left_frame, bg="#0d263e", height=1).pack(fill="x", pady=5)
+            tk.Frame(hero_box, bg=divider_col, height=1).pack(fill="x")
+
+    def _draw_feature_icon(self, icon_key, size=22):
+        """Draws a crisp supersampled lime line icon for the left-panel feature list."""
+        if not _PIL_AVAILABLE:
+            return None
+        scale = 3
+        s = size * scale  # 66x66 at default size=22
+        stroke = 2 * scale
+        img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+
+        if icon_key == "trend":
+            pts = [(10, 46), (26, 30), (35, 38), (55, 18)]
+            d.line(pts, fill=_LIME, width=stroke, joint="curve")
+            d.line([(42, 18), (55, 18), (55, 31)], fill=_LIME, width=stroke, joint="curve")
+
+        elif icon_key == "stopwatch":
+            d.line([(25, 9), (41, 9)], fill=_LIME, width=stroke)
+            d.line([(33, 9), (33, 17)], fill=_LIME, width=stroke)
+            d.line([(48, 20), (53, 15)], fill=_LIME, width=stroke)
+            d.ellipse([14, 18, 52, 56], outline=_LIME, width=stroke)
+            d.line([(33, 37), (33, 27)], fill=_LIME, width=stroke)
+            d.line([(33, 37), (41, 37)], fill=_LIME, width=stroke)
+
+        elif icon_key == "pulse":
+            pts = [(6, 33), (18, 33), (25, 14), (36, 52), (44, 25), (49, 33), (60, 33)]
+            d.line(pts, fill=_LIME, width=stroke, joint="curve")
+
+        elif icon_key == "shield":
+            poly = [(33, 10), (52, 18), (52, 33), (44, 48), (33, 57), (22, 48), (14, 33), (14, 18), (33, 10)]
+            d.line(poly, fill=_LIME, width=stroke, joint="curve")
+            d.line([(25, 33), (31, 39), (42, 26)], fill=_LIME, width=stroke, joint="curve")
+
+        return ImageTk.PhotoImage(img.resize((size, size), Image.LANCZOS))
 
     def _fallback_logo(self, parent):
         f = tk.Frame(parent, bg="#064e3b", width=42, height=42)
@@ -316,7 +349,7 @@ class LoginScreen(tk.Frame):
 
         roles = [
             ("Administrator",   "admin",           "admin123",      "#0d9488"),
-            ("Instructor (ML)", "instructor",      "instructor123", "#2563eb"),
+            ("Instructor",      "instructor",      "instructor123", "#2563eb"),
             ("Inventory Clerk", "inventory_clerk", "clerk123",      "#9333ea"),
             ("Sales Personnel", "sales_personnel", "sales123",      "#ea580c"),
         ]

@@ -1,9 +1,58 @@
+import random
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime, date, timedelta
 import config
 import db
 import auth
+
+# Category-specific wholesale cost range and retail markup multipliers:
+# (min_cost, max_cost, min_markup, max_markup)
+CATEGORY_PRICE_RANGES = {
+    "Analgesics & Antipyretics":      (0.20, 1.50, 2.5, 3.2),
+    "Antibiotics & Antivirals":      (0.45, 2.20, 2.5, 3.1),
+    "Antihistamines & Allergy":      (0.25, 2.50, 2.5, 3.2),
+    "Cardiovascular & Hypertension": (0.25, 1.20, 2.6, 3.2),
+    "Vitamins & Supplements":        (0.15, 0.85, 2.8, 3.5),
+    "Gastrointestinal & Digestive":  (0.20, 1.30, 2.6, 3.2),
+    "Respiratory & Cough Care":      (0.40, 3.50, 2.5, 3.0),
+    "Topical & First Aid":           (0.70, 3.00, 2.4, 2.9),
+}
+
+
+def generate_category_prices(cat_name, cat_id=None):
+    """Generates a realistic cost_price and selling_price pair for a given category."""
+    price_range = CATEGORY_PRICE_RANGES.get(cat_name)
+
+    if price_range is None and cat_id is not None:
+        # Derive range from existing active catalog items in custom categories
+        try:
+            stats = db.execute_query("""
+                SELECT MIN(cost_price) AS min_c, MAX(cost_price) AS max_c,
+                       AVG(selling_price / NULLIF(cost_price, 0)) AS avg_markup
+                FROM products
+                WHERE category_id = %s AND is_active = TRUE AND cost_price BETWEEN 0.05 AND 200
+            """, (cat_id,), fetchone=True)
+            if stats and stats["min_c"] is not None:
+                min_c = max(0.10, float(stats["min_c"]) * 0.85)
+                max_c = max(min_c + 0.25, float(stats["max_c"]) * 1.15)
+                avg_m = float(stats["avg_markup"] or 2.8)
+                price_range = (min_c, max_c, max(1.8, avg_m * 0.9), max(2.2, avg_m * 1.1))
+        except Exception:
+            pass
+
+    if price_range is None:
+        price_range = (0.50, 3.50, 2.4, 3.1)
+
+    min_c, max_c, min_m, max_m = price_range
+    raw_cost = random.uniform(min_c, max_c)
+    cost = max(0.10, round(raw_cost * 20) / 20)
+
+    markup = random.uniform(min_m, max_m)
+    raw_sell = max(cost + 0.25, cost * markup)
+    sell = max(cost + 0.25, round(raw_sell * 20) / 20)
+
+    return f"{cost:.2f}", f"{sell:.2f}"
 
 class InventoryScreen(tk.Frame):
     def __init__(self, parent, controller):
@@ -228,7 +277,7 @@ class InventoryScreen(tk.Frame):
     def open_product_form(self, title, existing_data=None):
         dlg = tk.Toplevel(self)
         dlg.title(title)
-        dlg.geometry("520x640")
+        dlg.geometry("590x640")
         dlg.configure(bg=config.COLORS["background"])
         dlg.transient(self)
         dlg.grab_set()
@@ -244,6 +293,7 @@ class InventoryScreen(tk.Frame):
 
         form_frame = tk.Frame(dlg, bg=config.COLORS["surface"], padx=25, pady=20, highlightbackground=config.COLORS["border"], highlightthickness=1)
         form_frame.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+        form_frame.grid_columnconfigure(1, weight=1)
 
         # Field Helper
         entries = {}
@@ -283,6 +333,38 @@ class InventoryScreen(tk.Frame):
         exp_val = existing_data["expiry_date"].strftime("%Y-%m-%d") if existing_data and hasattr(existing_data["expiry_date"], "strftime") else (str(existing_data["expiry_date"]) if existing_data else (date.today() + timedelta(days=365)).strftime("%Y-%m-%d"))
         add_field(8, "Expiry (YYYY-MM-DD) *", "expiry", exp_val)
         add_field(9, "Unit (piece/box/strip)", "unit", existing_data["unit"] if existing_data else "piece")
+
+        def regenerate_prices():
+            cat_name = entries["category"].get()
+            if not cat_name:
+                return
+            cat_id = cat_dict.get(cat_name)
+            new_cost, new_sell = generate_category_prices(cat_name, cat_id)
+            entries["cost"].delete(0, "end")
+            entries["cost"].insert(0, new_cost)
+            entries["price"].delete(0, "end")
+            entries["price"].insert(0, new_sell)
+
+        btn_regen = tk.Button(
+            form_frame,
+            text="↻ Auto Price",
+            font=config.FONTS["small"],
+            bg=config.COLORS["surface_alt"],
+            fg=config.COLORS["secondary_dark"],
+            relief="flat",
+            cursor="hand2",
+            padx=8,
+            pady=4,
+            highlightbackground=config.COLORS["border"],
+            highlightthickness=1,
+            command=regenerate_prices
+        )
+        btn_regen.grid(row=4, column=2, rowspan=2, padx=(8, 0), sticky="ns", pady=4)
+
+        if existing_data is None:
+            # Automatically regenerate cost & selling prices when adding a product
+            regenerate_prices()
+            entries["category"].bind("<<ComboboxSelected>>", lambda e: regenerate_prices())
 
         # Save Action
         def save():
