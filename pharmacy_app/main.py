@@ -7,7 +7,9 @@ from pathlib import Path
 os.environ.setdefault("MPLCONFIGDIR", tempfile.gettempdir())
 
 import tkinter as tk
+import tkinter.font as tkfont
 from tkinter import ttk, messagebox
+from datetime import datetime
 from PIL import Image, ImageTk, ImageDraw, ImageFont
 
 import config
@@ -254,7 +256,7 @@ class MainWindow(tk.Tk):
         self.build_app_shell()
         self.navigate_to("dashboard")
 
-    def _make_circle_avatar(self, initials, size=36, bg_color=_LIME, text_color="#071d32"):
+    def _make_circle_avatar(self, initials, size=36, bg_color=_LIME, text_color="#071d32", font_size=None):
         """Generates supersampled circular avatar image with user initials."""
         scale = 3
         s = size * scale
@@ -266,8 +268,9 @@ class MainWindow(tk.Tk):
         if not font_path.exists():
             font_path = _ASSETS_DIR / "fonts" / "Inter.ttf"
 
+        pt = font_size if font_size is not None else max(11, int(size * 0.35))
         try:
-            font = ImageFont.truetype(str(font_path), int(13 * scale))
+            font = ImageFont.truetype(str(font_path), int(pt * scale))
         except Exception:
             font = ImageFont.load_default()
 
@@ -543,28 +546,296 @@ class MainWindow(tk.Tk):
         if self.current_screen:
             self.current_screen.pack(fill="both", expand=True)
 
+    def _make_pill_badge(self, parent, text, fill_color, text_color, parent_bg, border_color=None):
+        """Creates a smooth antialiased rounded pill badge label."""
+        fnt = tkfont.Font(family="Segoe UI", size=8, weight="bold")
+        tw = fnt.measure(text)
+        pill_w = max(56, tw + 24)
+        pill_h = 24
+        scale = 3
+        sw, sh = pill_w * scale, pill_h * scale
+        r = (pill_h * scale) // 2
+
+        img = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        if border_color:
+            d.rounded_rectangle([1, 1, sw - 2, sh - 2], radius=r, fill=fill_color, outline=border_color, width=scale)
+        else:
+            d.rounded_rectangle([0, 0, sw - 1, sh - 1], radius=r, fill=fill_color)
+
+        final_img = img.resize((pill_w, pill_h), Image.LANCZOS)
+        photo = ImageTk.PhotoImage(final_img)
+        if not hasattr(self, "_avatar_photos"):
+            self._avatar_photos = []
+        self._avatar_photos.append(photo)
+
+        lbl = tk.Label(
+            parent,
+            image=photo,
+            text=text,
+            compound="center",
+            font=("Segoe UI", 8, "bold"),
+            fg=text_color,
+            bg=parent_bg,
+            bd=0,
+            padx=0,
+            pady=0
+        )
+        return lbl
+
+    def _create_rounded_card(self, parent, fill_color, parent_bg, border_color=None, radius=14, pad_x=28, pad_y=24):
+        """Creates a responsive Canvas-backed card with smooth antialiased rounded corners."""
+        canvas = tk.Canvas(parent, bg=parent_bg, bd=0, highlightthickness=0)
+        inner = tk.Frame(canvas, bg=fill_color)
+        win_id = canvas.create_window(pad_x, pad_y, window=inner, anchor="nw")
+        state = {"last_size": (0, 0), "photo": None, "bg_id": None}
+
+        def _redraw_bg(w, h):
+            if w < 20 or h < 20:
+                return
+            if state["last_size"] == (w, h):
+                return
+            state["last_size"] = (w, h)
+            scale = 2
+            sw, sh = w * scale, h * scale
+            r = radius * scale
+            img = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+            d = ImageDraw.Draw(img)
+            if border_color:
+                d.rounded_rectangle([1, 1, sw - 2, sh - 2], radius=r, fill=fill_color, outline=border_color, width=scale)
+            else:
+                d.rounded_rectangle([0, 0, sw - 1, sh - 1], radius=r, fill=fill_color)
+            final_img = img.resize((w, h), Image.LANCZOS)
+            state["photo"] = ImageTk.PhotoImage(final_img)
+            if state["bg_id"] is None:
+                state["bg_id"] = canvas.create_image(0, 0, image=state["photo"], anchor="nw")
+                canvas.tag_lower(state["bg_id"])
+            else:
+                canvas.itemconfig(state["bg_id"], image=state["photo"])
+
+        def _on_inner_configure(e):
+            req_h = inner.winfo_reqheight() + 2 * pad_y
+            if canvas.winfo_reqheight() != req_h:
+                canvas.configure(height=req_h)
+
+        def _on_canvas_configure(e):
+            w, h = e.width, e.height
+            canvas.itemconfig(win_id, width=max(10, w - 2 * pad_x))
+            _redraw_bg(w, h)
+
+        inner.bind("<Configure>", _on_inner_configure)
+        canvas.bind("<Configure>", _on_canvas_configure)
+        return canvas, inner
+
     def create_profile_view(self, parent):
         user = auth.SessionManager.get_user() or {}
-        frame = tk.Frame(parent, bg=config.COLORS["background"], padx=30, pady=25)
+        page_bg = config.COLORS["background"]
+        hero_bg = "#0c1b2e"
+        card_bg = "#ffffff"
+        card_border = "#e6ebf1"
+        divider_col = "#eef2f6"
+        text_dark = "#0f172a"
+        text_muted = "#64748b"
+        lime_col = "#b4e633"
 
-        card = tk.Frame(frame, bg=config.COLORS["surface"], padx=30, pady=25, highlightbackground=config.COLORS["border"], highlightthickness=1)
-        card.pack(fill="x", anchor="n")
+        full_name = user.get("full_name") or "System Administrator"
+        username = user.get("username") or "admin"
+        email = user.get("email") or "admin@pharmacare.local"
+        role_raw = user.get("role") or config.ROLE_ADMIN
+        role_label = config.ROLE_DISPLAY_NAMES.get(role_raw, role_raw)
 
-        tk.Label(card, text="👤 User Profile", font=config.FONTS["h2"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"]).pack(anchor="w", pady=(0, 15))
+        # Format session start time as YYYY-MM-DD · HH:MM
+        raw_login = user.get("last_login")
+        if isinstance(raw_login, datetime):
+            started_str = raw_login.strftime("%Y-%m-%d · %H:%M")
+        elif raw_login:
+            s_val = str(raw_login).strip()
+            try:
+                dt = datetime.fromisoformat(s_val)
+                started_str = dt.strftime("%Y-%m-%d · %H:%M")
+            except Exception:
+                started_str = s_val[:16].replace(" ", " · ")
+        else:
+            started_str = datetime.now().strftime("%Y-%m-%d · %H:%M")
 
-        details = [
-            ("Full Name:", user.get("full_name", "N/A")),
-            ("Username:", user.get("username", "N/A")),
-            ("Email Address:", user.get("email", "N/A")),
-            ("Assigned Role:", config.ROLE_DISPLAY_NAMES.get(user.get("role"), user.get("role"))),
-            ("Active Session Started:", str(user.get("last_login", "Just now")))
+        words = full_name.split()
+        initials = "".join(w[0].upper() for w in words[:2]) if words else "SA"
+
+        frame = tk.Frame(parent, bg=page_bg, padx=34, pady=26)
+
+        # ── Page Header ───────────────────────────────────────────────────────
+        tk.Label(
+            frame,
+            text="My Profile",
+            font=("Segoe UI", 18, "bold"),
+            bg=page_bg,
+            fg=text_dark
+        ).pack(anchor="w", pady=(0, 18))
+
+        # ── Hero Banner Card ──────────────────────────────────────────────────
+        hero_card, hero_inner = self._create_rounded_card(
+            frame,
+            fill_color=hero_bg,
+            parent_bg=page_bg,
+            border_color=None,
+            radius=14,
+            pad_x=28,
+            pad_y=24
+        )
+        hero_card.pack(fill="x", pady=(0, 20))
+
+        avatar_big = self._make_circle_avatar(
+            initials,
+            size=72,
+            bg_color=lime_col,
+            text_color="#0c1b2e",
+            font_size=22
+        )
+        tk.Label(hero_inner, image=avatar_big, bg=hero_bg, bd=0).pack(side="left", padx=(0, 22))
+
+        hero_info = tk.Frame(hero_inner, bg=hero_bg)
+        hero_info.pack(side="left", fill="x", expand=True)
+
+        tk.Label(
+            hero_info,
+            text=full_name,
+            font=("Segoe UI", 17, "bold"),
+            bg=hero_bg,
+            fg="#ffffff"
+        ).pack(anchor="w")
+
+        tk.Label(
+            hero_info,
+            text=email,
+            font=("Segoe UI", 10),
+            bg=hero_bg,
+            fg="#94a3b8"
+        ).pack(anchor="w", pady=(2, 10))
+
+        badges_row = tk.Frame(hero_info, bg=hero_bg)
+        badges_row.pack(anchor="w")
+
+        role_pill = self._make_pill_badge(
+            badges_row,
+            text=role_label,
+            fill_color=lime_col,
+            text_color="#0c1b2e",
+            parent_bg=hero_bg
+        )
+        role_pill.pack(side="left")
+
+        session_pill = self._make_pill_badge(
+            badges_row,
+            text="Session active",
+            fill_color="#132338",
+            text_color="#e2e8f0",
+            parent_bg=hero_bg,
+            border_color="#2a3f5a"
+        )
+        session_pill.pack(side="left", padx=(8, 0))
+
+        # ── Bottom Two-Column Cards Row ───────────────────────────────────────
+        cards_row = tk.Frame(frame, bg=page_bg)
+        cards_row.pack(fill="x", anchor="n")
+        cards_row.grid_columnconfigure(0, weight=65)
+        cards_row.grid_columnconfigure(1, weight=35)
+
+        # Left Card: Account details
+        acct_card, acct_inner = self._create_rounded_card(
+            cards_row,
+            fill_color=card_bg,
+            parent_bg=page_bg,
+            border_color=card_border,
+            radius=14,
+            pad_x=28,
+            pad_y=24
+        )
+        acct_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+
+        tk.Label(
+            acct_inner,
+            text="Account details",
+            font=("Segoe UI", 12, "bold"),
+            bg=card_bg,
+            fg=text_dark
+        ).pack(anchor="w", pady=(0, 14))
+
+        acct_grid = tk.Frame(acct_inner, bg=card_bg)
+        acct_grid.pack(fill="x")
+        acct_grid.grid_columnconfigure(0, weight=1, uniform="acct_col")
+        acct_grid.grid_columnconfigure(1, weight=1, uniform="acct_col")
+
+        acct_fields = [
+            (0, 0, "FULL NAME", full_name, (0, 16), (0, 14)),
+            (0, 1, "USERNAME", username, (16, 0), (0, 14)),
+            (1, 0, "EMAIL ADDRESS", email, (0, 16), (0, 4)),
+            (1, 1, "ASSIGNED ROLE", role_label, (16, 0), (0, 4)),
         ]
 
-        for lbl, val in details:
-            row = tk.Frame(card, bg=config.COLORS["surface"], pady=6)
-            row.pack(fill="x")
-            tk.Label(row, text=lbl, font=config.FONTS["body_bold"], width=24, anchor="w", bg=config.COLORS["surface"], fg=config.COLORS["text_muted"]).pack(side="left")
-            tk.Label(row, text=val, font=config.FONTS["body"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"]).pack(side="left")
+        for r_idx, c_idx, lbl_txt, val_txt, px, py_bot in acct_fields:
+            cell = tk.Frame(acct_grid, bg=card_bg)
+            cell.grid(row=r_idx, column=c_idx, sticky="ew", padx=px)
+
+            tk.Frame(cell, bg=divider_col, height=1).pack(fill="x", pady=(0, 12))
+            tk.Label(
+                cell,
+                text=lbl_txt,
+                font=("Segoe UI", 8, "bold"),
+                bg=card_bg,
+                fg=text_muted
+            ).pack(anchor="w")
+            tk.Label(
+                cell,
+                text=val_txt,
+                font=("Segoe UI", 10, "bold"),
+                bg=card_bg,
+                fg=text_dark
+            ).pack(anchor="w", pady=(3, py_bot[1]))
+
+        # Right Card: Current session
+        sess_card, sess_inner = self._create_rounded_card(
+            cards_row,
+            fill_color=card_bg,
+            parent_bg=page_bg,
+            border_color=card_border,
+            radius=14,
+            pad_x=28,
+            pad_y=24
+        )
+        sess_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
+
+        tk.Label(
+            sess_inner,
+            text="Current session",
+            font=("Segoe UI", 12, "bold"),
+            bg=card_bg,
+            fg=text_dark
+        ).pack(anchor="w", pady=(0, 14))
+
+        sess_fields = [
+            ("STARTED", started_str, 14),
+            ("STATUS", "Active", 4),
+        ]
+
+        for lbl_txt, val_txt, bot_pad in sess_fields:
+            s_cell = tk.Frame(sess_inner, bg=card_bg)
+            s_cell.pack(fill="x")
+
+            tk.Frame(s_cell, bg=divider_col, height=1).pack(fill="x", pady=(0, 12))
+            tk.Label(
+                s_cell,
+                text=lbl_txt,
+                font=("Segoe UI", 8, "bold"),
+                bg=card_bg,
+                fg=text_muted
+            ).pack(anchor="w")
+            tk.Label(
+                s_cell,
+                text=val_txt,
+                font=("Segoe UI", 10, "bold"),
+                bg=card_bg,
+                fg=text_dark
+            ).pack(anchor="w", pady=(3, bot_pad))
 
         return frame
 
