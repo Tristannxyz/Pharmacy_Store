@@ -30,6 +30,7 @@ class AnalysisScreen(tk.Frame):
 
         self.current_task = "product_demand"
         self.metadata = {}
+        self._mpl_charts = []
         self.load_current_metadata()
 
         self.setup_ui()
@@ -363,6 +364,7 @@ class AnalysisScreen(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.chart_container)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig, ax, canvas))
 
     def render_result_chart_demand(self, res):
         for widget in self.chart_container.winfo_children():
@@ -389,6 +391,7 @@ class AnalysisScreen(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.chart_container)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig, ax, canvas))
 
     def render_result_chart_revenue(self, res):
         for widget in self.chart_container.winfo_children():
@@ -415,6 +418,7 @@ class AnalysisScreen(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.chart_container)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig, ax, canvas))
 
     def render_result_chart_slow_moving(self, res):
         for widget in self.chart_container.winfo_children():
@@ -443,6 +447,7 @@ class AnalysisScreen(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.chart_container)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig, ax, canvas))
 
     def render_result_chart_best_selling(self, res):
         for widget in self.chart_container.winfo_children():
@@ -469,6 +474,7 @@ class AnalysisScreen(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=self.chart_container)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig, ax, canvas))
 
     def build_metrics_view(self, parent):
         scroll_c = tk.Canvas(parent, bg=config.COLORS["background"], highlightthickness=0)
@@ -611,6 +617,7 @@ class AnalysisScreen(tk.Frame):
         canvas1 = FigureCanvasTkAgg(fig1, master=c1_frame)
         canvas1.draw()
         canvas1.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig1, ax1, canvas1))
 
         # Chart 2: Feature Importance
         c2_frame = tk.Frame(charts_row, bg=config.COLORS["surface"], padx=15, pady=15, highlightbackground=config.COLORS["border"], highlightthickness=1)
@@ -637,6 +644,7 @@ class AnalysisScreen(tk.Frame):
         canvas2 = FigureCanvasTkAgg(fig2, master=c2_frame)
         canvas2.draw()
         canvas2.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append((fig2, ax2, canvas2))
 
     def build_dataset_view(self, parent):
         top_bar = tk.Frame(parent, bg=config.COLORS["surface"], padx=15, pady=12, highlightbackground=config.COLORS["border"], highlightthickness=1)
@@ -668,6 +676,31 @@ class AnalysisScreen(tk.Frame):
             # Insert preview rows (first 300 rows for smooth UI rendering)
             for _, row in df.head(300).iterrows():
                 tree.insert("", "end", values=list(row))
+
+    def apply_theme(self):
+        """Updates active Matplotlib figures in place when toggling Light/Dark theme."""
+        c = config.COLORS
+        alive = []
+        for fig, ax, canvas in self._mpl_charts:
+            try:
+                if not canvas.get_tk_widget().winfo_exists():
+                    continue
+            except Exception:
+                continue
+            alive.append((fig, ax, canvas))
+            fig.set_facecolor(c["surface"])
+            ax.set_facecolor(c["surface"])
+            ax.title.set_color(c["text_dark"])
+            ax.xaxis.label.set_color(c["text_muted"])
+            ax.yaxis.label.set_color(c["text_muted"])
+            ax.tick_params(colors=c["text_muted"], labelsize=8)
+            for spine in ax.spines.values():
+                spine.set_color(c["border"])
+            for txt in ax.texts:
+                txt.set_color(c["text_dark"])
+            ax.grid(True, linestyle="--", alpha=0.5, color=c["border"])
+            canvas.draw_idle()
+        self._mpl_charts = alive
 
     def handle_retrain(self):
         if messagebox.askyesno("Confirm Retraining", f"Trigger full retraining and hyperparameter tuning for task '{self.current_task}'?\n\nThis will re-fit models, calculate CV scores, and update saved .joblib files."):

@@ -19,27 +19,21 @@ from PIL import Image, ImageTk, ImageDraw
 import config
 import db
 import auth
+from theme import SmoothScroller
 
 
-# ── Design Tokens Matching Dashboard Reference ────────────────────────────────
-_BG           = "#f8fafc"   # Clean light slate canvas
-_SURFACE      = "#ffffff"   # Crisp white card surface
-_BORDER       = "#e2e8f0"   # Subtle card border
-_TEXT_DARK    = "#0f172a"   # Deep slate charcoal
-_TEXT_MUTED   = "#64748b"   # Slate muted text
-_TEXT_SUBTLE  = "#94a3b8"   # Slate subtle text
+# ── Accent Tokens Shared Across Themes ────────────────────────────────────────
 _LIME         = "#a3e635"   # Vibrant lime accent
 _TEAL         = "#0d9488"   # Primary teal brand
 _TEAL_LIGHT   = "#14b8a6"   # Light teal
 _BLUE         = "#2563eb"   # Royal blue
 _AMBER        = "#f59e0b"   # Amber warning
 _RED          = "#ef4444"   # Red danger
-_SLATE_ICON   = "#475569"   # Muted slate icon color
 
 
 class DashboardScreen(tk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent, bg=_BG)
+        super().__init__(parent, bg=config.COLORS["background"])
         self.parent = parent
         self.controller = controller
         self.user = auth.SessionManager.get_user() or {}
@@ -47,17 +41,24 @@ class DashboardScreen(tk.Frame):
 
         # Protect all rendered Pillow PhotoImages from garbage collection
         self._img_refs = []
+        self._kpi_icon_refs = []
+        self._pill_refs = []
+        self._mpl_charts = []
 
         self.setup_ui()
+
+    def _theme(self):
+        return config.COLORS
 
     # ──────────────────────────────────────────────────────────────────────────
     # UI SETUP & SCROLLABLE CONTAINER
     # ──────────────────────────────────────────────────────────────────────────
     def setup_ui(self):
+        c = self._theme()
         # Master scrollable canvas for responsive viewport sizing
-        self.canvas = tk.Canvas(self, bg=_BG, highlightthickness=0)
+        self.canvas = tk.Canvas(self, bg=c["background"], highlightthickness=0)
         self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = tk.Frame(self.canvas, bg=_BG, padx=28, pady=20)
+        self.scrollable_frame = tk.Frame(self.canvas, bg=c["background"], padx=28, pady=20)
 
         self.scrollable_frame.bind(
             "<Configure>",
@@ -76,15 +77,17 @@ class DashboardScreen(tk.Frame):
             lambda e: self.canvas.itemconfig(self.canvas_window, width=e.width)
         )
 
-        # Mousewheel scroll binding for smooth navigation
+        # Smooth momentum scrolling for dashboard canvas
+        self._scroller = SmoothScroller(self.canvas, friction=0.82, speed_factor=3.5)
         self.bind_all("<MouseWheel>", self._on_mousewheel)
 
         self.render_content()
+        self._scroller.attach_hover(self.canvas, self.scrollable_frame)
 
     def _on_mousewheel(self, event):
         # Only scroll if scrollable canvas exists and is visible
         if self.canvas.winfo_exists():
-            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+            return self._scroller.on_wheel(event)
 
     def destroy(self):
         # Clean up mousewheel binding on screen destroy
@@ -166,8 +169,10 @@ class DashboardScreen(tk.Frame):
         self._img_refs.append(photo)
         return photo
 
-    def _draw_pill_bar(self, width, height, fill_pct, fill_color, bg_color="#e2e8f0"):
+    def _draw_pill_bar(self, width, height, fill_pct, fill_color, bg_color=None):
         """Generates supersampled rounded pill progress bars."""
+        if bg_color is None:
+            bg_color = self._theme()["pill_track"]
         scale = 2
         sw = max(10, int(width * scale))
         sh = max(4, int(height * scale))
@@ -271,10 +276,18 @@ class DashboardScreen(tk.Frame):
     # RENDER MAIN DASHBOARD
     # ──────────────────────────────────────────────────────────────────────────
     def render_content(self):
+        c = self._theme()
+        self.config(bg=c["background"])
+        self.canvas.config(bg=c["background"])
+        self.scrollable_frame.config(bg=c["background"])
+
         # Clear existing widgets & image references
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
         self._img_refs.clear()
+        self._kpi_icon_refs.clear()
+        self._pill_refs.clear()
+        self._mpl_charts.clear()
 
         metrics = self.fetch_metrics()
 
@@ -291,18 +304,19 @@ class DashboardScreen(tk.Frame):
     # HEADER SECTION
     # ──────────────────────────────────────────────────────────────────────────
     def _render_header(self):
-        header = tk.Frame(self.scrollable_frame, bg=_BG)
+        c = self._theme()
+        header = tk.Frame(self.scrollable_frame, bg=c["background"])
         header.pack(fill="x", pady=(0, 20))
 
         # Top status line: Green dot + DB connected + User
-        status_line = tk.Frame(header, bg=_BG)
+        status_line = tk.Frame(header, bg=c["background"])
         status_line.pack(anchor="w", pady=(0, 6))
 
         tk.Label(
             status_line,
             text="●",
             font=("Segoe UI", 8),
-            bg=_BG,
+            bg=c["background"],
             fg="#10b981"
         ).pack(side="left", padx=(0, 6))
 
@@ -312,37 +326,37 @@ class DashboardScreen(tk.Frame):
             status_line,
             text=f"Database connected ({config.DB_NAME})  •  User: {username} ({role_label})",
             font=("Segoe UI", 9),
-            bg=_BG,
-            fg=_TEXT_MUTED
+            bg=c["background"],
+            fg=c["text_muted"]
         ).pack(side="left")
 
         # Main Greeting row with Actions on Right
-        action_row = tk.Frame(header, bg=_BG)
+        action_row = tk.Frame(header, bg=c["background"])
         action_row.pack(fill="x")
 
         # Left greeting
         user_name = self.user.get("full_name", "System Administrator")
-        left_box = tk.Frame(action_row, bg=_BG)
+        left_box = tk.Frame(action_row, bg=c["background"])
         left_box.pack(side="left", anchor="w")
 
         tk.Label(
             left_box,
             text=f"Welcome back, {user_name}",
             font=("Segoe UI", 20, "bold"),
-            bg=_BG,
-            fg=_TEXT_DARK
+            bg=c["background"],
+            fg=c["text_dark"]
         ).pack(anchor="w")
 
         tk.Label(
             left_box,
             text="Here is how the pharmacy is doing today.",
             font=("Segoe UI", 10),
-            bg=_BG,
-            fg=_TEXT_MUTED
+            bg=c["background"],
+            fg=c["text_muted"]
         ).pack(anchor="w", pady=(2, 0))
 
         # Right buttons: Refresh Data + Role Pill Badge
-        right_box = tk.Frame(action_row, bg=_BG)
+        right_box = tk.Frame(action_row, bg=c["background"])
         right_box.pack(side="right", anchor="e")
 
         # Role Badge (Lime green pill)
@@ -363,20 +377,20 @@ class DashboardScreen(tk.Frame):
             fg="#071d32"
         ).pack()
 
-        # Refresh Data Button (White rounded-card button)
+        # Refresh Data Button
         btn_refresh = tk.Button(
             right_box,
             text="Refresh data",
             font=("Segoe UI", 9, "bold"),
-            bg=_SURFACE,
-            fg=_TEXT_DARK,
-            activebackground="#f1f5f9",
-            activeforeground=_TEXT_DARK,
+            bg=c["surface"],
+            fg=c["text_dark"],
+            activebackground=c["surface_alt"],
+            activeforeground=c["text_dark"],
             relief="flat",
             cursor="hand2",
             padx=16,
             pady=6,
-            highlightbackground=_BORDER,
+            highlightbackground=c["border"],
             highlightthickness=1,
             command=self.refresh_dashboard
         )
@@ -386,11 +400,12 @@ class DashboardScreen(tk.Frame):
     # 6 KPI METRIC CARDS
     # ──────────────────────────────────────────────────────────────────────────
     def _render_kpi_cards(self, metrics):
-        grid_frame = tk.Frame(self.scrollable_frame, bg=_BG)
+        c = self._theme()
+        grid_frame = tk.Frame(self.scrollable_frame, bg=c["background"])
         grid_frame.pack(fill="x", pady=(0, 20))
 
-        for c in range(3):
-            grid_frame.grid_columnconfigure(c, weight=1, uniform="kpi")
+        for col_idx in range(3):
+            grid_frame.grid_columnconfigure(col_idx, weight=1, uniform="kpi")
 
         # Top product formatting (shorten if necessary)
         top_name = metrics["top_product_name"]
@@ -399,48 +414,51 @@ class DashboardScreen(tk.Frame):
         else:
             top_name_display = top_name
 
+        slate_icon = c["text_muted"] if config.get_theme() == "dark" else "#475569"
         kpis = [
-            # (row, col, icon_type, color, bg_color, title, value, subtext)
-            (0, 0, "trend", _TEAL,       "#e6f7f4", "Sales Today", f"{config.CURRENCY}{metrics['sales_today']:,.2f}", f"{metrics['sales_today_count']} transactions"),
-            (0, 1, "card",  _BLUE,       "#eff6ff", "Month-to-Date Revenue", f"{config.CURRENCY}{metrics['monthly_revenue']:,.2f}", "Current month"),
-            (0, 2, "box",   _SLATE_ICON, "#f1f5f9", "Total Products", f"{metrics['total_products']:,}", "Active in catalog"),
-            (1, 0, "alert", _RED,        "#fee2e2", "Low-Stock Alerts", f"{metrics['low_stock_count']}", "Needs restocking"),
-            (1, 1, "clock", _AMBER,      "#fef3c7", "Near-Expiry Alerts", f"{metrics['near_expiry_count']}", f"Within {config.EXPIRY_WARN_DAYS} days"),
-            (1, 2, "star",  "#0284c7",   "#e0f2fe", "Top Performing Product", top_name_display, f"{metrics['top_product_qty']} units sold")
+            # (row, col, icon_type, color, bg_key, title, value, subtext)
+            (0, 0, "trend", _TEAL,      "tile_trend_bg", "Sales Today", f"{config.CURRENCY}{metrics['sales_today']:,.2f}", f"{metrics['sales_today_count']} transactions"),
+            (0, 1, "card",  _BLUE,      "tile_card_bg",  "Month-to-Date Revenue", f"{config.CURRENCY}{metrics['monthly_revenue']:,.2f}", "Current month"),
+            (0, 2, "box",   slate_icon, "tile_box_bg",   "Total Products", f"{metrics['total_products']:,}", "Active in catalog"),
+            (1, 0, "alert", _RED,       "tile_alert_bg", "Low-Stock Alerts", f"{metrics['low_stock_count']}", "Needs restocking"),
+            (1, 1, "clock", _AMBER,     "tile_clock_bg", "Near-Expiry Alerts", f"{metrics['near_expiry_count']}", f"Within {config.EXPIRY_WARN_DAYS} days"),
+            (1, 2, "star",  "#0284c7",  "tile_star_bg",  "Top Performing Product", top_name_display, f"{metrics['top_product_qty']} units sold")
         ]
 
-        for row, col, icon_type, color, bg_color, title, value, subtext in kpis:
-            card = self._create_kpi_card(grid_frame, icon_type, color, bg_color, title, value, subtext)
+        for row, col, icon_type, color, bg_key, title, value, subtext in kpis:
+            card = self._create_kpi_card(grid_frame, icon_type, color, bg_key, title, value, subtext)
             card.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
 
-    def _create_kpi_card(self, parent, icon_type, color, bg_color, title, value, subtext):
+    def _create_kpi_card(self, parent, icon_type, color, bg_key, title, value, subtext):
+        c = self._theme()
         card = tk.Frame(
             parent,
-            bg=_SURFACE,
+            bg=c["surface"],
             padx=18,
             pady=16,
-            highlightbackground=_BORDER,
+            highlightbackground=c["border"],
             highlightthickness=1
         )
 
-        top_row = tk.Frame(card, bg=_SURFACE)
+        top_row = tk.Frame(card, bg=c["surface"])
         top_row.pack(fill="x")
 
         # Icon tile on left
-        icon_photo = self._draw_kpi_icon(icon_type, color, bg_color, size=40)
-        lbl_icon = tk.Label(top_row, image=icon_photo, bg=_SURFACE, bd=0)
+        icon_photo = self._draw_kpi_icon(icon_type, color, c[bg_key], size=40)
+        lbl_icon = tk.Label(top_row, image=icon_photo, bg=c["surface"], bd=0)
         lbl_icon.pack(side="left", padx=(0, 14), anchor="n")
+        self._kpi_icon_refs.append((lbl_icon, icon_type, color, bg_key))
 
         # Text stack on right
-        text_box = tk.Frame(top_row, bg=_SURFACE)
+        text_box = tk.Frame(top_row, bg=c["surface"])
         text_box.pack(side="left", fill="both", expand=True)
 
         tk.Label(
             text_box,
             text=title,
             font=("Segoe UI", 9),
-            bg=_SURFACE,
-            fg=_TEXT_MUTED
+            bg=c["surface"],
+            fg=c["text_muted"]
         ).pack(anchor="w")
 
         # Dynamic font sizing: smaller for long text names
@@ -449,16 +467,16 @@ class DashboardScreen(tk.Frame):
             text_box,
             text=str(value),
             font=val_font,
-            bg=_SURFACE,
-            fg=_TEXT_DARK
+            bg=c["surface"],
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(2, 2))
 
         tk.Label(
             text_box,
             text=subtext,
             font=("Segoe UI", 8),
-            bg=_SURFACE,
-            fg=_TEXT_SUBTLE
+            bg=c["surface"],
+            fg=c["text_subtle"]
         ).pack(anchor="w")
 
         return card
@@ -467,7 +485,8 @@ class DashboardScreen(tk.Frame):
     # 4 MAIN ANALYTICS CARDS (2 cols x 2 rows)
     # ──────────────────────────────────────────────────────────────────────────
     def _render_charts(self, metrics):
-        charts_grid = tk.Frame(self.scrollable_frame, bg=_BG)
+        c = self._theme()
+        charts_grid = tk.Frame(self.scrollable_frame, bg=c["background"])
         charts_grid.pack(fill="both", expand=True, pady=(4, 20))
 
         charts_grid.grid_columnconfigure(0, weight=1, uniform="chart")
@@ -487,15 +506,16 @@ class DashboardScreen(tk.Frame):
 
     # ── 1. Trend Line Chart ───────────────────────────────────────────────────
     def _embed_sales_trend(self, parent, row, col):
-        card = tk.Frame(parent, bg=_SURFACE, padx=22, pady=18, highlightbackground=_BORDER, highlightthickness=1)
+        c = self._theme()
+        card = tk.Frame(parent, bg=c["surface"], padx=22, pady=18, highlightbackground=c["border"], highlightthickness=1)
         card.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
 
         tk.Label(
             card,
             text="14-day sales revenue trend",
             font=("Segoe UI", 11, "bold"),
-            bg=_SURFACE,
-            fg=_TEXT_DARK
+            bg=c["surface"],
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(0, 10))
 
         try:
@@ -509,7 +529,7 @@ class DashboardScreen(tk.Frame):
         except Exception:
             trend_data = None
 
-        fig = Figure(figsize=(5.4, 2.6), dpi=100, facecolor=_SURFACE)
+        fig = Figure(figsize=(5.4, 2.6), dpi=100, facecolor=c["surface"])
         ax = fig.add_subplot(111)
 
         if trend_data and len(trend_data) > 0:
@@ -523,7 +543,7 @@ class DashboardScreen(tk.Frame):
                 revenues,
                 marker="o",
                 markersize=4.5,
-                markerfacecolor=_SURFACE,
+                markerfacecolor=c["surface"],
                 markeredgecolor=_TEAL,
                 markeredgewidth=1.8,
                 color=_TEAL,
@@ -539,17 +559,17 @@ class DashboardScreen(tk.Frame):
             ax.set_xticks(x_vals)
             ax.set_xticklabels(dates)
         else:
-            ax.text(0.5, 0.5, "No recent sales recorded", ha="center", va="center", color=_TEXT_MUTED, fontsize=9)
+            ax.text(0.5, 0.5, "No recent sales recorded", ha="center", va="center", color=c["text_muted"], fontsize=9)
 
-        ax.set_facecolor(_SURFACE)
-        ax.tick_params(colors=_TEXT_SUBTLE, labelsize=8)
-        ax.grid(True, axis="y", linestyle="-", alpha=0.7, color="#f1f5f9", linewidth=1)
+        ax.set_facecolor(c["surface"])
+        ax.tick_params(colors=c["text_subtle"], labelsize=8)
+        ax.grid(True, axis="y", linestyle="-", alpha=0.7, color=c["chart_grid"], linewidth=1)
 
         # Minimalist border spines
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.spines["left"].set_visible(False)
-        ax.spines["bottom"].set_color(_BORDER)
+        ax.spines["bottom"].set_color(c["border"])
         ax.spines["bottom"].set_linewidth(1)
 
         fig.subplots_adjust(left=0.08, right=0.96, top=0.92, bottom=0.18)
@@ -557,18 +577,20 @@ class DashboardScreen(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, master=card)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+        self._mpl_charts.append(("trend", fig, ax, canvas, {}))
 
     # ── 2. Top 5 Products Bar List ────────────────────────────────────────────
     def _embed_top_products(self, parent, row, col):
-        card = tk.Frame(parent, bg=_SURFACE, padx=22, pady=18, highlightbackground=_BORDER, highlightthickness=1)
+        c = self._theme()
+        card = tk.Frame(parent, bg=c["surface"], padx=22, pady=18, highlightbackground=c["border"], highlightthickness=1)
         card.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
 
         tk.Label(
             card,
             text="Top 5 products by quantity sold",
             font=("Segoe UI", 11, "bold"),
-            bg=_SURFACE,
-            fg=_TEXT_DARK
+            bg=c["surface"],
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(0, 16))
 
         try:
@@ -596,11 +618,11 @@ class DashboardScreen(tk.Frame):
         max_val = max([int(d["total_qty"]) for d in top_data]) if top_data else 1
         max_val = max(max_val, 1)
 
-        list_container = tk.Frame(card, bg=_SURFACE)
+        list_container = tk.Frame(card, bg=c["surface"])
         list_container.pack(fill="both", expand=True)
 
         for i, item in enumerate(top_data):
-            row_frame = tk.Frame(list_container, bg=_SURFACE, pady=6)
+            row_frame = tk.Frame(list_container, bg=c["surface"], pady=6)
             row_frame.pack(fill="x")
 
             # Clean product name label
@@ -611,8 +633,8 @@ class DashboardScreen(tk.Frame):
                 row_frame,
                 text=name,
                 font=("Segoe UI", 9),
-                bg=_SURFACE,
-                fg=_TEXT_DARK,
+                bg=c["surface"],
+                fg=c["text_dark"],
                 width=18,
                 anchor="w"
             ).pack(side="left", padx=(0, 10))
@@ -623,31 +645,33 @@ class DashboardScreen(tk.Frame):
             pct = qty / max_val
 
             pill_img = self._draw_pill_bar(190, 10, pct, bar_color)
-            lbl_bar = tk.Label(row_frame, image=pill_img, bg=_SURFACE, bd=0)
+            lbl_bar = tk.Label(row_frame, image=pill_img, bg=c["surface"], bd=0)
             lbl_bar.pack(side="left", fill="x", expand=True, padx=(0, 14))
+            self._pill_refs.append((lbl_bar, pct, bar_color, False))
 
             # Right unit count
             tk.Label(
                 row_frame,
                 text=str(qty),
                 font=("Segoe UI", 9, "bold"),
-                bg=_SURFACE,
-                fg=_TEXT_DARK,
+                bg=c["surface"],
+                fg=c["text_dark"],
                 width=3,
                 anchor="e"
             ).pack(side="right")
 
     # ── 3. Sales Breakdown by Category (Donut Chart + Legend) ─────────────────
     def _embed_sales_category(self, parent, row, col):
-        card = tk.Frame(parent, bg=_SURFACE, padx=22, pady=18, highlightbackground=_BORDER, highlightthickness=1)
+        c = self._theme()
+        card = tk.Frame(parent, bg=c["surface"], padx=22, pady=18, highlightbackground=c["border"], highlightthickness=1)
         card.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
 
         tk.Label(
             card,
             text="Sales breakdown by category",
             font=("Segoe UI", 11, "bold"),
-            bg=_SURFACE,
-            fg=_TEXT_DARK
+            bg=c["surface"],
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(0, 12))
 
         try:
@@ -663,7 +687,7 @@ class DashboardScreen(tk.Frame):
         except Exception:
             cat_data = None
 
-        content = tk.Frame(card, bg=_SURFACE)
+        content = tk.Frame(card, bg=c["surface"])
         content.pack(fill="both", expand=True)
 
         # Parse category data
@@ -672,9 +696,9 @@ class DashboardScreen(tk.Frame):
         total_rev = 0.0
 
         if cat_data:
-            for c in cat_data:
-                r = float(c["total_rev"])
-                labels.append(c["name"])
+            for item in cat_data:
+                r = float(item["total_rev"])
+                labels.append(item["name"])
                 revs.append(r)
                 total_rev += r
 
@@ -704,45 +728,46 @@ class DashboardScreen(tk.Frame):
             chart_vals = [max(0.1, r) for r in revs]
 
         # Donut Chart via Matplotlib on left
-        donut_frame = tk.Frame(content, bg=_SURFACE)
+        donut_frame = tk.Frame(content, bg=c["surface"])
         donut_frame.pack(side="left", padx=(0, 15))
 
-        fig = Figure(figsize=(2.3, 2.3), dpi=100, facecolor=_SURFACE)
+        fig = Figure(figsize=(2.3, 2.3), dpi=100, facecolor=c["surface"])
         ax = fig.add_subplot(111)
 
         palette = [_TEAL, _BLUE, _LIME]
         pie_colors = palette[:len(chart_vals)]
 
-        ax.pie(
+        wedges, _ = ax.pie(
             chart_vals,
             colors=pie_colors,
             startangle=90,
             counterclock=False,
-            wedgeprops=dict(width=0.28, edgecolor=_SURFACE, linewidth=2)
+            wedgeprops=dict(width=0.28, edgecolor=c["surface"], linewidth=2)
         )
 
         # Center Percentage & Label Text
-        ax.text(0, 0.08, top_pct_text, ha="center", va="center", fontsize=18, fontweight="bold", color=_TEXT_DARK)
-        ax.text(0, -0.16, top_cat_text, ha="center", va="center", fontsize=9, color=_TEXT_MUTED)
+        txt_pct = ax.text(0, 0.08, top_pct_text, ha="center", va="center", fontsize=18, fontweight="bold", color=c["text_dark"])
+        txt_cat = ax.text(0, -0.16, top_cat_text, ha="center", va="center", fontsize=9, color=c["text_muted"])
 
         fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
         canvas = FigureCanvasTkAgg(fig, master=donut_frame)
         canvas.draw()
         canvas.get_tk_widget().pack()
+        self._mpl_charts.append(("donut", fig, ax, canvas, {"wedges": wedges, "txt_pct": txt_pct, "txt_cat": txt_cat}))
 
         # Legend List on right
-        legend_frame = tk.Frame(content, bg=_SURFACE)
+        legend_frame = tk.Frame(content, bg=c["surface"])
         legend_frame.pack(side="left", fill="both", expand=True, padx=(10, 0))
 
         color_tags = [_TEAL, _BLUE, _LIME]
         for i, (name, pct) in enumerate(zip(display_names, percentages)):
-            item_row = tk.Frame(legend_frame, bg=_SURFACE, pady=8)
+            item_row = tk.Frame(legend_frame, bg=c["surface"], pady=8)
             item_row.pack(fill="x")
 
-            col = color_tags[i % len(color_tags)]
+            col_tag = color_tags[i % len(color_tags)]
             # Colored rounded marker square
-            dot = tk.Frame(item_row, bg=col, width=10, height=10)
+            dot = tk.Frame(item_row, bg=col_tag, width=10, height=10)
             dot.pack(side="left", padx=(0, 10))
             dot.pack_propagate(False)
 
@@ -750,8 +775,8 @@ class DashboardScreen(tk.Frame):
                 item_row,
                 text=name,
                 font=("Segoe UI", 9),
-                bg=_SURFACE,
-                fg=_TEXT_DARK,
+                bg=c["surface"],
+                fg=c["text_dark"],
                 anchor="w"
             ).pack(side="left")
 
@@ -759,22 +784,23 @@ class DashboardScreen(tk.Frame):
                 item_row,
                 text=f"{pct}%",
                 font=("Segoe UI", 9, "bold"),
-                bg=_SURFACE,
-                fg=_TEXT_DARK,
+                bg=c["surface"],
+                fg=c["text_dark"],
                 anchor="e"
             ).pack(side="right")
 
     # ── 4. Stock Health Distribution ──────────────────────────────────────────
     def _embed_stock_health(self, parent, row, col, metrics):
-        card = tk.Frame(parent, bg=_SURFACE, padx=22, pady=18, highlightbackground=_BORDER, highlightthickness=1)
+        c = self._theme()
+        card = tk.Frame(parent, bg=c["surface"], padx=22, pady=18, highlightbackground=c["border"], highlightthickness=1)
         card.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
 
         tk.Label(
             card,
             text="Stock health distribution",
             font=("Segoe UI", 11, "bold"),
-            bg=_SURFACE,
-            fg=_TEXT_DARK
+            bg=c["surface"],
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(0, 6))
 
         try:
@@ -798,56 +824,57 @@ class DashboardScreen(tk.Frame):
         out = int(counts.get("out_of_stock") or 0)
 
         # Big Stat Header: "57 products in catalog"
-        stat_row = tk.Frame(card, bg=_SURFACE)
+        stat_row = tk.Frame(card, bg=c["surface"])
         stat_row.pack(anchor="w", pady=(0, 14))
 
         tk.Label(
             stat_row,
             text=str(tot),
             font=("Segoe UI", 22, "bold"),
-            bg=_SURFACE,
-            fg=_TEXT_DARK
+            bg=c["surface"],
+            fg=c["text_dark"]
         ).pack(side="left", padx=(0, 8))
 
         tk.Label(
             stat_row,
             text="products in catalog",
             font=("Segoe UI", 9),
-            bg=_SURFACE,
-            fg=_TEXT_MUTED
+            bg=c["surface"],
+            fg=c["text_muted"]
         ).pack(side="left", pady=(6, 0))
 
         # 3 Progress bar rows
         bars = [
             ("Healthy", healthy, healthy / tot, _TEAL),
             ("Low stock", low, low / tot, _AMBER),
-            ("Out of stock", out, out / tot, _RED if out > 0 else "#e2e8f0")
+            ("Out of stock", out, out / tot, _RED if out > 0 else c["pill_track"])
         ]
 
         for label, count, pct, bar_col in bars:
-            r = tk.Frame(card, bg=_SURFACE, pady=5)
+            r = tk.Frame(card, bg=c["surface"], pady=5)
             r.pack(fill="x")
 
             tk.Label(
                 r,
                 text=label,
                 font=("Segoe UI", 9),
-                bg=_SURFACE,
-                fg=_TEXT_DARK,
+                bg=c["surface"],
+                fg=c["text_dark"],
                 width=12,
                 anchor="w"
             ).pack(side="left")
 
             pill_img = self._draw_pill_bar(190, 10, pct, bar_col)
-            lbl_p = tk.Label(r, image=pill_img, bg=_SURFACE, bd=0)
+            lbl_p = tk.Label(r, image=pill_img, bg=c["surface"], bd=0)
             lbl_p.pack(side="left", fill="x", expand=True, padx=(0, 14))
+            self._pill_refs.append((lbl_p, pct, bar_col, count == 0 and label == "Out of stock"))
 
             tk.Label(
                 r,
                 text=str(count),
                 font=("Segoe UI", 9, "bold"),
-                bg=_SURFACE,
-                fg=_TEXT_DARK,
+                bg=c["surface"],
+                fg=c["text_dark"],
                 width=3,
                 anchor="e"
             ).pack(side="right")
@@ -858,9 +885,44 @@ class DashboardScreen(tk.Frame):
             card,
             text=f"{expiry_cnt} products expire within {config.EXPIRY_WARN_DAYS} days.",
             font=("Segoe UI", 8),
-            bg=_SURFACE,
-            fg=_TEXT_MUTED
+            bg=c["surface"],
+            fg=c["text_muted"]
         ).pack(anchor="w", pady=(12, 0))
+
+    def apply_theme(self):
+        """Re-themes dashboard icons, pill tracks, and Matplotlib figures in place without DB re-query."""
+        c = self._theme()
+        for lbl_icon, icon_type, color, bg_key in self._kpi_icon_refs:
+            if lbl_icon.winfo_exists():
+                draw_color = (c["text_muted"] if config.get_theme() == "dark" else "#475569") if icon_type == "box" else color
+                photo = self._draw_kpi_icon(icon_type, draw_color, c[bg_key], size=40)
+                lbl_icon.config(image=photo)
+
+        for lbl_bar, pct, bar_col, is_zero_out in self._pill_refs:
+            if lbl_bar.winfo_exists():
+                use_col = c["pill_track"] if is_zero_out else bar_col
+                photo = self._draw_pill_bar(190, 10, pct, use_col, bg_color=c["pill_track"])
+                lbl_bar.config(image=photo)
+
+        for kind, fig, ax, canvas, extra in self._mpl_charts:
+            fig.set_facecolor(c["surface"])
+            ax.set_facecolor(c["surface"])
+            if kind == "trend":
+                ax.tick_params(colors=c["text_subtle"], labelsize=8)
+                ax.grid(True, axis="y", linestyle="-", alpha=0.7, color=c["chart_grid"], linewidth=1)
+                ax.spines["bottom"].set_color(c["border"])
+                for line in ax.get_lines():
+                    line.set_markerfacecolor(c["surface"])
+                for txt in ax.texts:
+                    txt.set_color(c["text_muted"])
+            elif kind == "donut":
+                for wedge in extra.get("wedges", []):
+                    wedge.set_edgecolor(c["surface"])
+                if "txt_pct" in extra:
+                    extra["txt_pct"].set_color(c["text_dark"])
+                if "txt_cat" in extra:
+                    extra["txt_cat"].set_color(c["text_muted"])
+            canvas.draw_idle()
 
     # ──────────────────────────────────────────────────────────────────────────
     # REFRESH ACTION

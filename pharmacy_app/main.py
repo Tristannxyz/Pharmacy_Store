@@ -13,6 +13,7 @@ from PIL import Image, ImageTk, ImageDraw, ImageFont
 import config
 import db
 import auth
+from theme import ThemeAnimator, collect_transition_targets
 from screens.login import LoginScreen
 from screens.dashboard import DashboardScreen
 
@@ -51,6 +52,9 @@ class MainWindow(tk.Tk):
         self.sidebar = None
         self.content_area = None
         self.current_screen = None
+        self._login_view = None
+        self.btn_theme = None
+        self._theme_animator = ThemeAnimator(self)
 
         # Check / Initialize DB on start
         try:
@@ -67,28 +71,141 @@ class MainWindow(tk.Tk):
         self.show_login_screen()
 
     def setup_ttk_styles(self):
+        c = config.COLORS
         style = ttk.Style(self)
         style.theme_use("clam")
+
+        # Default widget colors for classic tk widgets that omit explicit fg/bg
+        self.option_add("*Label.foreground", c["text_dark"])
+        self.option_add("*Radiobutton.foreground", c["text_dark"])
+        self.option_add("*Radiobutton.selectColor", c["surface_alt"])
+        self.option_add("*Checkbutton.foreground", c["text_dark"])
+        self.option_add("*Checkbutton.selectColor", c["surface_alt"])
+        self.option_add("*Text.foreground", c["text_dark"])
+        self.option_add("*Text.background", c["surface"])
+        self.option_add("*Text.insertBackground", c["text_dark"])
+        self.option_add("*TCombobox*Listbox.background", c["surface"])
+        self.option_add("*TCombobox*Listbox.foreground", c["text_dark"])
+        self.option_add("*TCombobox*Listbox.selectBackground", c["accent"])
+        self.option_add("*TCombobox*Listbox.selectForeground", "#ffffff")
 
         # Treeview styling for data tables
         style.configure(
             "Treeview",
-            background=config.COLORS["surface"],
-            foreground=config.COLORS["text_dark"],
+            background=c["surface"],
+            foreground=c["text_dark"],
             rowheight=28,
-            fieldbackground=config.COLORS["surface"],
+            fieldbackground=c["surface"],
             font=config.FONTS["body"],
             borderwidth=0
         )
         style.configure(
             "Treeview.Heading",
-            background=config.COLORS["surface_alt"],
-            foreground=config.COLORS["text_dark"],
+            background=c["surface_alt"],
+            foreground=c["text_dark"],
             font=config.FONTS["body_bold"],
             relief="flat",
             padding=(6, 6)
         )
-        style.map("Treeview", background=[("selected", config.COLORS["accent"])], foreground=[("selected", "white")])
+        style.map("Treeview.Heading", background=[("active", c["border"])])
+        style.map("Treeview", background=[("selected", c["accent"])], foreground=[("selected", "white")])
+
+        # Entry, Combobox, and Spinbox styling
+        style.configure(
+            "TEntry",
+            fieldbackground=c["surface_alt"],
+            foreground=c["text_dark"],
+            insertcolor=c["text_dark"],
+            bordercolor=c["border"],
+            lightcolor=c["border"],
+            darkcolor=c["border"],
+        )
+        style.configure(
+            "TCombobox",
+            fieldbackground=c["surface_alt"],
+            background=c["surface_alt"],
+            foreground=c["text_dark"],
+            arrowcolor=c["text_muted"],
+            bordercolor=c["border"],
+            lightcolor=c["border"],
+            darkcolor=c["border"],
+        )
+        style.map(
+            "TCombobox",
+            fieldbackground=[("readonly", c["surface_alt"])],
+            foreground=[("readonly", c["text_dark"])],
+            selectbackground=[("readonly", c["surface_alt"])],
+            selectforeground=[("readonly", c["text_dark"])],
+        )
+        style.configure(
+            "TSpinbox",
+            fieldbackground=c["surface_alt"],
+            background=c["surface_alt"],
+            foreground=c["text_dark"],
+            arrowcolor=c["text_muted"],
+            bordercolor=c["border"],
+        )
+
+        # Notebook & Tab styling
+        style.configure("TNotebook", background=c["background"], borderwidth=0)
+        style.configure(
+            "TNotebook.Tab",
+            background=c["surface_alt"],
+            foreground=c["text_muted"],
+            padding=(12, 6),
+            font=config.FONTS["body_bold"],
+            borderwidth=0,
+        )
+        style.map(
+            "TNotebook.Tab",
+            background=[("selected", c["surface"]), ("active", c["border"])],
+            foreground=[("selected", c["text_dark"])],
+        )
+
+        # Scrollbar styling
+        style.configure(
+            "Vertical.TScrollbar",
+            background=c["surface_alt"],
+            troughcolor=c["background"],
+            bordercolor=c["background"],
+            arrowcolor=c["text_muted"],
+        )
+        style.configure(
+            "Horizontal.TScrollbar",
+            background=c["surface_alt"],
+            troughcolor=c["background"],
+            bordercolor=c["background"],
+            arrowcolor=c["text_muted"],
+        )
+
+    def toggle_theme(self):
+        """Smoothly transitions Light/Dark theme in place without tearing down screens."""
+        self._theme_animator.finish_immediately()
+        prev_mode = config.get_theme()
+        new_mode = config.toggle_theme()
+        is_dark = new_mode == "dark"
+
+        self.setup_ttk_styles()
+
+        if self.sidebar is not None:
+            if self.btn_theme is not None and self.btn_theme.winfo_exists():
+                self.btn_theme.config(
+                    text="☀  Light Mode" if is_dark else "🌙  Dark Mode",
+                    fg=_LIME if is_dark else _NAV_INACTIVE_FG,
+                )
+
+            targets = collect_transition_targets(self.main_container, prev_mode, new_mode, in_login=False)
+            if self.current_screen is not None and hasattr(self.current_screen, "apply_theme"):
+                self.current_screen.apply_theme()
+            self._theme_animator.start(targets, duration_ms=180, steps=9)
+        elif self._login_view is not None:
+            targets = collect_transition_targets(self._login_view, prev_mode, new_mode, in_login=True)
+            if hasattr(self._login_view, "apply_theme"):
+                self._login_view.apply_theme()
+            self._theme_animator.start(targets, duration_ms=160, steps=8)
+        else:
+            self.main_container.config(bg=config.COLORS["background"])
+            self.show_login_screen()
 
     def minimize_window(self):
         self.iconify()
@@ -114,16 +231,24 @@ class MainWindow(tk.Tk):
 
     def clear_view(self):
         """Destroys current child widgets in main_container."""
+        self._theme_animator.finish_immediately()
         for widget in self.main_container.winfo_children():
             widget.destroy()
         self.sidebar = None
         self.content_area = None
         self.current_screen = None
+        self._login_view = None
+        self.btn_theme = None
 
     def show_login_screen(self):
         self.clear_view()
-        login_view = LoginScreen(self.main_container, on_login_success=self.on_login_success)
+        login_view = LoginScreen(
+            self.main_container,
+            on_login_success=self.on_login_success,
+            on_toggle_theme=self.toggle_theme,
+        )
         login_view.pack(fill="both", expand=True)
+        self._login_view = login_view
 
     def on_login_success(self, user_data):
         self.build_app_shell()
@@ -168,6 +293,7 @@ class MainWindow(tk.Tk):
 
         # ── Sidebar (Left) Matching Reference ─────────────────────────────────
         self.sidebar = tk.Frame(shell, bg=_SIDEBAR_BG, width=260, padx=16, pady=20)
+        self.sidebar._theme_skip = True
         self.sidebar.pack(side="left", fill="y")
         self.sidebar.pack_propagate(False)
 
@@ -251,9 +377,30 @@ class MainWindow(tk.Tk):
         self.active_key = None
         self.build_navigation_items(role)
 
-        # ── Bottom Logout Action ──────────────────────────────────────────────
+        # ── Bottom Theme Toggle & Logout Action ───────────────────────────────
         bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
         bottom_box.pack(side="bottom", fill="x")
+
+        is_dark = config.get_theme() == "dark"
+        theme_label = "☀  Light Mode" if is_dark else "🌙  Dark Mode"
+        btn_theme = tk.Button(
+            bottom_box,
+            text=theme_label,
+            font=("Segoe UI", 9, "bold"),
+            bg="#0c263e",
+            fg=_LIME if is_dark else _NAV_INACTIVE_FG,
+            activebackground="#1e293b",
+            activeforeground="#ffffff",
+            relief="flat",
+            cursor="hand2",
+            padx=12,
+            pady=8,
+            highlightbackground=_USER_CHIP_BORDER,
+            highlightthickness=1,
+            command=self.toggle_theme
+        )
+        btn_theme.pack(fill="x", pady=(0, 8))
+        self.btn_theme = btn_theme
 
         btn_logout = tk.Button(
             bottom_box,
@@ -288,10 +435,8 @@ class MainWindow(tk.Tk):
         elif role == config.ROLE_ADMIN:
             items.append(("inventory", "◫   Inventory Catalog"))
 
-        if role in [config.ROLE_SALES_PERSONNEL, config.ROLE_INSTRUCTOR]:
+        if role in [config.ROLE_SALES_PERSONNEL, config.ROLE_INSTRUCTOR, config.ROLE_ADMIN]:
             items.append(("sales", "💳   Point of Sale (POS)"))
-        elif role == config.ROLE_ADMIN:
-            items.append(("sales", "💳   Sales History"))
 
         if role in [config.ROLE_ADMIN, config.ROLE_INSTRUCTOR]:
             items.append(("users", "👥   User Management & Logs"))

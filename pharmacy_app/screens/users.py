@@ -425,3 +425,10 @@ class UsersScreen(tk.Frame):
                 )
             )
 
+    def apply_theme(self):
+        """Updates Treeview tag colors when switching themes in place."""
+        c = config.COLORS
+        if hasattr(self, "user_tree") and self.user_tree.winfo_exists():
+            self.user_tree.tag_configure("locked", foreground=c["danger"], font=config.FONTS["body_bold"])
+            self.user_tree.tag_configure("inactive", foreground=c["text_muted"])
+

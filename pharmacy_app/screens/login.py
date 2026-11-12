@@ -25,10 +25,11 @@ _FIELD_FOCUS  = "#0d9488"   # input field focus ring
 
 
 class LoginScreen(tk.Frame):
-    def __init__(self, parent, on_login_success):
+    def __init__(self, parent, on_login_success, on_toggle_theme=None):
         super().__init__(parent, bg=_BG)
         self.parent = parent
         self.on_login_success = on_login_success
+        self.on_toggle_theme = on_toggle_theme
         self._logo_photo = None  # Pillow GC protection
         self._feature_photos = []  # Pillow GC protection for feature icons
 
@@ -78,6 +79,7 @@ class LoginScreen(tk.Frame):
     # ──────────────────────────────────────────────────────────────────────────
     def _build_left_panel(self, parent):
         left_frame = tk.Frame(parent, bg=_PANEL_L, padx=52, pady=44)
+        left_frame._theme_skip = True
         left_frame.pack(side="left", fill="both", expand=True)
 
         hero_box = tk.Frame(left_frame, bg=_PANEL_L)
@@ -185,7 +187,7 @@ class LoginScreen(tk.Frame):
                 fg=_TEXT_MUTED,
                 anchor="w"
             ).pack(anchor="w")
-# daadwd
+
             tk.Frame(hero_box, bg=divider_col, height=1).pack(fill="x")
 
     def _draw_feature_icon(self, icon_key, size=22):
@@ -232,27 +234,55 @@ class LoginScreen(tk.Frame):
     # RIGHT PANEL (Form, Inputs, Lime CTA, Quick Access)
     # ──────────────────────────────────────────────────────────────────────────
     def _build_right_panel(self, parent):
-        right = tk.Frame(parent, bg=_PANEL_R)
+        c = config.COLORS
+        panel_r = c["login_panel_r"]
+        field_bg = c["login_field_bg"]
+        field_border = c["login_field_border"]
+        eye_active_bg = "#0f2f35" if config.get_theme() == "dark" else "#ecfdf5"
+
+        right = tk.Frame(parent, bg=panel_r)
         right.pack(side="right", fill="both", expand=True)
 
-        form = tk.Frame(right, bg=_PANEL_R, padx=50, pady=40)
+        form = tk.Frame(right, bg=panel_r, padx=50, pady=40)
         form.pack(fill="both", expand=True)
+
+        self.btn_theme_toggle = None
+        if self.on_toggle_theme is not None:
+            is_dark = config.get_theme() == "dark"
+            btn_theme = tk.Button(
+                right,
+                text="☀ Light" if is_dark else "🌙 Dark",
+                font=("Segoe UI", 8, "bold"),
+                bg=field_bg,
+                fg=c["text_muted"],
+                activebackground=c["login_pill_hover"],
+                activeforeground=c["text_dark"],
+                relief="flat",
+                cursor="hand2",
+                padx=10,
+                pady=4,
+                highlightbackground=field_border,
+                highlightthickness=1,
+                command=self.on_toggle_theme,
+            )
+            btn_theme.place(relx=1.0, x=-18, y=14, anchor="ne")
+            self.btn_theme_toggle = btn_theme
 
         # ── 1. Welcome Back Heading ───────────────────────────────────────────
         tk.Label(
             form,
             text="Welcome back",
             font=("Segoe UI", 28, "bold"),
-            bg=_PANEL_R,
-            fg="#0f172a"
+            bg=panel_r,
+            fg=c["text_dark"]
         ).pack(anchor="w")
 
         tk.Label(
             form,
             text="Sign in to access your designated workspace.",
             font=("Segoe UI", 10),
-            bg=_PANEL_R,
-            fg="#64748b"
+            bg=panel_r,
+            fg=c["text_muted"]
         ).pack(anchor="w", pady=(3, 20))
 
         # ── 3. Username Field ─────────────────────────────────────────────────
@@ -260,8 +290,8 @@ class LoginScreen(tk.Frame):
             form,
             text="Username",
             font=("Segoe UI", 10, "bold"),
-            bg=_PANEL_R,
-            fg="#334155"
+            bg=panel_r,
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(0, 6))
 
         self.ent_user = self._styled_entry(form)
@@ -273,11 +303,11 @@ class LoginScreen(tk.Frame):
             form,
             text="Password",
             font=("Segoe UI", 10, "bold"),
-            bg=_PANEL_R,
-            fg="#334155"
+            bg=panel_r,
+            fg=c["text_dark"]
         ).pack(anchor="w", pady=(0, 6))
 
-        pwd_row = tk.Frame(form, bg=_PANEL_R)
+        pwd_row = tk.Frame(form, bg=panel_r)
         pwd_row.pack(fill="x", pady=(0, 4))
 
         self.ent_pwd = self._styled_entry(pwd_row, show="•")
@@ -288,13 +318,13 @@ class LoginScreen(tk.Frame):
             pwd_row,
             text="👁",
             font=("Segoe UI Symbol", 11),
-            bg=_FIELD_BG,
-            fg="#64748b",
-            activebackground="#e2e8f0",
-            activeforeground="#0f172a",
+            bg=field_bg,
+            fg=c["text_muted"],
+            activebackground=c["login_pill_hover"],
+            activeforeground=c["text_dark"],
             relief="flat",
             bd=0,
-            highlightbackground=_FIELD_BORDER,
+            highlightbackground=field_border,
             highlightthickness=1,
             cursor="hand2",
             padx=12,
@@ -302,16 +332,21 @@ class LoginScreen(tk.Frame):
             command=self._toggle_pwd
         )
         self.btn_eye.pack(side="right", padx=(8, 0))
-        self.btn_eye.bind("<Enter>", lambda e: self.btn_eye.config(bg="#e2e8f0"))
-        self.btn_eye.bind("<Leave>", lambda e: self.btn_eye.config(bg="#ecfdf5" if self.is_pwd_visible else _FIELD_BG))
+        self.btn_eye.bind("<Enter>", lambda e: self.btn_eye.config(bg=config.COLORS["login_pill_hover"]))
+        self.btn_eye.bind(
+            "<Leave>",
+            lambda e: self.btn_eye.config(
+                bg=("#0f2f35" if config.get_theme() == "dark" else "#ecfdf5") if self.is_pwd_visible else config.COLORS["login_field_bg"]
+            ),
+        )
 
         # ── 5. Feedback / Status Label ────────────────────────────────────────
         self.lbl_msg = tk.Label(
             form,
             text="",
             font=("Segoe UI", 10),
-            bg=_PANEL_R,
-            fg=config.COLORS["danger"],
+            bg=panel_r,
+            fg=c["danger"],
             wraplength=400,
             justify="left"
         )
@@ -337,14 +372,14 @@ class LoginScreen(tk.Frame):
         self.btn_login.bind("<Leave>", lambda e: self.btn_login.config(bg=_LIME))
 
         # ── 7. Quick Access Divider ───────────────────────────────────────────
-        div_row = tk.Frame(form, bg=_PANEL_R)
+        div_row = tk.Frame(form, bg=panel_r)
         div_row.pack(fill="x", pady=(0, 12))
-        tk.Frame(div_row, bg="#e2e8f0", height=1).pack(side="left", fill="x", expand=True, pady=6)
-        tk.Label(div_row, text="   Quick access   ", font=("Segoe UI", 9), bg=_PANEL_R, fg="#94a3b8").pack(side="left")
-        tk.Frame(div_row, bg="#e2e8f0", height=1).pack(side="left", fill="x", expand=True, pady=6)
+        tk.Frame(div_row, bg=c["login_divider"], height=1).pack(side="left", fill="x", expand=True, pady=6)
+        tk.Label(div_row, text="   Quick access   ", font=("Segoe UI", 9), bg=panel_r, fg=c["text_subtle"]).pack(side="left")
+        tk.Frame(div_row, bg=c["login_divider"], height=1).pack(side="left", fill="x", expand=True, pady=6)
 
         # ── 8. Quick Access Demo Pills (2x2 Grid) ─────────────────────────────
-        chips_grid = tk.Frame(form, bg=_PANEL_R)
+        chips_grid = tk.Frame(form, bg=panel_r)
         chips_grid.pack(fill="x")
 
         roles = [
@@ -355,8 +390,8 @@ class LoginScreen(tk.Frame):
         ]
 
         for i, (lbl, u, p, dot_col) in enumerate(roles):
-            r, c = divmod(i, 2)
-            self._create_quick_pill(chips_grid, r, c, lbl, u, p, dot_col)
+            r, col_idx = divmod(i, 2)
+            self._create_quick_pill(chips_grid, r, col_idx, lbl, u, p, dot_col)
 
         # Keybindings
         self.ent_user.bind("<Return>", lambda e: self.ent_pwd.focus_set())
@@ -364,10 +399,16 @@ class LoginScreen(tk.Frame):
 
     def _create_quick_pill(self, parent, r, c, label_text, username, password, dot_col):
         """Creates a clean rounded-styled pill with a colored dot indicator and text."""
+        colors = config.COLORS
+        pill_bg = colors["login_panel_r"]
+        pill_border = colors["login_field_border"]
+        pill_hover = colors["login_pill_hover"]
+        pill_border_hover = colors["login_pill_border_hover"]
+
         pill = tk.Frame(
             parent,
-            bg="#ffffff",
-            highlightbackground="#e2e8f0",
+            bg=pill_bg,
+            highlightbackground=pill_border,
             highlightthickness=1,
             cursor="hand2",
             padx=15,
@@ -376,15 +417,15 @@ class LoginScreen(tk.Frame):
         pill.grid(row=r, column=c, sticky="nsew", padx=5, pady=5)
         parent.grid_columnconfigure(c, weight=1)
 
-        dot = tk.Label(pill, text="●", font=("Segoe UI", 12), bg="#ffffff", fg=dot_col, cursor="hand2")
+        dot = tk.Label(pill, text="●", font=("Segoe UI", 12), bg=pill_bg, fg=dot_col, cursor="hand2")
         dot.pack(side="left", padx=(0, 9))
 
         text_lbl = tk.Label(
             pill,
             text=label_text,
             font=("Segoe UI", 10, "bold"),
-            bg="#ffffff",
-            fg="#1e293b",
+            bg=pill_bg,
+            fg=colors["text_dark"],
             cursor="hand2"
         )
         text_lbl.pack(side="left")
@@ -394,14 +435,16 @@ class LoginScreen(tk.Frame):
             self.fill_quick(username, password, label_text)
 
         def on_enter(e):
-            pill.config(bg="#f8fafc", highlightbackground="#cbd5e1")
-            dot.config(bg="#f8fafc")
-            text_lbl.config(bg="#f8fafc")
+            cur = config.COLORS
+            pill.config(bg=cur["login_pill_hover"], highlightbackground=cur["login_pill_border_hover"])
+            dot.config(bg=cur["login_pill_hover"])
+            text_lbl.config(bg=cur["login_pill_hover"])
 
         def on_leave(e):
-            pill.config(bg="#ffffff", highlightbackground="#e2e8f0")
-            dot.config(bg="#ffffff")
-            text_lbl.config(bg="#ffffff")
+            cur = config.COLORS
+            pill.config(bg=cur["login_panel_r"], highlightbackground=cur["login_field_border"])
+            dot.config(bg=cur["login_panel_r"])
+            text_lbl.config(bg=cur["login_panel_r"])
 
         for widget in (pill, dot, text_lbl):
             widget.bind("<Button-1>", on_click)
@@ -410,14 +453,16 @@ class LoginScreen(tk.Frame):
 
     def _styled_entry(self, parent, show=None):
         """TTK Entry styled with soft modern slate background and teal focus ring."""
+        c = config.COLORS
         style = ttk.Style()
         style.configure(
             "LoginModern.TEntry",
-            fieldbackground=_FIELD_BG,
-            bordercolor=_FIELD_BORDER,
-            lightcolor=_FIELD_BORDER,
-            darkcolor=_FIELD_BORDER,
-            insertcolor="#0f172a",
+            fieldbackground=c["login_field_bg"],
+            foreground=c["text_dark"],
+            bordercolor=c["login_field_border"],
+            lightcolor=c["login_field_border"],
+            darkcolor=c["login_field_border"],
+            insertcolor=c["text_dark"],
             padding=(12, 9)
         )
         style.map(
@@ -430,6 +475,30 @@ class LoginScreen(tk.Frame):
         if show:
             kw["show"] = show
         return ttk.Entry(parent, **kw)
+
+    def apply_theme(self):
+        """Updates ttk entry style, theme button label, and eye button colors in place."""
+        c = config.COLORS
+        is_dark = config.get_theme() == "dark"
+        style = ttk.Style()
+        style.configure(
+            "LoginModern.TEntry",
+            fieldbackground=c["login_field_bg"],
+            foreground=c["text_dark"],
+            bordercolor=c["login_field_border"],
+            lightcolor=c["login_field_border"],
+            darkcolor=c["login_field_border"],
+            insertcolor=c["text_dark"],
+            padding=(12, 9),
+        )
+        if self.btn_theme_toggle is not None and self.btn_theme_toggle.winfo_exists():
+            self.btn_theme_toggle.config(text="☀ Light" if is_dark else "🌙 Dark")
+        if hasattr(self, "btn_eye") and self.btn_eye.winfo_exists():
+            eye_active_bg = "#0f2f35" if is_dark else "#ecfdf5"
+            self.btn_eye.config(
+                bg=eye_active_bg if self.is_pwd_visible else c["login_field_bg"],
+                fg=c["secondary"] if self.is_pwd_visible else c["text_muted"],
+            )
 
     # ──────────────────────────────────────────────────────────────────────────
     # BACKGROUND CONCENTRIC RINGS
@@ -477,13 +546,15 @@ class LoginScreen(tk.Frame):
     # LOGIC & AUTHENTICATION (Unchanged)
     # ──────────────────────────────────────────────────────────────────────────
     def _toggle_pwd(self):
+        c = config.COLORS
+        eye_active_bg = "#0f2f35" if config.get_theme() == "dark" else "#ecfdf5"
         self.is_pwd_visible = not self.is_pwd_visible
         if self.is_pwd_visible:
             self.ent_pwd.config(show="")
-            self.btn_eye.config(text="🙈", bg="#ecfdf5", fg="#0d9488")
+            self.btn_eye.config(text="🙈", bg=eye_active_bg, fg=c["secondary"])
         else:
             self.ent_pwd.config(show="•")
-            self.btn_eye.config(text="👁", bg=_FIELD_BG, fg="#64748b")
+            self.btn_eye.config(text="👁", bg=c["login_field_bg"], fg=c["text_muted"])
 
     def fill_quick(self, username, password, role_label=""):
         self.ent_user.delete(0, tk.END)

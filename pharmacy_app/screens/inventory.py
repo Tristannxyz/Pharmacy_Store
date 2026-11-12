@@ -167,7 +167,7 @@ class InventoryScreen(tk.Frame):
         # Row color tags for alerts
         self.prod_tree.tag_configure("low_stock", foreground=config.COLORS["danger"], font=config.FONTS["body_bold"])
         self.prod_tree.tag_configure("near_expiry", foreground=config.COLORS["warning"])
-        self.prod_tree.tag_configure("expired", foreground="#991b1b", background="#fee2e2")
+        self.prod_tree.tag_configure("expired", foreground=config.COLORS["expired_fg"], background=config.COLORS["expired_bg"])
 
         # Status footer
         self.lbl_prod_count = tk.Label(self.tab_products, text="", font=config.FONTS["small"], bg=config.COLORS["background"], fg=config.COLORS["text_muted"])
@@ -740,4 +740,12 @@ class InventoryScreen(tk.Frame):
 
         btn_save = tk.Button(dlg, text="Save Supplier", font=config.FONTS["body_bold"], bg=config.COLORS["secondary"], fg="white", relief="flat", cursor="hand2", command=save)
         btn_save.pack(pady=(0, 15))
+
+    def apply_theme(self):
+        """Updates Treeview tag colors when switching themes in place."""
+        c = config.COLORS
+        if hasattr(self, "prod_tree") and self.prod_tree.winfo_exists():
+            self.prod_tree.tag_configure("low_stock", foreground=c["danger"], font=config.FONTS["body_bold"])
+            self.prod_tree.tag_configure("near_expiry", foreground=c["warning"])
+            self.prod_tree.tag_configure("expired", foreground=c["expired_fg"], background=c["expired_bg"])
 
