@@ -240,15 +240,33 @@ class ThemeAnimator:
         step_frame()
 
 
+_CURRENT_ACTIVE_CANVAS = None
+_GLOBAL_WHEEL_INITIALIZED = False
+
+def _on_global_mousewheel(event):
+    global _CURRENT_ACTIVE_CANVAS
+    if _CURRENT_ACTIVE_CANVAS is not None and hasattr(_CURRENT_ACTIVE_CANVAS, "_smooth_scroller"):
+        return _CURRENT_ACTIVE_CANVAS._smooth_scroller.on_wheel(event)
+
+
 class SmoothScroller:
     """Provides buttery-smooth momentum scrolling for Tkinter Canvas widgets."""
 
     def __init__(self, canvas, friction=0.82, speed_factor=3.6):
+        global _GLOBAL_WHEEL_INITIALIZED
         self.canvas = canvas
+        self.canvas._smooth_scroller = self
         self.friction = friction
         self.speed_factor = speed_factor
         self.velocity = 0.0
         self._anim_job = None
+
+        if not _GLOBAL_WHEEL_INITIALIZED:
+            try:
+                canvas.bind_all("<MouseWheel>", _on_global_mousewheel)
+                _GLOBAL_WHEEL_INITIALIZED = True
+            except Exception:
+                pass
 
     def on_wheel(self, event):
         delta = event.delta
@@ -289,10 +307,13 @@ class SmoothScroller:
     def attach_hover(self, *widgets):
         """Activates mousewheel globally while cursor hovers any attached widget."""
         def _on_enter(e):
-            self.canvas.bind_all("<MouseWheel>", self.on_wheel)
+            global _CURRENT_ACTIVE_CANVAS
+            _CURRENT_ACTIVE_CANVAS = self.canvas
 
         def _on_leave(e):
-            self.canvas.unbind_all("<MouseWheel>")
+            global _CURRENT_ACTIVE_CANVAS
+            if _CURRENT_ACTIVE_CANVAS == self.canvas:
+                _CURRENT_ACTIVE_CANVAS = None
 
         for w in widgets:
             if hasattr(w, "bind"):

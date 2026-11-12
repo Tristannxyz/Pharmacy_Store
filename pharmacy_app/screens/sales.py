@@ -304,15 +304,16 @@ class ProductCard(tk.Frame):
         )
         lbl_price.pack(anchor="w")
 
+        self.price_box = price_box
+        self.lbl_incart = tk.Label(
+            price_box,
+            text=f"{self.in_cart_qty} in cart",
+            font=("Segoe UI", 8, "bold"),
+            bg=pal["card"],
+            fg=pal["teal"]
+        )
         if self.in_cart_qty > 0:
-            lbl_incart = tk.Label(
-                price_box,
-                text=f"{self.in_cart_qty} in cart",
-                font=("Segoe UI", 8, "bold"),
-                bg=pal["card"],
-                fg=pal["teal"]
-            )
-            lbl_incart.pack(anchor="w")
+            self.lbl_incart.pack(anchor="w")
 
         # 40x40 lime '+' button
         btn_add = tk.Button(
@@ -344,6 +345,20 @@ class ProductCard(tk.Frame):
                 btn_add.config(bg=p["lime"])
         btn_add.bind("<Enter>", on_add_enter)
         btn_add.bind("<Leave>", on_add_leave)
+
+    def update_in_cart_qty(self, new_qty):
+        """Ultra-fast in-place badge and border update without card recreation."""
+        self.in_cart_qty = new_qty
+        pal = get_pos_palette()
+        if new_qty > 0:
+            self.lbl_incart.config(text=f"{new_qty} in cart")
+            if not self.lbl_incart.winfo_ismapped():
+                self.lbl_incart.pack(anchor="w")
+            self.config(highlightbackground=pal["card_active_border"], highlightthickness=2)
+        else:
+            if self.lbl_incart.winfo_ismapped():
+                self.lbl_incart.pack_forget()
+            self.config(highlightbackground=pal["border"], highlightthickness=1)
 
     def _handle_click_add(self):
         self.on_add(self.pdata, 1)
@@ -437,7 +452,7 @@ class CartLine(tk.Frame):
 
         # Line total
         total = float(self.item_data.get("line_total", 0.0))
-        lbl_tot = tk.Label(
+        self.lbl_tot = tk.Label(
             self,
             text=f"{config.CURRENCY}{total:.2f}",
             font=("Segoe UI", 10, "bold"),
@@ -446,7 +461,7 @@ class CartLine(tk.Frame):
             width=7,
             anchor="e"
         )
-        lbl_tot.pack(side="right", padx=(6, 6))
+        self.lbl_tot.pack(side="right", padx=(6, 6))
 
         # Quantity stepper: [ - ] qty [ + ]
         stepper_box = tk.Frame(self, bg=pal["stepper_bg"], highlightbackground=pal["stepper_border"], highlightthickness=1)
@@ -466,7 +481,7 @@ class CartLine(tk.Frame):
         )
         btn_minus.pack(side="left")
 
-        lbl_qty = tk.Label(
+        self.lbl_qty = tk.Label(
             stepper_box,
             text=str(self.item_data.get("qty", 1)),
             font=("Segoe UI", 9, "bold"),
@@ -474,7 +489,7 @@ class CartLine(tk.Frame):
             fg=pal["text"],
             width=3
         )
-        lbl_qty.pack(side="left")
+        self.lbl_qty.pack(side="left")
 
         btn_plus = tk.Button(
             stepper_box,
@@ -489,6 +504,14 @@ class CartLine(tk.Frame):
             command=lambda: self.on_qty_change(self.item_data["product_id"], 1)
         )
         btn_plus.pack(side="left")
+
+    def update_data(self, item_data):
+        """Ultra-fast in-place label update without line recreation."""
+        self.item_data = item_data
+        qty = item_data.get("qty", 1)
+        total = float(item_data.get("line_total", 0.0))
+        self.lbl_qty.config(text=str(qty))
+        self.lbl_tot.config(text=f"{config.CURRENCY}{total:.2f}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -507,6 +530,9 @@ class SalesScreen(tk.Frame):
 
         # Cart state
         self.cart = []  # list of dicts: {"product_id", "sku", "name", "price", "cost", "stock_qty", "qty", "line_total"}
+        self._card_widgets = {}  # prod_id -> ProductCard
+        self._cart_lines = {}    # prod_id -> {"line": CartLine, "divider": tk.Frame or None}
+        self._empty_cart_label = None
         self.selected_category_id = None  # None = "All", "LOW_STOCK" = low stock
         self.active_discount_pct = 0.0
         self.selected_pay_method = "CASH"
@@ -846,19 +872,30 @@ class SalesScreen(tk.Frame):
             btn.pack(side="left", padx=(0, 8), pady=2)
             self.chip_buttons[cid] = btn
 
-            if not is_active:
-                def _c_enter(e, b=btn):
+            def _c_enter(e, b=btn, c_id=cid):
+                if self.selected_category_id != c_id:
                     p = get_pos_palette()
                     b.config(bg=p["border"], fg=p["text"])
-                def _c_leave(e, b=btn):
+            def _c_leave(e, b=btn, c_id=cid):
+                if self.selected_category_id != c_id:
                     p = get_pos_palette()
                     b.config(bg=p["chip"], fg=p["text"])
-                btn.bind("<Enter>", _c_enter)
-                btn.bind("<Leave>", _c_leave)
+            btn.bind("<Enter>", _c_enter)
+            btn.bind("<Leave>", _c_leave)
 
     def _on_chip_selected(self, category_id):
+        if self.selected_category_id == category_id:
+            return
         self.selected_category_id = category_id
-        self.build_category_chips()
+        pal = get_pos_palette()
+        for cid, btn in self.chip_buttons.items():
+            is_active = (cid == category_id)
+            btn.config(
+                bg=pal["chip_active"] if is_active else pal["chip"],
+                fg=pal["chip_active_fg"] if is_active else pal["text"],
+                highlightbackground=pal["chip_active"] if is_active else pal["border"],
+                font=("Segoe UI", 9, "bold" if is_active else "normal")
+            )
         self.filter_products()
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -969,6 +1006,7 @@ class SalesScreen(tk.Frame):
         """Re-draws all cards in the responsive grid."""
         for w in self.cards_inner_frame.winfo_children():
             w.destroy()
+        self._card_widgets.clear()
 
         pal = get_pos_palette()
         paged_items = self._filtered_catalog_products[:ITEMS_PER_PAGE]
@@ -1002,18 +1040,22 @@ class SalesScreen(tk.Frame):
                     in_cart_qty=in_cart_qty
                 )
                 card.grid(row=r, column=c, padx=7, pady=7, sticky="nsew")
+                self._card_widgets[prod["id"]] = card
 
                 if hasattr(self, "_catalog_scroller"):
-                    def _attach_cat(w):
-                        self._catalog_scroller.attach_hover(w)
-                        for ch in w.winfo_children():
-                            _attach_cat(ch)
-                    _attach_cat(card)
+                    self._catalog_scroller.attach_hover(card)
 
         # Update counter footer
         total_matching = len(self._filtered_catalog_products)
         displayed = len(paged_items)
         self.lbl_catalog_count.config(text=f"Showing {displayed} of {total_matching} products")
+
+    def _sync_card_badge(self, prod_id):
+        """Ultra-fast sync of a single product card's badge & border in <0.1ms."""
+        if prod_id in self._card_widgets:
+            in_cart = next((item for item in self.cart if item["product_id"] == prod_id), None)
+            qty = in_cart["qty"] if in_cart else 0
+            self._card_widgets[prod_id].update_in_cart_qty(qty)
 
     # ─────────────────────────────────────────────────────────────────────────
     # RIGHT COLUMN: "Current sale" Panel
@@ -1345,8 +1387,13 @@ class SalesScreen(tk.Frame):
     # Cart State Actions
     # ─────────────────────────────────────────────────────────────────────────
 
+    def _update_cart_header(self):
+        total_items = len(self.cart)
+        total_units = sum(c["qty"] for c in self.cart)
+        self.lbl_cart_units.config(text=f"{total_items} line items · {total_units} units")
+
     def add_product_to_cart(self, prod_data, qty=1):
-        """Adds a unit of product to cart or increments existing quantity."""
+        """Adds a unit of product to cart or increments existing quantity with instant UI response."""
         prod_id = prod_data["id"]
         available_stock = int(prod_data.get("stock_qty", 0))
 
@@ -1364,15 +1411,16 @@ class SalesScreen(tk.Frame):
             )
             return
 
-        # Fetch cost price if not present
         cost = float(prod_data.get("cost_price", 0.0))
         price = float(prod_data.get("selling_price", 0.0))
 
         if existing:
             existing["qty"] += qty
             existing["line_total"] = round(existing["qty"] * price, 2)
+            if prod_id in self._cart_lines:
+                self._cart_lines[prod_id]["line"].update_data(existing)
         else:
-            self.cart.append({
+            new_item = {
                 "product_id": prod_id,
                 "sku": prod_data.get("sku", ""),
                 "name": prod_data.get("name", ""),
@@ -1381,13 +1429,38 @@ class SalesScreen(tk.Frame):
                 "stock_qty": available_stock,
                 "qty": qty,
                 "line_total": round(qty * price, 2)
-            })
+            }
+            self.cart.append(new_item)
 
-        self.refresh_cart_display()
-        self.render_product_cards()
+            if self._empty_cart_label and self._empty_cart_label.winfo_exists():
+                self._empty_cart_label.destroy()
+                self._empty_cart_label = None
+
+            pal = get_pos_palette()
+            div = None
+            if self._cart_lines:
+                div = tk.Frame(self.cart_items_frame, height=1, bg=pal["divider"])
+                div.pack(fill="x")
+
+            line = CartLine(
+                self.cart_items_frame,
+                item_data=new_item,
+                on_qty_change=self.update_cart_item_qty,
+                on_remove=self.remove_cart_item
+            )
+            line.pack(fill="x", expand=True)
+
+            if hasattr(self, "_cart_scroller"):
+                self._cart_scroller.attach_hover(line)
+
+            self._cart_lines[prod_id] = {"line": line, "divider": div}
+
+        self._sync_card_badge(prod_id)
+        self._update_cart_header()
+        self.update_totals()
 
     def update_cart_item_qty(self, prod_id, delta):
-        """Modifies cart item quantity via stepper buttons."""
+        """Modifies cart item quantity in-place via stepper buttons."""
         item = next((c for c in self.cart if c["product_id"] == prod_id), None)
         if not item:
             return
@@ -1404,29 +1477,55 @@ class SalesScreen(tk.Frame):
         item["qty"] = new_qty
         item["line_total"] = round(item["qty"] * item["price"], 2)
 
-        self.refresh_cart_display()
-        self.render_product_cards()
+        if prod_id in self._cart_lines:
+            self._cart_lines[prod_id]["line"].update_data(item)
+
+        self._sync_card_badge(prod_id)
+        self._update_cart_header()
+        self.update_totals()
 
     def remove_cart_item(self, prod_id):
-        """Removes a product line from active cart."""
+        """Removes a product line from active cart without redrawing entire cart."""
         self.cart = [c for c in self.cart if c["product_id"] != prod_id]
-        self.refresh_cart_display()
-        self.render_product_cards()
+        if prod_id in self._cart_lines:
+            entry = self._cart_lines.pop(prod_id)
+            if entry["line"] and entry["line"].winfo_exists():
+                entry["line"].destroy()
+            if entry.get("divider") and entry["divider"].winfo_exists():
+                entry["divider"].destroy()
+
+        if not self.cart:
+            pal = get_pos_palette()
+            if not self._empty_cart_label or not self._empty_cart_label.winfo_exists():
+                self._empty_cart_label = tk.Label(
+                    self.cart_items_frame,
+                    text="Cart is empty\n\nClick '+' on products to add items.",
+                    font=("Segoe UI", 9),
+                    bg=pal["card"],
+                    fg=pal["muted"],
+                    pady=30,
+                    justify="center"
+                )
+                self._empty_cart_label.pack(fill="both", expand=True)
+
+        self._sync_card_badge(prod_id)
+        self._update_cart_header()
+        self.update_totals()
 
     def clear_cart(self):
-        """Clears all items in the cart."""
+        """Clears all items in the cart instantly."""
+        old_ids = [c["product_id"] for c in self.cart]
         self.cart.clear()
-        self.refresh_cart_display()
-        self.render_product_cards()
-
-    def refresh_cart_display(self):
-        """Re-renders cart rows, totals, and buttons."""
-        for w in self.cart_items_frame.winfo_children():
-            w.destroy()
+        for entry in self._cart_lines.values():
+            if entry["line"] and entry["line"].winfo_exists():
+                entry["line"].destroy()
+            if entry.get("divider") and entry["divider"].winfo_exists():
+                entry["divider"].destroy()
+        self._cart_lines.clear()
 
         pal = get_pos_palette()
-        if not self.cart:
-            empty_lbl = tk.Label(
+        if not self._empty_cart_label or not self._empty_cart_label.winfo_exists():
+            self._empty_cart_label = tk.Label(
                 self.cart_items_frame,
                 text="Cart is empty\n\nClick '+' on products to add items.",
                 font=("Segoe UI", 9),
@@ -1435,9 +1534,40 @@ class SalesScreen(tk.Frame):
                 pady=30,
                 justify="center"
             )
-            empty_lbl.pack(fill="both", expand=True)
+            self._empty_cart_label.pack(fill="both", expand=True)
+
+        for pid in old_ids:
+            self._sync_card_badge(pid)
+
+        self._update_cart_header()
+        self.update_totals()
+
+    def refresh_cart_display(self):
+        """Full re-renders cart rows (used on initial build or view switches)."""
+        for w in self.cart_items_frame.winfo_children():
+            w.destroy()
+        self._cart_lines.clear()
+        self._empty_cart_label = None
+
+        pal = get_pos_palette()
+        if not self.cart:
+            self._empty_cart_label = tk.Label(
+                self.cart_items_frame,
+                text="Cart is empty\n\nClick '+' on products to add items.",
+                font=("Segoe UI", 9),
+                bg=pal["card"],
+                fg=pal["muted"],
+                pady=30,
+                justify="center"
+            )
+            self._empty_cart_label.pack(fill="both", expand=True)
         else:
             for idx, item in enumerate(self.cart):
+                div = None
+                if idx > 0:
+                    div = tk.Frame(self.cart_items_frame, height=1, bg=pal["divider"])
+                    div.pack(fill="x")
+
                 line = CartLine(
                     self.cart_items_frame,
                     item_data=item,
@@ -1447,22 +1577,11 @@ class SalesScreen(tk.Frame):
                 line.pack(fill="x", expand=True)
 
                 if hasattr(self, "_cart_scroller"):
-                    def _attach_cart(w):
-                        self._cart_scroller.attach_hover(w)
-                        for ch in w.winfo_children():
-                            _attach_cart(ch)
-                    _attach_cart(line)
+                    self._cart_scroller.attach_hover(line)
 
-                if idx < len(self.cart) - 1:
-                    div = tk.Frame(self.cart_items_frame, height=1, bg=pal["divider"])
-                    div.pack(fill="x")
+                self._cart_lines[item["product_id"]] = {"line": line, "divider": div}
 
-        # Update cart header line
-        total_items = len(self.cart)
-        total_units = sum(c["qty"] for c in self.cart)
-        self.lbl_cart_units.config(text=f"{total_items} line items · {total_units} units")
-
-        # Update totals
+        self._update_cart_header()
         self.update_totals()
 
     def set_discount_pct(self, pct):
