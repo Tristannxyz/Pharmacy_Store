@@ -185,7 +185,7 @@ class LoginScreen(tk.Frame):
                 fg=_TEXT_MUTED,
                 anchor="w"
             ).pack(anchor="w")
-
+# daadwd
             tk.Frame(hero_box, bg=divider_col, height=1).pack(fill="x")
 
     def _draw_feature_icon(self, icon_key, size=22):
