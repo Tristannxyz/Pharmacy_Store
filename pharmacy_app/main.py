@@ -541,7 +541,7 @@ class MainWindow(tk.Tk):
             from screens.analysis import AnalysisScreen
             self.current_screen = AnalysisScreen(self.content_area, self)
         elif screen_name == "profile":
-            self.current_screen = self.create_profile_view(self.content_area)
+            self.current_screen = ProfileScreen(self.content_area, self)
 
         if self.current_screen:
             self.current_screen.pack(fill="both", expand=True)
@@ -583,59 +583,31 @@ class MainWindow(tk.Tk):
         )
         return lbl
 
-    def _create_rounded_card(self, parent, fill_color, parent_bg, border_color=None, radius=14, pad_x=28, pad_y=24):
-        """Creates a responsive Canvas-backed card with smooth antialiased rounded corners."""
-        canvas = tk.Canvas(parent, bg=parent_bg, bd=0, highlightthickness=0)
-        inner = tk.Frame(canvas, bg=fill_color)
-        win_id = canvas.create_window(pad_x, pad_y, window=inner, anchor="nw")
-        state = {"last_size": (0, 0), "photo": None, "bg_id": None}
+    def handle_logout(self):
+        if messagebox.askyesno("Confirm Logout", "Are you sure you want to log out of your session?"):
+            auth.logout_user()
+            self.show_login_screen()
 
-        def _redraw_bg(w, h):
-            if w < 20 or h < 20:
-                return
-            if state["last_size"] == (w, h):
-                return
-            state["last_size"] = (w, h)
-            scale = 2
-            sw, sh = w * scale, h * scale
-            r = radius * scale
-            img = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
-            d = ImageDraw.Draw(img)
-            if border_color:
-                d.rounded_rectangle([1, 1, sw - 2, sh - 2], radius=r, fill=fill_color, outline=border_color, width=scale)
-            else:
-                d.rounded_rectangle([0, 0, sw - 1, sh - 1], radius=r, fill=fill_color)
-            final_img = img.resize((w, h), Image.LANCZOS)
-            state["photo"] = ImageTk.PhotoImage(final_img)
-            if state["bg_id"] is None:
-                state["bg_id"] = canvas.create_image(0, 0, image=state["photo"], anchor="nw")
-                canvas.tag_lower(state["bg_id"])
-            else:
-                canvas.itemconfig(state["bg_id"], image=state["photo"])
 
-        def _on_inner_configure(e):
-            req_h = inner.winfo_reqheight() + 2 * pad_y
-            if canvas.winfo_reqheight() != req_h:
-                canvas.configure(height=req_h)
+class ProfileScreen(tk.Frame):
+    def __init__(self, parent, controller):
+        c = config.COLORS
+        super().__init__(parent, bg=c["background"], padx=34, pady=26)
+        self.controller = controller
+        self.setup_ui()
 
-        def _on_canvas_configure(e):
-            w, h = e.width, e.height
-            canvas.itemconfig(win_id, width=max(10, w - 2 * pad_x))
-            _redraw_bg(w, h)
-
-        inner.bind("<Configure>", _on_inner_configure)
-        canvas.bind("<Configure>", _on_canvas_configure)
-        return canvas, inner
-
-    def create_profile_view(self, parent):
+    def setup_ui(self):
         user = auth.SessionManager.get_user() or {}
-        page_bg = config.COLORS["background"]
+        is_dark = config.get_theme() == "dark"
+        c = config.COLORS
+        page_bg = c["background"]
         hero_bg = "#0c1b2e"
-        card_bg = "#ffffff"
-        card_border = "#e6ebf1"
-        divider_col = "#eef2f6"
-        text_dark = "#0f172a"
-        text_muted = "#64748b"
+        card_bg = c["surface"]
+
+        # In dark mode: border is completely removed! In light mode: subtle 1px border.
+        border_thick = 0 if is_dark else 1
+        border_col = c["surface"] if is_dark else "#e6ebf1"
+        divider_col = "#1e3350" if is_dark else "#eef2f6"
         lime_col = "#b4e633"
 
         full_name = user.get("full_name") or "System Administrator"
@@ -644,7 +616,6 @@ class MainWindow(tk.Tk):
         role_raw = user.get("role") or config.ROLE_ADMIN
         role_label = config.ROLE_DISPLAY_NAMES.get(role_raw, role_raw)
 
-        # Format session start time as YYYY-MM-DD · HH:MM
         raw_login = user.get("last_login")
         if isinstance(raw_login, datetime):
             started_str = raw_login.strftime("%Y-%m-%d · %H:%M")
@@ -661,39 +632,36 @@ class MainWindow(tk.Tk):
         words = full_name.split()
         initials = "".join(w[0].upper() for w in words[:2]) if words else "SA"
 
-        frame = tk.Frame(parent, bg=page_bg, padx=34, pady=26)
-
-        # ── Page Header ───────────────────────────────────────────────────────
-        tk.Label(
-            frame,
+        # ── Page Header ──
+        self.lbl_title = tk.Label(
+            self,
             text="My Profile",
             font=("Segoe UI", 18, "bold"),
             bg=page_bg,
-            fg=text_dark
-        ).pack(anchor="w", pady=(0, 18))
-
-        # ── Hero Banner Card ──────────────────────────────────────────────────
-        hero_card, hero_inner = self._create_rounded_card(
-            frame,
-            fill_color=hero_bg,
-            parent_bg=page_bg,
-            border_color=None,
-            radius=14,
-            pad_x=28,
-            pad_y=24
+            fg=c["text_dark"]
         )
-        hero_card.pack(fill="x", pady=(0, 20))
+        self.lbl_title.pack(anchor="w", pady=(0, 18))
 
-        avatar_big = self._make_circle_avatar(
+        # ── Hero Banner Card (Deep Navy) ──
+        self.hero_card = tk.Frame(
+            self,
+            bg=hero_bg,
+            padx=28,
+            pady=24,
+            highlightthickness=0
+        )
+        self.hero_card.pack(fill="x", pady=(0, 20))
+
+        avatar_big = self.controller._make_circle_avatar(
             initials,
             size=72,
             bg_color=lime_col,
             text_color="#0c1b2e",
             font_size=22
         )
-        tk.Label(hero_inner, image=avatar_big, bg=hero_bg, bd=0).pack(side="left", padx=(0, 22))
+        tk.Label(self.hero_card, image=avatar_big, bg=hero_bg, bd=0).pack(side="left", padx=(0, 22))
 
-        hero_info = tk.Frame(hero_inner, bg=hero_bg)
+        hero_info = tk.Frame(self.hero_card, bg=hero_bg)
         hero_info.pack(side="left", fill="x", expand=True)
 
         tk.Label(
@@ -715,7 +683,7 @@ class MainWindow(tk.Tk):
         badges_row = tk.Frame(hero_info, bg=hero_bg)
         badges_row.pack(anchor="w")
 
-        role_pill = self._make_pill_badge(
+        role_pill = self.controller._make_pill_badge(
             badges_row,
             text=role_label,
             fill_color=lime_col,
@@ -724,7 +692,7 @@ class MainWindow(tk.Tk):
         )
         role_pill.pack(side="left")
 
-        session_pill = self._make_pill_badge(
+        session_pill = self.controller._make_pill_badge(
             badges_row,
             text="Session active",
             fill_color="#132338",
@@ -734,36 +702,36 @@ class MainWindow(tk.Tk):
         )
         session_pill.pack(side="left", padx=(8, 0))
 
-        # ── Bottom Two-Column Cards Row ───────────────────────────────────────
-        cards_row = tk.Frame(frame, bg=page_bg)
-        cards_row.pack(fill="x", anchor="n")
-        cards_row.grid_columnconfigure(0, weight=65)
-        cards_row.grid_columnconfigure(1, weight=35)
+        # ── Bottom Two-Column Cards Row ──
+        self.cards_row = tk.Frame(self, bg=page_bg)
+        self.cards_row.pack(fill="x", anchor="n")
+        self.cards_row.grid_columnconfigure(0, weight=65)
+        self.cards_row.grid_columnconfigure(1, weight=35)
 
-        # Left Card: Account details
-        acct_card, acct_inner = self._create_rounded_card(
-            cards_row,
-            fill_color=card_bg,
-            parent_bg=page_bg,
-            border_color=card_border,
-            radius=14,
-            pad_x=28,
-            pad_y=24
+        # Left Card: Account details (border removed in dark mode)
+        self.acct_card = tk.Frame(
+            self.cards_row,
+            bg=card_bg,
+            padx=28,
+            pady=24,
+            highlightbackground=border_col,
+            highlightthickness=border_thick
         )
-        acct_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+        self.acct_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
 
-        tk.Label(
-            acct_inner,
+        self.lbl_acct_title = tk.Label(
+            self.acct_card,
             text="Account details",
             font=("Segoe UI", 12, "bold"),
             bg=card_bg,
-            fg=text_dark
-        ).pack(anchor="w", pady=(0, 14))
+            fg=c["text_dark"]
+        )
+        self.lbl_acct_title.pack(anchor="w", pady=(0, 14))
 
-        acct_grid = tk.Frame(acct_inner, bg=card_bg)
-        acct_grid.pack(fill="x")
-        acct_grid.grid_columnconfigure(0, weight=1, uniform="acct_col")
-        acct_grid.grid_columnconfigure(1, weight=1, uniform="acct_col")
+        self.acct_grid = tk.Frame(self.acct_card, bg=card_bg)
+        self.acct_grid.pack(fill="x")
+        self.acct_grid.grid_columnconfigure(0, weight=1, uniform="acct_col")
+        self.acct_grid.grid_columnconfigure(1, weight=1, uniform="acct_col")
 
         acct_fields = [
             (0, 0, "FULL NAME", full_name, (0, 16), (0, 14)),
@@ -772,45 +740,59 @@ class MainWindow(tk.Tk):
             (1, 1, "ASSIGNED ROLE", role_label, (16, 0), (0, 4)),
         ]
 
-        for r_idx, c_idx, lbl_txt, val_txt, px, py_bot in acct_fields:
-            cell = tk.Frame(acct_grid, bg=card_bg)
-            cell.grid(row=r_idx, column=c_idx, sticky="ew", padx=px)
+        self.cells = []
+        self.dividers = []
+        self.muted_labels = []
+        self.val_labels = []
 
-            tk.Frame(cell, bg=divider_col, height=1).pack(fill="x", pady=(0, 12))
-            tk.Label(
+        for r_idx, c_idx, lbl_txt, val_txt, px, py_bot in acct_fields:
+            cell = tk.Frame(self.acct_grid, bg=card_bg)
+            cell.grid(row=r_idx, column=c_idx, sticky="ew", padx=px)
+            self.cells.append(cell)
+
+            d = tk.Frame(cell, bg=divider_col, height=1)
+            d.pack(fill="x", pady=(0, 12))
+            self.dividers.append(d)
+
+            ml = tk.Label(
                 cell,
                 text=lbl_txt,
                 font=("Segoe UI", 8, "bold"),
                 bg=card_bg,
-                fg=text_muted
-            ).pack(anchor="w")
-            tk.Label(
+                fg=c["text_muted"]
+            )
+            ml.pack(anchor="w")
+            self.muted_labels.append(ml)
+
+            vl = tk.Label(
                 cell,
                 text=val_txt,
                 font=("Segoe UI", 10, "bold"),
                 bg=card_bg,
-                fg=text_dark
-            ).pack(anchor="w", pady=(3, py_bot[1]))
+                fg=c["text_dark"]
+            )
+            vl.pack(anchor="w", pady=(3, py_bot[1]))
+            self.val_labels.append(vl)
 
-        # Right Card: Current session
-        sess_card, sess_inner = self._create_rounded_card(
-            cards_row,
-            fill_color=card_bg,
-            parent_bg=page_bg,
-            border_color=card_border,
-            radius=14,
-            pad_x=28,
-            pad_y=24
+        # Right Card: Current session (border removed in dark mode)
+        self.sess_card = tk.Frame(
+            self.cards_row,
+            bg=card_bg,
+            padx=28,
+            pady=24,
+            highlightbackground=border_col,
+            highlightthickness=border_thick
         )
-        sess_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
+        self.sess_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
 
-        tk.Label(
-            sess_inner,
+        self.lbl_sess_title = tk.Label(
+            self.sess_card,
             text="Current session",
             font=("Segoe UI", 12, "bold"),
             bg=card_bg,
-            fg=text_dark
-        ).pack(anchor="w", pady=(0, 14))
+            fg=c["text_dark"]
+        )
+        self.lbl_sess_title.pack(anchor="w", pady=(0, 14))
 
         sess_fields = [
             ("STARTED", started_str, 14),
@@ -818,26 +800,68 @@ class MainWindow(tk.Tk):
         ]
 
         for lbl_txt, val_txt, bot_pad in sess_fields:
-            s_cell = tk.Frame(sess_inner, bg=card_bg)
+            s_cell = tk.Frame(self.sess_card, bg=card_bg)
             s_cell.pack(fill="x")
+            self.cells.append(s_cell)
 
-            tk.Frame(s_cell, bg=divider_col, height=1).pack(fill="x", pady=(0, 12))
-            tk.Label(
+            d = tk.Frame(s_cell, bg=divider_col, height=1)
+            d.pack(fill="x", pady=(0, 12))
+            self.dividers.append(d)
+
+            ml = tk.Label(
                 s_cell,
                 text=lbl_txt,
                 font=("Segoe UI", 8, "bold"),
                 bg=card_bg,
-                fg=text_muted
-            ).pack(anchor="w")
-            tk.Label(
+                fg=c["text_muted"]
+            )
+            ml.pack(anchor="w")
+            self.muted_labels.append(ml)
+
+            vl = tk.Label(
                 s_cell,
                 text=val_txt,
                 font=("Segoe UI", 10, "bold"),
                 bg=card_bg,
-                fg=text_dark
-            ).pack(anchor="w", pady=(3, bot_pad))
+                fg=c["text_dark"]
+            )
+            vl.pack(anchor="w", pady=(3, bot_pad))
+            self.val_labels.append(vl)
 
-        return frame
+    def apply_theme(self):
+        """Seamless live theme update: removes border in dark mode."""
+        is_dark = config.get_theme() == "dark"
+        c = config.COLORS
+        page_bg = c["background"]
+        card_bg = c["surface"]
+        border_thick = 0 if is_dark else 1
+        border_col = c["surface"] if is_dark else "#e6ebf1"
+        divider_col = "#1e3350" if is_dark else "#eef2f6"
+
+        self.config(bg=page_bg)
+        self.lbl_title.config(bg=page_bg, fg=c["text_dark"])
+        self.cards_row.config(bg=page_bg)
+
+        for card in [self.acct_card, self.sess_card]:
+            card.config(
+                bg=card_bg,
+                highlightthickness=border_thick,
+                highlightbackground=border_col
+            )
+
+        self.lbl_acct_title.config(bg=card_bg, fg=c["text_dark"])
+        self.lbl_sess_title.config(bg=card_bg, fg=c["text_dark"])
+
+        self.acct_grid.config(bg=card_bg)
+
+        for cell in self.cells:
+            cell.config(bg=card_bg)
+        for div in self.dividers:
+            div.config(bg=divider_col)
+        for ml in self.muted_labels:
+            ml.config(bg=card_bg, fg=c["text_muted"])
+        for vl in self.val_labels:
+            vl.config(bg=card_bg, fg=c["text_dark"])
 
     def handle_logout(self):
         if messagebox.askyesno("Confirm Logout", "Are you sure you want to log out of your session?"):
