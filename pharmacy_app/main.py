@@ -598,7 +598,7 @@ class ProfileScreen(tk.Frame):
 
     def setup_ui(self):
         user = auth.SessionManager.get_user() or {}
-        is_dark = config.get_theme() == "dark"
+        is_dark = config.get_theme() == "dark" if hasattr(config, "get_theme") else False
         c = config.COLORS
         page_bg = c["background"]
         hero_bg = "#0c1b2e"
@@ -830,7 +830,7 @@ class ProfileScreen(tk.Frame):
 
     def apply_theme(self):
         """Seamless live theme update: removes border in dark mode."""
-        is_dark = config.get_theme() == "dark"
+        is_dark = config.get_theme() == "dark" if hasattr(config, "get_theme") else False
         c = config.COLORS
         page_bg = c["background"]
         card_bg = c["surface"]
