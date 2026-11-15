@@ -219,6 +219,14 @@ THEMES = {
 CURRENT_THEME = "light"
 COLORS = dict(THEMES[CURRENT_THEME])
 
+# UI Preferences (persisted in session)
+UI_PREFS = {
+    "theme": "light",
+    "language": "English",
+    "font": "Inter",
+    "text_size": "M",
+}
+
 
 def get_theme() -> str:
     return CURRENT_THEME
@@ -230,6 +238,7 @@ def set_theme(mode: str) -> str:
     if mode not in THEMES:
         mode = "light"
     CURRENT_THEME = mode
+    UI_PREFS["theme"] = mode
     COLORS.clear()
     COLORS.update(THEMES[mode])
     return CURRENT_THEME
