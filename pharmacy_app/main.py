@@ -43,12 +43,21 @@ class MainWindow(tk.Tk):
         self.bind("<Escape>", lambda e: self.attributes("-fullscreen", False))
         self.protocol("WM_DELETE_WINDOW", self.on_close_attempt)
 
+        self._available_families = set()
+        try:
+            self._available_families = set(tkfont.families())
+        except Exception:
+            pass
+        self._font_spec_cache = {}
+        self._typo_idle_scheduled = False
+
         # Style TTK widgets
         self.setup_ttk_styles()
 
         # Master layout container
         self.main_container = tk.Frame(self, bg=config.COLORS["background"])
         self.main_container.pack(fill="both", expand=True)
+        self.bind("<Map>", self._on_any_widget_map, add="+")
 
         #Active components
         self.sidebar = None
@@ -62,12 +71,6 @@ class MainWindow(tk.Tk):
         self._sidebar_active_dropdown = None
         self._is_sidebar_settings_open = False
         self._theme_animator = ThemeAnimator(self)
-
-        self._available_families = set()
-        try:
-            self._available_families = set(tkfont.families())
-        except Exception:
-            pass
 
         # Check / Initialize DB on start
         try:
@@ -103,20 +106,25 @@ class MainWindow(tk.Tk):
         self.option_add("*TCombobox*Listbox.selectForeground", "#ffffff")
 
         # Treeview styling for data tables
+        prefs = getattr(config, "UI_PREFS", {})
+        sz_off = {"S": -1, "M": 0, "L": 2, "XL": 3}.get(prefs.get("text_size", "M"), 0)
+        body_font = self._ui_font(10)
+        body_bold_font = self._ui_font(10, "bold")
+
         style.configure(
             "Treeview",
             background=c["surface"],
             foreground=c["text_dark"],
-            rowheight=28,
+            rowheight=max(24, 28 + sz_off * 2),
             fieldbackground=c["surface"],
-            font=config.FONTS["body"],
+            font=body_font,
             borderwidth=0
         )
         style.configure(
             "Treeview.Heading",
             background=c["surface_alt"],
             foreground=c["text_dark"],
-            font=config.FONTS["body_bold"],
+            font=body_bold_font,
             relief="flat",
             padding=(6, 6)
         )
@@ -132,6 +140,7 @@ class MainWindow(tk.Tk):
             bordercolor=c["border"],
             lightcolor=c["border"],
             darkcolor=c["border"],
+            font=body_font,
         )
         style.configure(
             "TCombobox",
@@ -142,6 +151,7 @@ class MainWindow(tk.Tk):
             bordercolor=c["border"],
             lightcolor=c["border"],
             darkcolor=c["border"],
+            font=body_font,
         )
         style.map(
             "TCombobox",
@@ -157,6 +167,7 @@ class MainWindow(tk.Tk):
             foreground=c["text_dark"],
             arrowcolor=c["text_muted"],
             bordercolor=c["border"],
+            font=body_font,
         )
 
         # Notebook & Tab styling
@@ -166,7 +177,7 @@ class MainWindow(tk.Tk):
             background=c["surface_alt"],
             foreground=c["text_muted"],
             padding=(12, 6),
-            font=config.FONTS["body_bold"],
+            font=body_bold_font,
             borderwidth=0,
         )
         style.map(
@@ -407,26 +418,29 @@ class MainWindow(tk.Tk):
         brand_text_box = tk.Frame(brand_frame, bg=_SIDEBAR_BG)
         brand_text_box.pack(side="left", fill="x", expand=True)
 
-        tk.Label(
+        self._lbl_brand_title = tk.Label(
             brand_text_box,
-            text="PharmaCare",
-            font=("Segoe UI", 16, "bold"),
+            text="RestInPills",
+            font=self._ui_font(16, "bold"),
             bg=_SIDEBAR_BG,
             fg="#ffffff"
-        ).pack(anchor="w")
+        )
+        self._lbl_brand_title.pack(anchor="w")
 
-        tk.Label(
+        self._lbl_brand_sub = tk.Label(
             brand_text_box,
             text="Pharmacy & Knowledge Studio",
-            font=("Segoe UI", 8),
+            font=self._ui_font(8),
             bg=_SIDEBAR_BG,
             fg=_NAV_INACTIVE_FG
-        ).pack(anchor="w")
+        )
+        self._lbl_brand_sub.pack(anchor="w")
 
         # ── Fetch User & Role ─────────────────────────────────────────────────
         user = auth.SessionManager.get_user() or {}
         role = user.get("role", config.ROLE_ADMIN)
         role_label = config.ROLE_DISPLAY_NAMES.get(role, role)
+        self._user_role_en = role_label
 
         # ── Bottom Box: User Profile Chip + Theme Toggle & Logout ─────────────
         bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
@@ -459,22 +473,24 @@ class MainWindow(tk.Tk):
         lbl_uname = tk.Label(
             user_text_box,
             text=full_name,
-            font=("Segoe UI", 9, "bold"),
+            font=self._ui_font(9, "bold"),
             bg=_USER_CHIP_BG,
             fg="#ffffff",
             cursor="hand2"
         )
         lbl_uname.pack(anchor="w")
+        self._lbl_user_name = lbl_uname
 
         lbl_urole = tk.Label(
             user_text_box,
             text=role_label,
-            font=("Segoe UI", 8),
+            font=self._ui_font(8),
             bg=_USER_CHIP_BG,
             fg=_NAV_INACTIVE_FG,
             cursor="hand2"
         )
         lbl_urole.pack(anchor="w", pady=(1, 0))
+        self._lbl_user_role = lbl_urole
 
         # Clicking the user profile chip opens My Profile
         for w in (user_chip, lbl_avatar, user_text_box, lbl_uname, lbl_urole):
@@ -894,20 +910,327 @@ class MainWindow(tk.Tk):
             val_l.configure(text=val_txt, font=self._ui_font(9, "bold"), bg=p["surface"], fg=p["text_primary"])
             chv_l.configure(font=self._ui_font(9, "bold"), bg=p["surface"], fg=p["text_muted"])
 
-    def _apply_global_typography(self):
-        """Updates config.FONTS, sidebar labels, and active screen fonts in-place."""
+    def _parse_font_spec(self, raw_font: str) -> tuple:
+        """Parses any Tkinter font spec into (family, base_pt_size, flags_tuple) with caching."""
+        cached = self._font_spec_cache.get(raw_font)
+        if cached is not None:
+            return cached
+        try:
+            f_obj = tkfont.Font(root=self, font=raw_font)
+            act = f_obj.actual()
+            fam = act.get("family", "Segoe UI")
+            sz = int(act.get("size", 10))
+            if sz < 0:
+                sz = max(8, int(round(abs(sz) * 0.75)))
+            flags = []
+            if act.get("weight") == "bold":
+                flags.append("bold")
+            if act.get("slant") == "italic":
+                flags.append("italic")
+            res = (fam, sz, tuple(flags))
+        except Exception:
+            res = ("Segoe UI", 10, ())
+        self._font_spec_cache[raw_font] = res
+        return res
+
+    def _translate_content_text(self, en_text: str, lang: str) -> str:
+        """Translates known UI phrases and patterns across content screens while preserving dynamic values."""
+        if not en_text or lang == "English":
+            return en_text
+
+        exact_map = {
+            "Filipino": {
+                "Pharmacy & Knowledge Studio": "Parmasya at Knowledge Studio",
+                "Administrator": "Administrador",
+                "Inventory Clerk": "Klerk ng Imbentaryo",
+                "Sales Personnel": "Kawani ng Benta",
+                "Academic Instructor": "Instruktor",
+                "Here is how the pharmacy is doing today.": "Narito ang lagay ng parmasya ngayong araw.",
+                "Refresh data": "I-refresh ang datos",
+                "Sales Today": "Benta Ngayon",
+                "Month-to-Date Revenue": "Kita Ngayong Buwan",
+                "Total Products": "Kabuuang Produkto",
+                "Low-Stock Alerts": "Alerto sa Mababang Stak",
+                "Near-Expiry Alerts": "Malapit Nang Mag-expire",
+                "Top Performing Product": "Pinakamabentang Produkto",
+                "Current month": "Kasalukuyang buwan",
+                "Active in catalog": "Aktibo sa katalogo",
+                "Needs restocking": "Kailangang dagdagan",
+                "14-day sales revenue trend": "14-araw na tunguhin ng benta",
+                "Top 5 products by quantity sold": "Nangungunang 5 produkto sa benta",
+                "Sales breakdown by category": "Benta ayon sa kategorya",
+                "Stock health distribution": "Kalagayan ng stak",
+                "products in catalog": "produkto sa katalogo",
+                "Healthy": "Maayos",
+                "Low stock": "Mababang stak",
+                "Out of stock": "Walang stak",
+                "My Profile": "Aking Profile",
+                "Session active": "Aktibo ang sesyon",
+                "Account details": "Detalye ng account",
+                "FULL NAME": "BUONG PANGALAN",
+                "USERNAME": "USERNAME",
+                "EMAIL ADDRESS": "EMAIL ADDRESS",
+                "ASSIGNED ROLE": "TUNGKULIN",
+                "Current session": "Kasalukuyang sesyon",
+                "STARTED": "SINIMULAN",
+                "STATUS": "KATAYUAN",
+                "Active": "Aktibo",
+                "Inventory Management": "Pamamahala ng Imbentaryo",
+                "Product Catalog": "Katalogo ng Produkto",
+                "Stock Movements": "Galaw ng Stak",
+                "Categories & Suppliers": "Mga Kategorya at Supplier",
+                "Point of Sale (POS)": "Punto ng Benta (POS)",
+                "Sales History": "Kasaysayan ng Benta",
+                "👥 User Accounts & Security Audit Trail": "👥 Mga Account at Audit Trail",
+                "+ Add New User": "+ Magdagdag ng User",
+                "✎ Edit User": "✎ I-edit ang User",
+                "🔑 Reset Password": "🔑 I-reset ang Password",
+                "🔓 Unlock Account": "🔓 I-unlock ang Account",
+                "Toggle Active / Inactive": "Palitan Aktibo / Di-Aktibo",
+                "Filter Action:": "Salain ang Aksyon:",
+                "↻ Refresh Log": "↻ I-refresh ang Log",
+                "Select Analysis Task:": "Piliin ang Gawain:",
+                "⚡ Retrain Models": "⚡ Sanayin Muli ang Modelo",
+                "⚙ Prediction Parameters": "⚙ Mga Parameter ng Prediksyon",
+                "Machine Learning Model:": "Modelo ng Machine Learning:",
+                "📊 Prediction Results & Output Visualizer": "📊 Resulta ng Prediksyon",
+                "🚀 Calculate Prediction": "🚀 Kalkulahin ang Prediksyon",
+            },
+            "Spanish": {
+                "Pharmacy & Knowledge Studio": "Estudio de Farmacia y Conocimiento",
+                "Administrator": "Administrador",
+                "Inventory Clerk": "Encargado de Inventario",
+                "Sales Personnel": "Personal de Ventas",
+                "Academic Instructor": "Instructor Académico",
+                "Here is how the pharmacy is doing today.": "Así va la farmacia el día de hoy.",
+                "Refresh data": "Actualizar datos",
+                "Sales Today": "Ventas de Hoy",
+                "Month-to-Date Revenue": "Ingresos del Mes",
+                "Total Products": "Total de Productos",
+                "Low-Stock Alerts": "Alertas de Bajo Stock",
+                "Near-Expiry Alerts": "Alertas de Próximo Vencimiento",
+                "Top Performing Product": "Producto Más Vendido",
+                "Current month": "Mes actual",
+                "Active in catalog": "Activo en catálogo",
+                "Needs restocking": "Necesita reabastecimiento",
+                "14-day sales revenue trend": "Tendencia de ingresos de 14 días",
+                "Top 5 products by quantity sold": "Top 5 productos por cantidad vendida",
+                "Sales breakdown by category": "Ventas por categoría",
+                "Stock health distribution": "Distribución de salud del stock",
+                "products in catalog": "productos en catálogo",
+                "Healthy": "Saludable",
+                "Low stock": "Bajo stock",
+                "Out of stock": "Sin stock",
+                "My Profile": "Mi Perfil",
+                "Session active": "Sesión activa",
+                "Account details": "Detalles de la cuenta",
+                "FULL NAME": "NOMBRE COMPLETO",
+                "USERNAME": "USUARIO",
+                "EMAIL ADDRESS": "CORREO ELECTRÓNICO",
+                "ASSIGNED ROLE": "ROL ASIGNADO",
+                "Current session": "Sesión actual",
+                "STARTED": "INICIADO",
+                "STATUS": "ESTADO",
+                "Active": "Activo",
+                "Inventory Management": "Gestión de Inventario",
+                "Product Catalog": "Catálogo de Productos",
+                "Stock Movements": "Movimientos de Stock",
+                "Categories & Suppliers": "Categorías y Proveedores",
+                "Point of Sale (POS)": "Punto de Venta (POS)",
+                "Sales History": "Historial de Ventas",
+                "👥 User Accounts & Security Audit Trail": "👥 Cuentas de Usuario y Auditoría",
+                "+ Add New User": "+ Añadir Usuario",
+                "✎ Edit User": "✎ Editar Usuario",
+                "🔑 Reset Password": "🔑 Restablecer Contraseña",
+                "🔓 Unlock Account": "🔓 Desbloquear Cuenta",
+                "Toggle Active / Inactive": "Alternar Activo / Inactivo",
+                "Filter Action:": "Filtrar Acción:",
+                "↻ Refresh Log": "↻ Actualizar Registro",
+                "Select Analysis Task:": "Seleccionar Tarea de Análisis:",
+                "⚡ Retrain Models": "⚡ Reentrenar Modelos",
+                "⚙ Prediction Parameters": "⚙ Parámetros de Predicción",
+                "Machine Learning Model:": "Modelo de Aprendizaje Automático:",
+                "📊 Prediction Results & Output Visualizer": "📊 Resultados de Predicción",
+                "🚀 Calculate Prediction": "🚀 Calcular Predicción",
+            },
+        }
+
+        lang_dict = exact_map.get(lang, {})
+        if en_text in lang_dict:
+            return lang_dict[en_text]
+
+        # Prefix / suffix pattern translations
+        if en_text.startswith("Welcome back, "):
+            name = en_text[len("Welcome back, "):]
+            if lang == "Filipino":
+                return f"Maligayang pagbabalik, {name}"
+            if lang == "Spanish":
+                return f"Bienvenido de nuevo, {name}"
+        if en_text.startswith("Role: "):
+            r_val = en_text[len("Role: "):]
+            r_tr = lang_dict.get(r_val, r_val)
+            if lang == "Filipino":
+                return f"Tungkulin: {r_tr}"
+            if lang == "Spanish":
+                return f"Rol: {r_tr}"
+        if en_text.endswith(" transactions"):
+            cnt = en_text[:-len(" transactions")]
+            if lang == "Filipino":
+                return f"{cnt} transaksyon"
+            if lang == "Spanish":
+                return f"{cnt} transacciones"
+        if en_text.endswith(" units sold"):
+            cnt = en_text[:-len(" units sold")]
+            if lang == "Filipino":
+                return f"{cnt} pirasong naibenta"
+            if lang == "Spanish":
+                return f"{cnt} unidades vendidas"
+        if en_text.startswith("Within ") and en_text.endswith(" days"):
+            days = en_text[len("Within "):-len(" days")]
+            if lang == "Filipino":
+                return f"Sa loob ng {days} araw"
+            if lang == "Spanish":
+                return f"Dentro de {days} días"
+        if en_text.endswith(" products expire within 90 days."):
+            cnt = en_text[:-len(" products expire within 90 days.")]
+            if lang == "Filipino":
+                return f"{cnt} produkto ang mag-e-expire sa loob ng 90 araw."
+            if lang == "Spanish":
+                return f"{cnt} productos vencen en 90 días."
+        return en_text
+
+    def _sync_widget_tree_typography(self, root_widget, fam: str, off: int, lang: str):
+        """Recursively updates fonts, text sizes, and translations across all widgets in root_widget."""
+        if root_widget is None:
+            return
+        try:
+            if not root_widget.winfo_exists():
+                return
+        except Exception:
+            return
+
+        stack = [root_widget]
+        while stack:
+            w = stack.pop()
+            try:
+                if not w.winfo_exists() or getattr(w, "_typo_skip", False):
+                    continue
+            except Exception:
+                continue
+
+            # 1. Update widget font if supported
+            try:
+                cur_font_str = str(w.cget("font"))
+            except Exception:
+                cur_font_str = ""
+
+            if cur_font_str:
+                try:
+                    last_set_font = getattr(w, "_last_set_font_str", None)
+                    if not hasattr(w, "_base_font_spec") or (last_set_font is not None and cur_font_str != last_set_font):
+                        w._base_font_spec = self._parse_font_spec(cur_font_str)
+
+                    orig_fam, base_sz, flags = w._base_font_spec
+                    target_fam = orig_fam if (orig_fam == "Courier New" and fam != "Consolas") else fam
+                    if getattr(w, "_fixed_pill_badge", False):
+                        new_sz = max(7, base_sz + min(1, max(-1, off)))
+                    else:
+                        new_sz = max(7, base_sz + off)
+                    new_font = (target_fam, new_sz, *flags) if flags else (target_fam, new_sz)
+                    w.configure(font=new_font)
+                    w._last_set_font_str = str(w.cget("font"))
+                except Exception:
+                    pass
+
+            # 2. Update widget text translation if supported (Labels, Buttons, Checkbuttons, Radiobuttons)
+            if isinstance(w, (tk.Label, tk.Button, tk.Checkbutton, tk.Radiobutton, tk.LabelFrame)):
+                try:
+                    cur_txt = str(w.cget("text"))
+                    if cur_txt:
+                        last_set_txt = getattr(w, "_last_set_text_str", None)
+                        if not hasattr(w, "_base_en_text") or (last_set_txt is not None and cur_txt != last_set_txt):
+                            w._base_en_text = cur_txt
+                        tr_txt = self._translate_content_text(w._base_en_text, lang)
+                        if tr_txt != cur_txt:
+                            w.configure(text=tr_txt)
+                        w._last_set_text_str = tr_txt
+                except Exception:
+                    pass
+
+            # 3. Update Canvas text items if widget is a tk.Canvas
+            if isinstance(w, tk.Canvas):
+                try:
+                    base_fonts = getattr(w, "_canvas_base_fonts", None)
+                    if base_fonts is None:
+                        base_fonts = {}
+                        w._canvas_base_fonts = base_fonts
+                    for item_id in w.find_all():
+                        if w.type(item_id) == "text":
+                            if item_id not in base_fonts:
+                                item_f = str(w.itemcget(item_id, "font"))
+                                base_fonts[item_id] = self._parse_font_spec(item_f) if item_f else ("Segoe UI", 10, ())
+                            orig_fam, base_sz, flags = base_fonts[item_id]
+                            new_sz = max(7, base_sz + off)
+                            new_font = (fam, new_sz, *flags) if flags else (fam, new_sz)
+                            w.itemconfigure(item_id, font=new_font)
+                except Exception:
+                    pass
+
+            try:
+                children = w.winfo_children()
+                if children:
+                    stack.extend(children)
+            except Exception:
+                pass
+
+    def _on_any_widget_map(self, event=None):
+        """Debounced handler so newly opened tabs, refreshed views, or dialogs inherit typography."""
+        if self.sidebar is None or self._typo_idle_scheduled:
+            return
+        self._typo_idle_scheduled = True
+        self.after_idle(self._run_deferred_typography_sync)
+
+    def _run_deferred_typography_sync(self):
+        self._typo_idle_scheduled = False
+        if self.sidebar is None:
+            return
         fam = self._resolve_ui_font_family()
         prefs = getattr(config, "UI_PREFS", {})
         sz = prefs.get("text_size", "M")
         off = {"S": -1, "M": 0, "L": 2, "XL": 3}.get(sz, 0)
+        lang = prefs.get("language", "English")
+        if self.content_area is not None and self.content_area.winfo_exists():
+            self._sync_widget_tree_typography(self.content_area, fam, off, lang)
+        for child in self.winfo_children():
+            if isinstance(child, tk.Toplevel) and child.winfo_exists():
+                self._sync_widget_tree_typography(child, fam, off, lang)
 
-        config.FONTS["h1"] = (fam, 20 + off, "bold")
-        config.FONTS["h2"] = (fam, 16 + off, "bold")
-        config.FONTS["h3"] = (fam, 13 + off, "bold")
-        config.FONTS["body"] = (fam, 10 + off)
-        config.FONTS["body_bold"] = (fam, 10 + off, "bold")
-        config.FONTS["small"] = (fam, 9 + off)
+    def _apply_global_typography(self):
+        """Updates TTK styles, sidebar labels, and the entire active content screen in-place."""
+        fam = self._resolve_ui_font_family()
+        prefs = getattr(config, "UI_PREFS", {})
+        sz = prefs.get("text_size", "M")
+        off = {"S": -1, "M": 0, "L": 2, "XL": 3}.get(sz, 0)
+        lang = prefs.get("language", "English")
+
         self.setup_ttk_styles()
+
+        # Update Sidebar Brand & User Chip
+        if getattr(self, "_lbl_brand_title", None) is not None and self._lbl_brand_title.winfo_exists():
+            self._lbl_brand_title.configure(font=self._ui_font(16, "bold"))
+        if getattr(self, "_lbl_brand_sub", None) is not None and self._lbl_brand_sub.winfo_exists():
+            self._lbl_brand_sub.configure(
+                text=self._translate_content_text("Pharmacy & Knowledge Studio", lang),
+                font=self._ui_font(8),
+            )
+        if getattr(self, "_lbl_user_name", None) is not None and self._lbl_user_name.winfo_exists():
+            self._lbl_user_name.configure(font=self._ui_font(9, "bold"))
+        if getattr(self, "_lbl_user_role", None) is not None and self._lbl_user_role.winfo_exists():
+            role_en = getattr(self, "_user_role_en", "Administrator")
+            self._lbl_user_role.configure(
+                text=self._translate_content_text(role_en, lang),
+                font=self._ui_font(8),
+            )
 
         if self.btn_settings is not None and self.btn_settings.winfo_exists():
             self.btn_settings.configure(text=f"⚙  {self._ui_t('settings')}", font=self._ui_font(9, "bold"))
@@ -925,6 +1248,28 @@ class MainWindow(tk.Tk):
         for k, btn in getattr(self, "menu_buttons", {}).items():
             if btn.winfo_exists():
                 btn.configure(text=self._ui_t(nav_keys.get(k, k)), font=self._ui_font(9, "bold"))
+
+        # Update the whole content area and any open Toplevel dialogs
+        if self.content_area is not None and self.content_area.winfo_exists():
+            self._sync_widget_tree_typography(self.content_area, fam, off, lang)
+        for child in self.winfo_children():
+            if isinstance(child, tk.Toplevel) and child.winfo_exists():
+                self._sync_widget_tree_typography(child, fam, off, lang)
+
+        # Update Matplotlib chart typography on Dashboard if present
+        if self.current_screen is not None and hasattr(self.current_screen, "_mpl_charts"):
+            for chart_type, fig, ax, canvas, extra in getattr(self.current_screen, "_mpl_charts", []):
+                try:
+                    if chart_type == "trend":
+                        ax.tick_params(labelsize=max(6, 8 + off))
+                    elif chart_type == "donut":
+                        if "txt_pct" in extra:
+                            extra["txt_pct"].set_fontsize(max(12, 18 + off))
+                        if "txt_cat" in extra:
+                            extra["txt_cat"].set_fontsize(max(7, 9 + off))
+                    canvas.draw_idle()
+                except Exception:
+                    pass
 
         self._refresh_sidebar_settings_popover()
 
@@ -1049,6 +1394,7 @@ class MainWindow(tk.Tk):
 
         if self.current_screen:
             self.current_screen.pack(fill="both", expand=True)
+            self._apply_global_typography()
 
     def _make_pill_badge(self, parent, text, fill_color, text_color, parent_bg, border_color=None):
         """Creates a smooth antialiased rounded pill badge label."""
@@ -1085,6 +1431,7 @@ class MainWindow(tk.Tk):
             padx=0,
             pady=0
         )
+        lbl._fixed_pill_badge = True
         return lbl
 
     def handle_logout(self):
@@ -1116,7 +1463,7 @@ class ProfileScreen(tk.Frame):
 
         full_name = user.get("full_name") or "System Administrator"
         username = user.get("username") or "admin"
-        email = user.get("email") or "admin@pharmacare.local"
+        email = user.get("email") or "admin@restinpills.local"
         role_raw = user.get("role") or config.ROLE_ADMIN
         role_label = config.ROLE_DISPLAY_NAMES.get(role_raw, role_raw)
 

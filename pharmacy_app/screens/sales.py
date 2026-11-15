@@ -1815,7 +1815,7 @@ class SalesScreen(tk.Frame):
 
         lines = [
             "==========================================",
-            "           PHARMACARE PHARMACY            ",
+            "           RESTINPILLS PHARMACY           ",
             "       123 Healthcare Blvd, Suite 100     ",
             "            Tel: +1-800-555-0199          ",
             "==========================================",

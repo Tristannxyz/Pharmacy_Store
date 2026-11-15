@@ -20,7 +20,7 @@ DB_NAME = os.getenv("PHARMACY_DB_NAME", "pharmacy")
 DB_PORT = int(os.getenv("PHARMACY_DB_PORT", 3306))
 
 # Application Settings
-APP_NAME = "PharmaCare"
+APP_NAME = "RestInPills"
 APP_TITLE = "Pharmacy Store Business Management System with Knowledge Analysis"
 APP_VERSION = "2.0.0"
 CURRENCY = "$"
