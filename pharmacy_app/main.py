@@ -20,12 +20,12 @@ from screens.login import LoginScreen
 from screens.dashboard import DashboardScreen
 
 _ASSETS_DIR = Path(__file__).resolve().parent / "assets"
-_SIDEBAR_BG = "#071d32"
-_USER_CHIP_BG = "#0c263e"
-_USER_CHIP_BORDER = "#143657"
-_LIME = "#a3e635"
-_NAV_INACTIVE_FG = "#8ea3b8"
-_NAV_HOVER_BG = "#0d2742"
+_SIDEBAR_BG = "#0D1524"
+_USER_CHIP_BG = "#111A2B"
+_USER_CHIP_BORDER = "#1E2B42"
+_LIME = "#A3E635"
+_NAV_INACTIVE_FG = "#9FB0C8"
+_NAV_HOVER_BG = "#15213A"
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -333,20 +333,29 @@ class MainWindow(tk.Tk):
             fg=_NAV_INACTIVE_FG
         ).pack(anchor="w")
 
-        # ── User Profile Chip ─────────────────────────────────────────────────
+        # ── Navigation Menu Items ─────────────────────────────────────────────
+        self.menu_buttons = {}
+        self.active_key = None
+        self.build_navigation_items(role)
+
+        # ── Bottom Box: User Profile Chip + Theme Toggle & Logout ─────────────
+        bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
+        bottom_box.pack(side="bottom", fill="x")
+
+        # Pinned User Profile Card at bottom
         user = auth.SessionManager.get_user() or {}
         role = user.get("role", config.ROLE_ADMIN)
         role_label = config.ROLE_DISPLAY_NAMES.get(role, role)
 
         user_chip = tk.Frame(
-            self.sidebar,
+            bottom_box,
             bg=_USER_CHIP_BG,
             padx=12,
             pady=10,
             highlightbackground=_USER_CHIP_BORDER,
             highlightthickness=1
         )
-        user_chip.pack(fill="x", pady=(0, 22))
+        user_chip.pack(fill="x", pady=(0, 10))
 
         # Determine user initials
         full_name = user.get("full_name", "System Administrator")
@@ -374,15 +383,6 @@ class MainWindow(tk.Tk):
             bg=_USER_CHIP_BG,
             fg=_NAV_INACTIVE_FG
         ).pack(anchor="w", pady=(1, 0))
-
-        # ── Navigation Menu Items ─────────────────────────────────────────────
-        self.menu_buttons = {}
-        self.active_key = None
-        self.build_navigation_items(role)
-
-        # ── Bottom Theme Toggle & Logout Action ───────────────────────────────
-        bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
-        bottom_box.pack(side="bottom", fill="x")
 
         is_dark = config.get_theme() == "dark"
         theme_label = "☀  Light Mode" if is_dark else "🌙  Dark Mode"
@@ -430,26 +430,13 @@ class MainWindow(tk.Tk):
     def build_navigation_items(self, role):
         """Constructs role-tailored sidebar menu items with sleek pill highlights."""
         items = [
-            ("dashboard", "⊞   Dashboard")
+            ("dashboard", "⊞   Dashboard"),
+            ("inventory", "◫   Inventory Management"),
+            ("sales", "💳   Point of Sale (POS)"),
+            ("users", "👥   User Management & Logs"),
+            ("analysis", "📈   Knowledge Analysis Studio"),
+            ("profile", "👤   My Profile"),
         ]
-
-        if role in [config.ROLE_INVENTORY_CLERK, config.ROLE_INSTRUCTOR]:
-            items.append(("inventory", "◫   Inventory Management"))
-        elif role == config.ROLE_ADMIN:
-            items.append(("inventory", "◫   Inventory Catalog"))
-
-        if role in [config.ROLE_SALES_PERSONNEL, config.ROLE_INSTRUCTOR, config.ROLE_ADMIN]:
-            items.append(("sales", "💳   Point of Sale (POS)"))
-
-        if role in [config.ROLE_ADMIN, config.ROLE_INSTRUCTOR]:
-            items.append(("users", "👥   User Management & Logs"))
-
-        if role == config.ROLE_ADMIN:
-            items.append(("analysis", "📈   Knowledge Analysis (Predict)"))
-        elif role == config.ROLE_INSTRUCTOR:
-            items.append(("analysis", "📈   Knowledge Analysis Studio"))
-
-        items.append(("profile", "👤   My Profile"))
 
         for key, label in items:
             btn = tk.Button(
@@ -489,7 +476,7 @@ class MainWindow(tk.Tk):
                 # Active item styled as vibrant lime pill with dark text
                 btn.config(
                     bg=_LIME,
-                    fg="#071d32",
+                    fg="#0A101C",
                     font=("Segoe UI", 9, "bold")
                 )
             else:
