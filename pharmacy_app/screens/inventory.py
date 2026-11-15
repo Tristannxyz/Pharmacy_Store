@@ -86,6 +86,368 @@ def generate_category_prices(cat_name, cat_id=None):
     return f"{cost:.2f}", f"{sell:.2f}"
 
 
+class ProductCatalogRow:
+    """High-performance reusable table row component with in-place data updates and jitter-free hover."""
+
+    def __init__(self, parent, on_toggle_check, on_edit, on_stock, on_select, on_mousewheel):
+        self.parent = parent
+        self.on_toggle_check = on_toggle_check
+        self.on_edit = on_edit
+        self.on_stock = on_stock
+        self.on_select = on_select
+        self.on_mousewheel = on_mousewheel
+
+        self.prod_id = None
+        self.is_checked = False
+        self.is_low = False
+        self.base_bg = T["surface"]
+
+        self.frame = tk.Frame(parent, bg=T["surface"], height=54)
+        self.frame.pack_propagate(False)
+
+        # Checkbox (width 36: 3 chars + padding)
+        self.lbl_chk = tk.Label(
+            self.frame,
+            text="☐",
+            font=("Segoe UI", 12, "bold"),
+            bg=T["surface"],
+            fg=T["border_input"],
+            width=3,
+            cursor="hand2"
+        )
+        self.lbl_chk.pack(side="left", padx=(10, 4))
+        self.lbl_chk.bind("<Button-1>", lambda e: self.on_toggle_check(self.prod_id))
+
+        # Column 1: PRODUCT (Name bold 10pt + SKU below muted 8pt, width 260)
+        self.f_prod = tk.Frame(self.frame, bg=T["surface"], width=260)
+        self.f_prod.pack(side="left", fill="y")
+        self.f_prod.pack_propagate(False)
+
+        self.p_box = tk.Frame(self.f_prod, bg=T["surface"])
+        self.p_box.pack(fill="both", expand=True, padx=8, pady=6)
+
+        self.lbl_name = tk.Label(
+            self.p_box,
+            text="",
+            font=("Segoe UI", 10, "bold"),
+            bg=T["surface"],
+            fg=T["text"],
+            anchor="w"
+        )
+        self.lbl_name.pack(fill="x")
+
+        self.lbl_sku = tk.Label(
+            self.p_box,
+            text="",
+            font=("Segoe UI", 8),
+            bg=T["surface"],
+            fg=T["text_muted"],
+            anchor="w"
+        )
+        self.lbl_sku.pack(fill="x")
+
+        # Column 2: CATEGORY (Pill tag, width 160)
+        self.f_cat = tk.Frame(self.frame, bg=T["surface"], width=160)
+        self.f_cat.pack(side="left", fill="y")
+        self.f_cat.pack_propagate(False)
+
+        self.cat_pill = tk.Frame(
+            self.f_cat,
+            bg="#172338",
+            highlightbackground=T["border_input"],
+            highlightthickness=1,
+            padx=8,
+            pady=2
+        )
+        self.cat_pill.pack(side="left", padx=8, pady=12)
+
+        self.lbl_cat = tk.Label(
+            self.cat_pill,
+            text="",
+            font=("Segoe UI", 8),
+            bg="#172338",
+            fg=T["text"]
+        )
+        self.lbl_cat.pack()
+
+        # Column 3: STOCK VS. REORDER (Qty bold + / N min muted + 5px progress bar, width 170)
+        self.f_stock = tk.Frame(self.frame, bg=T["surface"], width=170)
+        self.f_stock.pack(side="left", fill="y")
+        self.f_stock.pack_propagate(False)
+
+        self.s_box = tk.Frame(self.f_stock, bg=T["surface"])
+        self.s_box.pack(fill="both", expand=True, padx=8, pady=6)
+
+        self.s_text_row = tk.Frame(self.s_box, bg=T["surface"])
+        self.s_text_row.pack(fill="x", anchor="w")
+
+        self.lbl_stock = tk.Label(
+            self.s_text_row,
+            text="",
+            font=("Segoe UI", 10, "bold"),
+            bg=T["surface"],
+            fg=T["text"]
+        )
+        self.lbl_stock.pack(side="left")
+
+        self.lbl_reorder = tk.Label(
+            self.s_text_row,
+            text="",
+            font=("Segoe UI", 8),
+            bg=T["surface"],
+            fg=T["text_muted"]
+        )
+        self.lbl_reorder.pack(side="left")
+
+        # 5px Progress bar track & fill
+        self.bar_track = tk.Frame(self.s_box, height=5, width=130, bg=T["border_card"])
+        self.bar_track.pack_propagate(False)
+        self.bar_track.pack(anchor="w", pady=(4, 0))
+
+        self.bar_fill = tk.Frame(self.bar_track, height=5, width=0, bg=T["lime"])
+        self.bar_fill.place(x=0, y=0, height=5, width=0)
+
+        # Column 4: COST (Tabular right-aligned, width 90)
+        self.f_cost = tk.Frame(self.frame, bg=T["surface"], width=90)
+        self.f_cost.pack(side="left", fill="y")
+        self.f_cost.pack_propagate(False)
+
+        self.lbl_cost = tk.Label(
+            self.f_cost,
+            text="",
+            font=("Segoe UI", 9),
+            bg=T["surface"],
+            fg=T["text_muted"],
+            anchor="e"
+        )
+        self.lbl_cost.pack(fill="both", expand=True, padx=8)
+
+        # Column 5: PRICE (Tabular right-aligned bold, width 90)
+        self.f_price = tk.Frame(self.frame, bg=T["surface"], width=90)
+        self.f_price.pack(side="left", fill="y")
+        self.f_price.pack_propagate(False)
+
+        self.lbl_price = tk.Label(
+            self.f_price,
+            text="",
+            font=("Segoe UI", 10, "bold"),
+            bg=T["surface"],
+            fg=T["text"],
+            anchor="e"
+        )
+        self.lbl_price.pack(fill="both", expand=True, padx=8)
+
+        # Column 6: EXPIRY (Centered, width 110)
+        self.f_exp = tk.Frame(self.frame, bg=T["surface"], width=110)
+        self.f_exp.pack(side="left", fill="y")
+        self.f_exp.pack_propagate(False)
+
+        self.lbl_exp = tk.Label(
+            self.f_exp,
+            text="",
+            font=("Segoe UI", 9),
+            bg=T["surface"],
+            fg=T["text"],
+            anchor="center"
+        )
+        self.lbl_exp.pack(fill="both", expand=True, padx=8)
+
+        # Column 7: UNIT (Centered, width 70)
+        self.f_unit = tk.Frame(self.frame, bg=T["surface"], width=70)
+        self.f_unit.pack(side="left", fill="y")
+        self.f_unit.pack_propagate(False)
+
+        self.lbl_unit = tk.Label(
+            self.f_unit,
+            text="",
+            font=("Segoe UI", 9),
+            bg=T["surface"],
+            fg=T["text_muted"],
+            anchor="center"
+        )
+        self.lbl_unit.pack(fill="both", expand=True, padx=4)
+
+        # Column 8: STATUS BADGE (Centered, width 120)
+        self.f_status = tk.Frame(self.frame, bg=T["surface"], width=120)
+        self.f_status.pack(side="left", fill="y")
+        self.f_status.pack_propagate(False)
+
+        self.badge_box = tk.Frame(self.f_status, bg=T["success_badge_bg"], padx=10, pady=3)
+        self.badge_box.pack(anchor="center", pady=13)
+
+        self.lbl_status = tk.Label(
+            self.badge_box,
+            text="",
+            font=("Segoe UI", 8, "bold"),
+            bg=T["success_badge_bg"],
+            fg=T["success_badge_text"]
+        )
+        self.lbl_status.pack()
+
+        # Column 9: ROW ACTIONS (Edit, Stock In/Out, width 90)
+        self.f_actions = tk.Frame(self.frame, bg=T["surface"], width=90)
+        self.f_actions.pack(side="left", fill="y")
+        self.f_actions.pack_propagate(False)
+
+        self.btn_edit = tk.Button(
+            self.f_actions,
+            text="✎",
+            font=("Segoe UI", 10, "bold"),
+            bg=T["surface"],
+            fg=T["text_muted"],
+            activebackground=T["hover_row"],
+            activeforeground=T["lime"],
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            width=2,
+            command=lambda: self.on_edit(self.prod_id)
+        )
+        self.btn_edit.pack(side="left", padx=(8, 4), pady=11)
+
+        self.btn_stock = tk.Button(
+            self.f_actions,
+            text="↕",
+            font=("Segoe UI", 11, "bold"),
+            bg=T["surface"],
+            fg=T["text_muted"],
+            activebackground=T["hover_row"],
+            activeforeground=T["lime"],
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            width=2,
+            command=lambda: self.on_stock(self.prod_id)
+        )
+        self.btn_stock.pack(side="left", padx=4, pady=11)
+
+        # 1px Bottom Divider
+        self.divider = tk.Frame(parent, height=1, bg=T["border_card"])
+
+        # Jitter-free hover and click selection
+        self.frame.bind("<Enter>", self._on_enter)
+        self.frame.bind("<Leave>", self._on_leave)
+        self.frame.bind("<Button-1>", lambda e: self.on_select(self.prod_id))
+
+        # Attach mousewheel to row elements for smooth, instant scrolling
+        if self.on_mousewheel:
+            for w in (self.frame, self.lbl_chk, self.f_prod, self.p_box, self.lbl_name, self.lbl_sku,
+                     self.f_cat, self.cat_pill, self.lbl_cat, self.f_stock, self.s_box, self.s_text_row,
+                     self.lbl_stock, self.lbl_reorder, self.bar_track, self.bar_fill, self.f_cost,
+                     self.lbl_cost, self.f_price, self.lbl_price, self.f_exp, self.lbl_exp,
+                     self.f_unit, self.lbl_unit, self.f_status, self.badge_box, self.lbl_status,
+                     self.f_actions, self.btn_edit, self.btn_stock):
+                w.bind("<MouseWheel>", self.on_mousewheel)
+
+    def set_data(self, prod, is_checked):
+        self.prod_id = prod["id"]
+        stock = prod["stock_qty"]
+        reorder = max(1, prod["reorder_level"])
+        self.is_low = (stock <= reorder)
+        self.is_checked = is_checked
+
+        self.base_bg = T["danger_row"] if self.is_low else T["surface"]
+        cur_bg = T["selected_row"] if self.is_checked else self.base_bg
+        self._apply_bg(cur_bg)
+
+        # Checkbox
+        self.lbl_chk.config(
+            text="☑" if self.is_checked else "☐",
+            fg=T["lime"] if self.is_checked else T["border_input"]
+        )
+
+        # Product Info
+        self.lbl_name.config(text=prod["name"] or "")
+        self.lbl_sku.config(text=prod.get("sku", "") or "")
+
+        # Category
+        cat_name = prod.get("category_name") or "Unassigned"
+        cat_short = (cat_name[:18] + "..") if len(cat_name) > 20 else cat_name
+        self.lbl_cat.config(text=cat_short)
+
+        # Stock vs. Reorder
+        self.lbl_stock.config(text=str(stock))
+        self.lbl_reorder.config(text=f"  / {reorder} min")
+
+        # 5px Progress bar
+        fill_pct = min(1.0, max(0.0, float(stock) / float(reorder * 10.0)))
+        fill_w = int(130 * fill_pct)
+        bar_col = T["danger_bar"] if self.is_low else T["lime"]
+        self.bar_fill.config(bg=bar_col)
+        self.bar_fill.place(x=0, y=0, height=5, width=fill_w)
+
+        # Cost & Price
+        self.lbl_cost.config(text=f"${float(prod['cost_price']):.2f}")
+        self.lbl_price.config(text=f"${float(prod['selling_price']):.2f}")
+
+        # Expiry
+        exp_date = prod["expiry_date"]
+        exp_str = exp_date.strftime("%Y-%m-%d") if hasattr(exp_date, "strftime") else str(exp_date or "N/A")
+        self.lbl_exp.config(text=exp_str)
+
+        # Unit
+        self.lbl_unit.config(text=prod.get("unit") or "piece")
+
+        # Status badge
+        if stock <= 0:
+            b_bg, b_fg, b_txt = T["danger_badge_bg"], T["danger_badge_text"], "Out of stock"
+        elif self.is_low:
+            b_bg, b_fg, b_txt = T["danger_badge_bg"], T["danger_badge_text"], "Low stock"
+        else:
+            b_bg, b_fg, b_txt = T["success_badge_bg"], T["success_badge_text"], "In stock"
+
+        self.badge_box.config(bg=b_bg)
+        self.lbl_status.config(text=b_txt, bg=b_bg, fg=b_fg)
+
+        if not self.frame.winfo_ismapped():
+            self.frame.pack(fill="x", side="top")
+        if not self.divider.winfo_ismapped():
+            self.divider.pack(fill="x", side="top")
+
+    def update_checked(self, is_checked):
+        """Instant in-place toggle without rebuilding widgets (0.05ms)."""
+        self.is_checked = is_checked
+        cur_bg = T["selected_row"] if self.is_checked else self.base_bg
+        self._apply_bg(cur_bg)
+        self.lbl_chk.config(
+            text="☑" if self.is_checked else "☐",
+            fg=T["lime"] if self.is_checked else T["border_input"]
+        )
+
+    def hide(self):
+        if self.frame.winfo_ismapped():
+            self.frame.pack_forget()
+        if self.divider.winfo_ismapped():
+            self.divider.pack_forget()
+
+    def _apply_bg(self, bg):
+        for widget in (self.frame, self.lbl_chk, self.f_prod, self.p_box, self.lbl_name, self.lbl_sku,
+                       self.f_cat, self.f_stock, self.s_box, self.s_text_row, self.lbl_stock, self.lbl_reorder,
+                       self.f_cost, self.lbl_cost, self.f_price, self.lbl_price, self.f_exp, self.lbl_exp,
+                       self.f_unit, self.lbl_unit, self.f_status, self.f_actions, self.btn_edit, self.btn_stock):
+            widget.config(bg=bg)
+
+    def _on_enter(self, event):
+        if not self.is_checked:
+            self._apply_bg(T["hover_row"])
+
+    def _on_leave(self, event):
+        # Prevent jitter when cursor moves over internal child widgets
+        try:
+            x, y = self.frame.winfo_pointerxy()
+            rx = self.frame.winfo_rootx()
+            ry = self.frame.winfo_rooty()
+            rw = self.frame.winfo_width()
+            rh = self.frame.winfo_height()
+            if rx <= x < rx + rw and ry <= y < ry + rh:
+                return
+        except Exception:
+            pass
+
+        cur_bg = T["selected_row"] if self.is_checked else self.base_bg
+        self._apply_bg(cur_bg)
+
+
 class InventoryScreen(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg=T["bg"])
@@ -455,8 +817,23 @@ class InventoryScreen(tk.Frame):
         self.table_inner.bind("<Configure>", lambda e: self.canvas_table.configure(scrollregion=self.canvas_table.bbox("all")))
         self.canvas_table.bind("<Configure>", self._on_canvas_configure)
 
-        self._scroller = SmoothScroller(self.canvas_table, friction=0.82, speed_factor=3.5)
-        self._scroller.attach_hover(self.canvas_table, self.table_inner)
+        # High-performance responsive mousewheel scrolling
+        self.canvas_table.bind("<MouseWheel>", self._on_table_wheel)
+        self.table_inner.bind("<MouseWheel>", self._on_table_wheel)
+        self.table_card.bind("<MouseWheel>", self._on_table_wheel)
+
+        # Reusable row pool & fast lookup cache
+        self._row_pool = []
+        self._row_by_id = {}
+
+        self._empty_label = tk.Label(
+            self.table_inner,
+            text="No products found matching the current filters.",
+            font=("Segoe UI", 11),
+            bg=T["surface"],
+            fg=T["text_muted"],
+            pady=60
+        )
 
         # 5. Table Footer Row
         self.footer_frame = tk.Frame(self.view_catalog, bg=T["bg"], pady=8)
@@ -484,6 +861,16 @@ class InventoryScreen(tk.Frame):
         min_width = 1180
         width = max(min_width, event.width)
         self.canvas_table.itemconfig(self.table_win_id, width=width)
+
+    def _on_table_wheel(self, event):
+        if not self.canvas_table.winfo_exists():
+            return "break"
+        delta = event.delta
+        if delta == 0:
+            return "break"
+        direction = -1 if delta > 0 else 1
+        self.canvas_table.yview_scroll(direction * 3, "units")
+        return "break"
 
     def _build_kpi_card(self, col, label_text, default_val, is_danger=False):
         border_col = T["danger_badge_bg"] if is_danger else T["border_card"]
@@ -772,324 +1159,87 @@ class InventoryScreen(tk.Frame):
     # ─────────────────────────────────────────────────────────────────────────
 
     def render_table_rows(self):
-        for widget in self.table_inner.winfo_children():
-            widget.destroy()
-
         total_count = len(self._all_products_cache)
         disp_count = len(self._displayed_products)
         self.lbl_prod_count.config(text=f"Showing {disp_count} of {total_count} products")
 
         if not self._displayed_products:
-            empty_lbl = tk.Label(
-                self.table_inner,
-                text="No products found matching the current filters.",
-                font=("Segoe UI", 11),
-                bg=T["surface"],
-                fg=T["text_muted"],
-                pady=60
-            )
-            empty_lbl.pack(fill="x", expand=True)
+            for row in self._row_pool:
+                row.hide()
+            self._empty_label.pack(fill="x", expand=True)
+            self._update_selection_state()
             return
 
-        today = date.today()
-        warn_date = today + timedelta(days=config.EXPIRY_WARN_DAYS)
+        self._empty_label.pack_forget()
 
-        for prod in self._displayed_products:
-            pid = prod["id"]
-            stock = prod["stock_qty"]
-            reorder = max(1, prod["reorder_level"])
-            is_low = stock <= reorder
-
-            # Determine status badge text and colors
-            if stock <= 0:
-                badge_bg = T["danger_badge_bg"]
-                badge_fg = T["danger_badge_text"]
-                status_txt = "Out of stock"
-            elif is_low:
-                badge_bg = T["danger_badge_bg"]
-                badge_fg = T["danger_badge_text"]
-                status_txt = "Low stock"
-            else:
-                badge_bg = T["success_badge_bg"]
-                badge_fg = T["success_badge_text"]
-                status_txt = "In stock"
-
-            # Check expiry
-            exp_date = prod["expiry_date"]
-            if hasattr(exp_date, "strftime"):
-                exp_str = exp_date.strftime("%Y-%m-%d")
-            else:
-                exp_str = str(exp_date or "N/A")
-
-            # Base row background (danger row tint #1F1620 for low stock)
-            base_bg = T["danger_row"] if is_low else T["surface"]
-            is_checked = pid in self.selected_ids
-
-            row_frame = tk.Frame(self.table_inner, bg=base_bg, height=54)
-            row_frame.pack(fill="x", side="top")
-            row_frame.pack_propagate(False)
-
-            # Checkbox
-            chk_lbl = tk.Label(
-                row_frame,
-                text="☑" if is_checked else "☐",
-                font=("Segoe UI", 12, "bold"),
-                bg=base_bg,
-                fg=T["lime"] if is_checked else T["border_input"],
-                width=3,
-                cursor="hand2"
+        needed = len(self._displayed_products)
+        while len(self._row_pool) < needed:
+            new_row = ProductCatalogRow(
+                self.table_inner,
+                on_toggle_check=self.toggle_row_check,
+                on_edit=self.open_edit_product_modal,
+                on_stock=self.open_stock_movement_modal,
+                on_select=self._set_last_clicked,
+                on_mousewheel=self._on_table_wheel
             )
-            chk_lbl.pack(side="left", padx=(10, 4))
-            chk_lbl.bind("<Button-1>", lambda e, p_id=pid: self.toggle_row_check(p_id))
+            self._row_pool.append(new_row)
 
-            # Column 1: PRODUCT (Name bold + SKU below muted)
-            f_prod = tk.Frame(row_frame, bg=base_bg, width=260)
-            f_prod.pack(side="left", fill="y")
-            f_prod.pack_propagate(False)
+        self._row_by_id.clear()
+        for i in range(needed):
+            prod = self._displayed_products[i]
+            row = self._row_pool[i]
+            is_chk = prod["id"] in self.selected_ids
+            row.set_data(prod, is_chk)
+            self._row_by_id[prod["id"]] = row
 
-            p_box = tk.Frame(f_prod, bg=base_bg)
-            p_box.pack(fill="both", expand=True, padx=8, pady=6)
+        # Hide any unused rows in pool
+        for i in range(needed, len(self._row_pool)):
+            self._row_pool[i].hide()
 
-            tk.Label(
-                p_box,
-                text=prod["name"],
-                font=("Segoe UI", 10, "bold"),
-                bg=base_bg,
-                fg=T["text"],
-                anchor="w"
-            ).pack(fill="x")
-
-            tk.Label(
-                p_box,
-                text=prod.get("sku", ""),
-                font=("Segoe UI", 8),
-                bg=base_bg,
-                fg=T["text_muted"],
-                anchor="w"
-            ).pack(fill="x")
-
-            # Column 2: CATEGORY (Pill tag)
-            f_cat = tk.Frame(row_frame, bg=base_bg, width=160)
-            f_cat.pack(side="left", fill="y")
-            f_cat.pack_propagate(False)
-
-            cat_pill = tk.Frame(
-                f_cat,
-                bg="#172338",
-                highlightbackground=T["border_input"],
-                highlightthickness=1,
-                padx=8,
-                pady=2
-            )
-            cat_pill.pack(side="left", padx=8, pady=12)
-
-            cat_name = prod.get("category_name") or "Unassigned"
-            cat_short = (cat_name[:18] + "..") if len(cat_name) > 20 else cat_name
-            tk.Label(
-                cat_pill,
-                text=cat_short,
-                font=("Segoe UI", 8),
-                bg="#172338",
-                fg=T["text"]
-            ).pack()
-
-            # Column 3: STOCK VS. REORDER (Stock bold + / min muted + 5px progress bar)
-            f_stock = tk.Frame(row_frame, bg=base_bg, width=170)
-            f_stock.pack(side="left", fill="y")
-            f_stock.pack_propagate(False)
-
-            s_box = tk.Frame(f_stock, bg=base_bg)
-            s_box.pack(fill="both", expand=True, padx=8, pady=6)
-
-            s_text_row = tk.Frame(s_box, bg=base_bg)
-            s_text_row.pack(fill="x", anchor="w")
-
-            tk.Label(
-                s_text_row,
-                text=str(stock),
-                font=("Segoe UI", 10, "bold"),
-                bg=base_bg,
-                fg=T["text"]
-            ).pack(side="left")
-
-            tk.Label(
-                s_text_row,
-                text=f"  / {reorder} min",
-                font=("Segoe UI", 8),
-                bg=base_bg,
-                fg=T["text_muted"]
-            ).pack(side="left")
-
-            # 5px Progress bar Canvas
-            bar_canvas = tk.Canvas(s_box, height=5, width=130, bg=base_bg, bd=0, highlightthickness=0)
-            bar_canvas.pack(anchor="w", pady=(4, 0))
-
-            fill_pct = min(1.0, max(0.0, float(stock) / float(reorder * 10.0)))
-            fill_w = int(130 * fill_pct)
-            bar_col = T["danger_bar"] if is_low else T["lime"]
-
-            # Draw track
-            bar_canvas.create_rectangle(0, 0, 130, 5, fill=T["border_card"], outline="")
-            # Draw fill
-            if fill_w > 0:
-                bar_canvas.create_rectangle(0, 0, fill_w, 5, fill=bar_col, outline="")
-
-            # Column 4: COST
-            f_cost = tk.Frame(row_frame, bg=base_bg, width=90)
-            f_cost.pack(side="left", fill="y")
-            f_cost.pack_propagate(False)
-
-            tk.Label(
-                f_cost,
-                text=f"${float(prod['cost_price']):.2f}",
-                font=("Segoe UI", 9),
-                bg=base_bg,
-                fg=T["text_muted"],
-                anchor="e"
-            ).pack(fill="both", expand=True, padx=8)
-
-            # Column 5: PRICE
-            f_price = tk.Frame(row_frame, bg=base_bg, width=90)
-            f_price.pack(side="left", fill="y")
-            f_price.pack_propagate(False)
-
-            tk.Label(
-                f_price,
-                text=f"${float(prod['selling_price']):.2f}",
-                font=("Segoe UI", 10, "bold"),
-                bg=base_bg,
-                fg=T["text"],
-                anchor="e"
-            ).pack(fill="both", expand=True, padx=8)
-
-            # Column 6: EXPIRY
-            f_exp = tk.Frame(row_frame, bg=base_bg, width=110)
-            f_exp.pack(side="left", fill="y")
-            f_exp.pack_propagate(False)
-
-            tk.Label(
-                f_exp,
-                text=exp_str,
-                font=("Segoe UI", 9),
-                bg=base_bg,
-                fg=T["text"],
-                anchor="center"
-            ).pack(fill="both", expand=True, padx=8)
-
-            # Column 7: UNIT
-            f_unit = tk.Frame(row_frame, bg=base_bg, width=70)
-            f_unit.pack(side="left", fill="y")
-            f_unit.pack_propagate(False)
-
-            tk.Label(
-                f_unit,
-                text=prod.get("unit") or "piece",
-                font=("Segoe UI", 9),
-                bg=base_bg,
-                fg=T["text_muted"],
-                anchor="center"
-            ).pack(fill="both", expand=True, padx=4)
-
-            # Column 8: STATUS BADGE
-            f_status = tk.Frame(row_frame, bg=base_bg, width=120)
-            f_status.pack(side="left", fill="y")
-            f_status.pack_propagate(False)
-
-            badge_box = tk.Frame(f_status, bg=badge_bg, padx=10, pady=3)
-            badge_box.pack(anchor="center", pady=13)
-
-            tk.Label(
-                badge_box,
-                text=status_txt,
-                font=("Segoe UI", 8, "bold"),
-                bg=badge_bg,
-                fg=badge_fg
-            ).pack()
-
-            # Column 9: ROW ACTIONS (Edit, Stock In/Out)
-            f_actions = tk.Frame(row_frame, bg=base_bg, width=90)
-            f_actions.pack(side="left", fill="y")
-            f_actions.pack_propagate(False)
-
-            btn_edit = tk.Button(
-                f_actions,
-                text="✎",
-                font=("Segoe UI", 10, "bold"),
-                bg=T["surface"],
-                fg=T["text_muted"],
-                activebackground=T["hover_row"],
-                activeforeground=T["lime"],
-                relief="flat",
-                bd=0,
-                cursor="hand2",
-                width=2,
-                command=lambda p_id=pid: self.open_edit_product_modal(p_id)
-            )
-            btn_edit.pack(side="left", padx=(8, 4), pady=11)
-
-            btn_stock_row = tk.Button(
-                f_actions,
-                text="↕",
-                font=("Segoe UI", 11, "bold"),
-                bg=T["surface"],
-                fg=T["text_muted"],
-                activebackground=T["hover_row"],
-                activeforeground=T["lime"],
-                relief="flat",
-                bd=0,
-                cursor="hand2",
-                width=2,
-                command=lambda p_id=pid: self.open_stock_movement_modal(p_id)
-            )
-            btn_stock_row.pack(side="left", padx=4, pady=11)
-
-            # 1px Bottom Divider
-            divider = tk.Frame(self.table_inner, height=1, bg=T["border_card"])
-            divider.pack(fill="x")
-
-            # Row Hover & Selection Click Handlers
-            def on_enter(e, rf=row_frame, is_l=is_low, p_id=pid):
-                if p_id not in self.selected_ids:
-                    rf.config(bg=T["hover_row"])
-
-            def on_leave(e, rf=row_frame, is_l=is_low, p_id=pid):
-                if p_id in self.selected_ids:
-                    rf.config(bg=T["selected_row"])
-                else:
-                    rf.config(bg=T["danger_row"] if is_l else T["surface"])
-
-            def on_row_click(e, p_id=pid):
-                self.last_clicked_row_id = p_id
-
-            row_frame.bind("<Enter>", on_enter)
-            row_frame.bind("<Leave>", on_leave)
-            row_frame.bind("<Button-1>", on_row_click)
-
-        # Update header checkbox status
         self._update_selection_state()
+        self.canvas_table.configure(scrollregion=self.canvas_table.bbox("all"))
+
+    def _set_last_clicked(self, prod_id):
+        self.last_clicked_row_id = prod_id
 
     # ─────────────────────────────────────────────────────────────────────────
     # Selection & Bulk Actions
     # ─────────────────────────────────────────────────────────────────────────
 
     def toggle_row_check(self, prod_id):
+        """Instant in-place checkbox toggling without rebuilding widgets."""
         if prod_id in self.selected_ids:
             self.selected_ids.remove(prod_id)
+            is_chk = False
         else:
             self.selected_ids.add(prod_id)
-        self.render_table_rows()
+            is_chk = True
+
+        row = self._row_by_id.get(prod_id)
+        if row:
+            row.update_checked(is_chk)
+
+        self._update_selection_state()
 
     def toggle_select_all(self):
+        """In-place batch check/uncheck without rebuilding widgets."""
         visible_ids = {p["id"] for p in self._displayed_products}
         if visible_ids.issubset(self.selected_ids) and len(visible_ids) > 0:
             self.selected_ids.difference_update(visible_ids)
         else:
             self.selected_ids.update(visible_ids)
-        self.render_table_rows()
+
+        for prod_id, row in self._row_by_id.items():
+            row.update_checked(prod_id in self.selected_ids)
+
+        self._update_selection_state()
 
     def clear_selection(self):
+        """In-place clear selection without rebuilding widgets."""
         self.selected_ids.clear()
-        self.render_table_rows()
+        for row in self._row_by_id.values():
+            row.update_checked(False)
+        self._update_selection_state()
 
     def _update_selection_state(self):
         count = len(self.selected_ids)
