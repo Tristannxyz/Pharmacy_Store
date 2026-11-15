@@ -484,7 +484,8 @@ class AnalysisScreen(tk.Frame):
         scroll_c.create_window((0, 0), window=inner, anchor="nw")
         scroll_c.configure(yscrollcommand=sbar.set)
         scroll_c.pack(side="left", fill="both", expand=True)
-        sbar.pack(side="right", fill="y")
+        scroll_c.bind("<MouseWheel>", lambda e: scroll_c.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+        inner.bind("<MouseWheel>", lambda e: scroll_c.yview_scroll(int(-1 * (e.delta / 120)), "units"))
 
         tk.Label(inner, text="Detailed Model Evaluation Metrics & Plain-Language Interpretations", font=config.FONTS["h2"], bg=config.COLORS["background"], fg=config.COLORS["text_dark"]).pack(anchor="w", pady=(0, 15))
 
@@ -533,7 +534,8 @@ class AnalysisScreen(tk.Frame):
         scroll_c.create_window((0, 0), window=inner, anchor="nw")
         scroll_c.configure(yscrollcommand=sbar.set)
         scroll_c.pack(side="left", fill="both", expand=True)
-        sbar.pack(side="right", fill="y")
+        scroll_c.bind("<MouseWheel>", lambda e: scroll_c.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+        inner.bind("<MouseWheel>", lambda e: scroll_c.yview_scroll(int(-1 * (e.delta / 120)), "units"))
 
         # Winner Summary Banner
         comp = self.metadata.get("comparison", {})
@@ -670,8 +672,6 @@ class AnalysisScreen(tk.Frame):
             tree.configure(yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
 
             tree.pack(side="left", fill="both", expand=True)
-            scroll_y.pack(side="right", fill="y")
-            scroll_x.pack(side="bottom", fill="x")
 
             # Insert preview rows (first 300 rows for smooth UI rendering)
             for _, row in df.head(300).iterrows():

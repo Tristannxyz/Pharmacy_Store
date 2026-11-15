@@ -769,7 +769,6 @@ class SalesScreen(tk.Frame):
         self.canvas_catalog.grid(row=0, column=0, sticky="nsew")
 
         self.scroll_catalog = ttk.Scrollbar(grid_container, orient="vertical", command=self.canvas_catalog.yview)
-        self.scroll_catalog.grid(row=0, column=1, sticky="ns")
         self.canvas_catalog.configure(yscrollcommand=self.scroll_catalog.set)
 
         self.cards_inner_frame = tk.Frame(self.canvas_catalog, bg=pal["bg"])
@@ -1138,7 +1137,6 @@ class SalesScreen(tk.Frame):
         self.canvas_cart.pack(side="left", fill="both", expand=True)
 
         self.scroll_cart = ttk.Scrollbar(cart_scroll_frame, orient="vertical", command=self.canvas_cart.yview)
-        self.scroll_cart.pack(side="right", fill="y")
         self.canvas_cart.configure(yscrollcommand=self.scroll_cart.set)
 
         self.cart_items_frame = tk.Frame(self.canvas_cart, bg=pal["card"])
@@ -1973,7 +1971,6 @@ class SalesScreen(tk.Frame):
         scroll_y = ttk.Scrollbar(table_frame, orient="vertical", command=self.hist_tree.yview)
         self.hist_tree.configure(yscrollcommand=scroll_y.set)
         self.hist_tree.pack(side="left", fill="both", expand=True)
-        scroll_y.pack(side="right", fill="y")
 
         self.hist_tree.bind("<Double-1>", lambda e: self.view_selected_invoice_details())
 

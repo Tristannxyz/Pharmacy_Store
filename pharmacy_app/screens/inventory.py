@@ -807,8 +807,6 @@ class InventoryScreen(tk.Frame):
 
         self.canvas_table.configure(yscrollcommand=self.scroll_y.set, xscrollcommand=self.scroll_x.set)
 
-        self.scroll_y.pack(side="right", fill="y")
-        self.scroll_x.pack(side="bottom", fill="x")
         self.canvas_table.pack(side="left", fill="both", expand=True)
 
         self.table_inner = tk.Frame(self.canvas_table, bg=T["surface"])
@@ -1698,7 +1696,6 @@ class InventoryScreen(tk.Frame):
         scroll_y = ttk.Scrollbar(move_card, orient="vertical", command=self.move_tree.yview)
         self.move_tree.configure(yscrollcommand=scroll_y.set)
         self.move_tree.pack(side="left", fill="both", expand=True)
-        scroll_y.pack(side="right", fill="y")
 
     def load_movements(self):
         if not hasattr(self, "move_tree"):
