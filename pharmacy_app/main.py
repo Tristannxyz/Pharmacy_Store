@@ -333,27 +333,24 @@ class MainWindow(tk.Tk):
             fg=_NAV_INACTIVE_FG
         ).pack(anchor="w")
 
-        # ── Navigation Menu Items ─────────────────────────────────────────────
-        self.menu_buttons = {}
-        self.active_key = None
-        self.build_navigation_items(role)
+        # ── Fetch User & Role ─────────────────────────────────────────────────
+        user = auth.SessionManager.get_user() or {}
+        role = user.get("role", config.ROLE_ADMIN)
+        role_label = config.ROLE_DISPLAY_NAMES.get(role, role)
 
         # ── Bottom Box: User Profile Chip + Theme Toggle & Logout ─────────────
         bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
         bottom_box.pack(side="bottom", fill="x")
 
-        # Pinned User Profile Card at bottom
-        user = auth.SessionManager.get_user() or {}
-        role = user.get("role", config.ROLE_ADMIN)
-        role_label = config.ROLE_DISPLAY_NAMES.get(role, role)
-
+        # Pinned User Profile Card at bottom (Clickable to view My Profile)
         user_chip = tk.Frame(
             bottom_box,
             bg=_USER_CHIP_BG,
             padx=12,
             pady=10,
             highlightbackground=_USER_CHIP_BORDER,
-            highlightthickness=1
+            highlightthickness=1,
+            cursor="hand2"
         )
         user_chip.pack(fill="x", pady=(0, 10))
 
@@ -363,26 +360,35 @@ class MainWindow(tk.Tk):
         initials = "".join(w[0].upper() for w in words[:2]) if words else "SA"
 
         avatar_photo = self._make_circle_avatar(initials, size=36)
-        tk.Label(user_chip, image=avatar_photo, bg=_USER_CHIP_BG, bd=0).pack(side="left", padx=(0, 10))
+        lbl_avatar = tk.Label(user_chip, image=avatar_photo, bg=_USER_CHIP_BG, bd=0, cursor="hand2")
+        lbl_avatar.pack(side="left", padx=(0, 10))
 
-        user_text_box = tk.Frame(user_chip, bg=_USER_CHIP_BG)
+        user_text_box = tk.Frame(user_chip, bg=_USER_CHIP_BG, cursor="hand2")
         user_text_box.pack(side="left", fill="x", expand=True)
 
-        tk.Label(
+        lbl_uname = tk.Label(
             user_text_box,
             text=full_name,
             font=("Segoe UI", 9, "bold"),
             bg=_USER_CHIP_BG,
-            fg="#ffffff"
-        ).pack(anchor="w")
+            fg="#ffffff",
+            cursor="hand2"
+        )
+        lbl_uname.pack(anchor="w")
 
-        tk.Label(
+        lbl_urole = tk.Label(
             user_text_box,
             text=role_label,
             font=("Segoe UI", 8),
             bg=_USER_CHIP_BG,
-            fg=_NAV_INACTIVE_FG
-        ).pack(anchor="w", pady=(1, 0))
+            fg=_NAV_INACTIVE_FG,
+            cursor="hand2"
+        )
+        lbl_urole.pack(anchor="w", pady=(1, 0))
+
+        # Clicking the user profile chip opens My Profile
+        for w in (user_chip, lbl_avatar, user_text_box, lbl_uname, lbl_urole):
+            w.bind("<Button-1>", lambda e: self.navigate_to("profile"))
 
         is_dark = config.get_theme() == "dark"
         theme_label = "☀  Light Mode" if is_dark else "🌙  Dark Mode"
@@ -422,6 +428,11 @@ class MainWindow(tk.Tk):
             command=self.handle_logout
         )
         btn_logout.pack(fill="x")
+
+        # ── Navigation Menu Items ─────────────────────────────────────────────
+        self.menu_buttons = {}
+        self.active_key = None
+        self.build_navigation_items(role)
 
         # ── Right Content Area ────────────────────────────────────────────────
         self.content_area = tk.Frame(shell, bg=config.COLORS["background"])
