@@ -1288,9 +1288,31 @@ class MainWindow(tk.Tk):
             config.UI_PREFS["text_size"] = sz
         self._apply_global_typography()
 
+    def _is_nav_allowed(self, key: str, role: str) -> bool:
+        """Determines whether a navigation item is permitted for the given role."""
+        perms = config.ROLE_PERMISSIONS.get(role)
+        if perms is None and auth.SessionManager.is_authenticated():
+            perms = config.ROLE_PERMISSIONS.get(auth.SessionManager.get_role(), [])
+        if perms is None:
+            perms = []
+
+        if key == "dashboard":
+            return "dashboard_view" in perms or not perms
+        if key == "inventory":
+            return "inventory_view" in perms
+        if key == "sales":
+            return "sales_pos" in perms or "sales_history" in perms
+        if key == "users":
+            return "users_manage" in perms
+        if key == "analysis":
+            return "analysis_input_predict" in perms
+        if key == "profile":
+            return "profile_view" in perms or not perms
+        return True
+
     def build_navigation_items(self, role):
         """Constructs role-tailored sidebar menu items with sleek pill highlights."""
-        items = [
+        all_items = [
             ("dashboard", self._ui_t("nav_dashboard")),
             ("inventory", self._ui_t("nav_inventory")),
             ("sales", self._ui_t("nav_sales")),
@@ -1298,6 +1320,8 @@ class MainWindow(tk.Tk):
             ("analysis", self._ui_t("nav_analysis")),
             ("profile", self._ui_t("nav_profile")),
         ]
+
+        items = [(k, label) for k, label in all_items if self._is_nav_allowed(k, role)]
 
         for key, label in items:
             btn = tk.Button(
