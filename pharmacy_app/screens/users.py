@@ -87,7 +87,6 @@ class UsersScreen(tk.Frame):
         scroll_y = ttk.Scrollbar(table_frame, orient="vertical", command=self.user_tree.yview)
         self.user_tree.configure(yscrollcommand=scroll_y.set)
         self.user_tree.pack(side="left", fill="both", expand=True)
-        scroll_y.pack(side="right", fill="y")
 
         self.user_tree.tag_configure("locked", foreground=config.COLORS["danger"], font=config.FONTS["body_bold"])
         self.user_tree.tag_configure("inactive", foreground=config.COLORS["text_muted"])
@@ -392,7 +391,6 @@ class UsersScreen(tk.Frame):
         scroll_y = ttk.Scrollbar(table_frame, orient="vertical", command=self.audit_tree.yview)
         self.audit_tree.configure(yscrollcommand=scroll_y.set)
         self.audit_tree.pack(side="left", fill="both", expand=True)
-        scroll_y.pack(side="right", fill="y")
 
         self.load_audit_logs()
 
@@ -424,4 +422,11 @@ class UsersScreen(tk.Frame):
                     log["ip_address"]
                 )
             )
+
+    def apply_theme(self):
+        """Updates Treeview tag colors when switching themes in place."""
+        c = config.COLORS
+        if hasattr(self, "user_tree") and self.user_tree.winfo_exists():
+            self.user_tree.tag_configure("locked", foreground=c["danger"], font=config.FONTS["body_bold"])
+            self.user_tree.tag_configure("inactive", foreground=c["text_muted"])
 

@@ -15,16 +15,17 @@ from PIL import Image, ImageTk, ImageDraw, ImageFont
 import config
 import db
 import auth
+from theme import ThemeAnimator, collect_transition_targets
 from screens.login import LoginScreen
 from screens.dashboard import DashboardScreen
 
 _ASSETS_DIR = Path(__file__).resolve().parent / "assets"
-_SIDEBAR_BG = "#071d32"
-_USER_CHIP_BG = "#0c263e"
-_USER_CHIP_BORDER = "#143657"
-_LIME = "#a3e635"
-_NAV_INACTIVE_FG = "#8ea3b8"
-_NAV_HOVER_BG = "#0d2742"
+_SIDEBAR_BG = "#0D1524"
+_USER_CHIP_BG = "#111A2B"
+_USER_CHIP_BORDER = "#1E2B42"
+_LIME = "#A3E635"
+_NAV_INACTIVE_FG = "#9FB0C8"
+_NAV_HOVER_BG = "#15213A"
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -42,17 +43,34 @@ class MainWindow(tk.Tk):
         self.bind("<Escape>", lambda e: self.attributes("-fullscreen", False))
         self.protocol("WM_DELETE_WINDOW", self.on_close_attempt)
 
+        self._available_families = set()
+        try:
+            self._available_families = set(tkfont.families())
+        except Exception:
+            pass
+        self._font_spec_cache = {}
+        self._typo_idle_scheduled = False
+
         # Style TTK widgets
         self.setup_ttk_styles()
 
         # Master layout container
         self.main_container = tk.Frame(self, bg=config.COLORS["background"])
         self.main_container.pack(fill="both", expand=True)
+        self.bind("<Map>", self._on_any_widget_map, add="+")
 
-        # Active components
+        #Active components
         self.sidebar = None
         self.content_area = None
         self.current_screen = None
+        self._login_view = None
+        self.btn_theme = None
+        self.btn_settings = None
+        self.btn_logout = None
+        self._sidebar_settings_popover = None
+        self._sidebar_active_dropdown = None
+        self._is_sidebar_settings_open = False
+        self._theme_animator = ThemeAnimator(self)
 
         # Check / Initialize DB on start
         try:
@@ -69,28 +87,225 @@ class MainWindow(tk.Tk):
         self.show_login_screen()
 
     def setup_ttk_styles(self):
+        c = config.COLORS
         style = ttk.Style(self)
         style.theme_use("clam")
 
+        # Default widget colors for classic tk widgets that omit explicit fg/bg
+        self.option_add("*Label.foreground", c["text_dark"])
+        self.option_add("*Radiobutton.foreground", c["text_dark"])
+        self.option_add("*Radiobutton.selectColor", c["surface_alt"])
+        self.option_add("*Checkbutton.foreground", c["text_dark"])
+        self.option_add("*Checkbutton.selectColor", c["surface_alt"])
+        self.option_add("*Text.foreground", c["text_dark"])
+        self.option_add("*Text.background", c["surface"])
+        self.option_add("*Text.insertBackground", c["text_dark"])
+        self.option_add("*TCombobox*Listbox.background", c["surface"])
+        self.option_add("*TCombobox*Listbox.foreground", c["text_dark"])
+        self.option_add("*TCombobox*Listbox.selectBackground", c["accent"])
+        self.option_add("*TCombobox*Listbox.selectForeground", "#ffffff")
+
         # Treeview styling for data tables
+        prefs = getattr(config, "UI_PREFS", {})
+        sz_off = {"S": -1, "M": 0, "L": 2, "XL": 3}.get(prefs.get("text_size", "M"), 0)
+        body_font = self._ui_font(10)
+        body_bold_font = self._ui_font(10, "bold")
+
         style.configure(
             "Treeview",
-            background=config.COLORS["surface"],
-            foreground=config.COLORS["text_dark"],
-            rowheight=28,
-            fieldbackground=config.COLORS["surface"],
-            font=config.FONTS["body"],
+            background=c["surface"],
+            foreground=c["text_dark"],
+            rowheight=max(24, 28 + sz_off * 2),
+            fieldbackground=c["surface"],
+            font=body_font,
             borderwidth=0
         )
         style.configure(
             "Treeview.Heading",
-            background=config.COLORS["surface_alt"],
-            foreground=config.COLORS["text_dark"],
-            font=config.FONTS["body_bold"],
+            background=c["surface_alt"],
+            foreground=c["text_dark"],
+            font=body_bold_font,
             relief="flat",
             padding=(6, 6)
         )
-        style.map("Treeview", background=[("selected", config.COLORS["accent"])], foreground=[("selected", "white")])
+        style.map("Treeview.Heading", background=[("active", c["border"])])
+        style.map("Treeview", background=[("selected", c["accent"])], foreground=[("selected", "white")])
+
+        # Entry, Combobox, and Spinbox styling
+        style.configure(
+            "TEntry",
+            fieldbackground=c["surface_alt"],
+            foreground=c["text_dark"],
+            insertcolor=c["text_dark"],
+            bordercolor=c["border"],
+            lightcolor=c["border"],
+            darkcolor=c["border"],
+            font=body_font,
+        )
+        style.configure(
+            "TCombobox",
+            fieldbackground=c["surface_alt"],
+            background=c["surface_alt"],
+            foreground=c["text_dark"],
+            arrowcolor=c["text_muted"],
+            bordercolor=c["border"],
+            lightcolor=c["border"],
+            darkcolor=c["border"],
+            font=body_font,
+        )
+        style.map(
+            "TCombobox",
+            fieldbackground=[("readonly", c["surface_alt"])],
+            foreground=[("readonly", c["text_dark"])],
+            selectbackground=[("readonly", c["surface_alt"])],
+            selectforeground=[("readonly", c["text_dark"])],
+        )
+        style.configure(
+            "TSpinbox",
+            fieldbackground=c["surface_alt"],
+            background=c["surface_alt"],
+            foreground=c["text_dark"],
+            arrowcolor=c["text_muted"],
+            bordercolor=c["border"],
+            font=body_font,
+        )
+
+        # Notebook & Tab styling
+        style.configure("TNotebook", background=c["background"], borderwidth=0)
+        style.configure(
+            "TNotebook.Tab",
+            background=c["surface_alt"],
+            foreground=c["text_muted"],
+            padding=(12, 6),
+            font=body_bold_font,
+            borderwidth=0,
+        )
+        style.map(
+            "TNotebook.Tab",
+            background=[("selected", c["surface"]), ("active", c["border"])],
+            foreground=[("selected", c["text_dark"])],
+        )
+
+        # Hide scrollbars globally while preserving smooth mousewheel scrolling
+        style.layout("Vertical.TScrollbar", [])
+        style.layout("Horizontal.TScrollbar", [])
+        style.configure(
+            "Vertical.TScrollbar",
+            background=c["surface_alt"],
+            troughcolor=c["background"],
+            bordercolor=c["background"],
+            arrowcolor=c["text_muted"],
+            width=0,
+        )
+        style.configure(
+            "Horizontal.TScrollbar",
+            background=c["surface_alt"],
+            troughcolor=c["background"],
+            bordercolor=c["background"],
+            arrowcolor=c["text_muted"],
+             width=0,
+        )
+
+    def _resolve_ui_font_family(self) -> str:
+        prefs = getattr(config, "UI_PREFS", {})
+        choice = prefs.get("font", "Inter")
+        if choice == "Inter":
+            if "Inter" in self._available_families:
+                return "Inter"
+            if "Segoe UI Variable Text" in self._available_families:
+                return "Segoe UI Variable Text"
+            return "Segoe UI"
+        if choice in self._available_families:
+            return choice
+        return "Segoe UI"
+
+    def _ui_font(self, base_pt: int, weight: str = "normal"):
+        prefs = getattr(config, "UI_PREFS", {})
+        sz = prefs.get("text_size", "M")
+        offsets = {"S": -1, "M": 0, "L": 2, "XL": 3}
+        pt = max(7, base_pt + offsets.get(sz, 0))
+        fam = self._resolve_ui_font_family()
+        return (fam, pt, "bold") if weight == "bold" else (fam, pt)
+
+    def _ui_t(self, key: str) -> str:
+        prefs = getattr(config, "UI_PREFS", {})
+        lang = prefs.get("language", "English")
+        translations = {
+            "English": {
+                "settings": "Settings",
+                "appearance": "Appearance",
+                "light_mode": "Light mode",
+                "dark_mode": "Dark mode",
+                "language": "Language",
+                "font": "Font",
+                "text_size": "Text size",
+                "sign_out": "⏻  Sign Out",
+                "nav_dashboard": "⊞   Dashboard",
+                "nav_inventory": "◫   Inventory Management",
+                "nav_sales": "💳   Point of Sale (POS)",
+                "nav_users": "👥   User Management & Logs",
+                "nav_analysis": "📈   Knowledge Analysis Studio",
+                "nav_profile": "👤   My Profile",
+            },
+            "Filipino": {
+                "settings": "Settings",
+                "appearance": "Hitsura",
+                "light_mode": "Light mode",
+                "dark_mode": "Dark mode",
+                "language": "Wika",
+                "font": "Font",
+                "text_size": "Laki ng teksto",
+                "sign_out": "⏻  Mag-sign Out",
+                "nav_dashboard": "⊞   Dashboard",
+                "nav_inventory": "◫   Pamamahala ng Imbentaryo",
+                "nav_sales": "💳   Point of Sale (POS)",
+                "nav_users": "👥   Mga User at Logs",
+                "nav_analysis": "📈   Knowledge Analysis Studio",
+                "nav_profile": "👤   Aking Profile",
+            },
+            "Spanish": {
+                "settings": "Ajustes",
+                "appearance": "Apariencia",
+                "light_mode": "Light mode",
+                "dark_mode": "Dark mode",
+                "language": "Idioma",
+                "font": "Fuente",
+                "text_size": "Tamaño de texto",
+                "sign_out": "⏻  Cerrar sesión",
+                "nav_dashboard": "⊞   Panel Principal",
+                "nav_inventory": "◫   Gestión de Inventario",
+                "nav_sales": "💳   Punto de Venta (POS)",
+                "nav_users": "👥   Usuarios y Registros",
+                "nav_analysis": "📈   Estudio de Analítica",
+                "nav_profile": "👤   Mi Perfil",
+            },
+        }
+        tmap = translations.get(lang, translations["English"])
+        return tmap.get(key, translations["English"].get(key, key))
+
+    def set_theme_mode(self, target_mode: str):
+        """Smoothly transitions to the requested Light/Dark theme in place."""
+        prev_mode = config.get_theme()
+        if target_mode == prev_mode:
+            return
+        self._theme_animator.finish_immediately()
+        new_mode = config.set_theme(target_mode)
+        self.setup_ttk_styles()
+
+        if self.sidebar is not None:
+            targets = collect_transition_targets(self.main_container, prev_mode, new_mode, in_login=False)
+            if self.current_screen is not None and hasattr(self.current_screen, "apply_theme"):
+                self.current_screen.apply_theme()
+            self._theme_animator.start(targets, duration_ms=180, steps=9)
+            self._refresh_sidebar_settings_popover()
+        elif self._login_view is not None:
+            if hasattr(self._login_view, "apply_theme"):
+                self._login_view.apply_theme()
+
+    def toggle_theme(self):
+        """Smoothly transitions Light/Dark theme in place without tearing down screens."""
+        next_mode = "dark" if config.get_theme() == "light" else "light"
+        self.set_theme_mode(next_mode)
 
     def minimize_window(self):
         self.iconify()
@@ -116,16 +331,27 @@ class MainWindow(tk.Tk):
 
     def clear_view(self):
         """Destroys current child widgets in main_container."""
+        self._theme_animator.finish_immediately()
+        self._hide_sidebar_settings_popover()
         for widget in self.main_container.winfo_children():
             widget.destroy()
         self.sidebar = None
         self.content_area = None
         self.current_screen = None
+        self._login_view = None
+        self.btn_theme = None
+        self.btn_settings = None
+        self.btn_logout = None
 
     def show_login_screen(self):
         self.clear_view()
-        login_view = LoginScreen(self.main_container, on_login_success=self.on_login_success)
+        login_view = LoginScreen(
+            self.main_container,
+            on_login_success=self.on_login_success,
+            on_toggle_theme=self.toggle_theme,
+        )
         login_view.pack(fill="both", expand=True)
+        self._login_view = login_view
 
     def on_login_success(self, user_data):
         self.build_app_shell()
@@ -171,6 +397,7 @@ class MainWindow(tk.Tk):
 
         # ── Sidebar (Left) Matching Reference ─────────────────────────────────
         self.sidebar = tk.Frame(shell, bg=_SIDEBAR_BG, width=260, padx=16, pady=20)
+        self.sidebar._theme_skip = True
         self.sidebar.pack(side="left", fill="y")
         self.sidebar.pack_propagate(False)
 
@@ -191,36 +418,45 @@ class MainWindow(tk.Tk):
         brand_text_box = tk.Frame(brand_frame, bg=_SIDEBAR_BG)
         brand_text_box.pack(side="left", fill="x", expand=True)
 
-        tk.Label(
+        self._lbl_brand_title = tk.Label(
             brand_text_box,
-            text="PharmaCare",
-            font=("Segoe UI", 16, "bold"),
+            text="RestInPills",
+            font=self._ui_font(16, "bold"),
             bg=_SIDEBAR_BG,
             fg="#ffffff"
-        ).pack(anchor="w")
+        )
+        self._lbl_brand_title.pack(anchor="w")
 
-        tk.Label(
+        self._lbl_brand_sub = tk.Label(
             brand_text_box,
             text="Pharmacy & Knowledge Studio",
-            font=("Segoe UI", 8),
+            font=self._ui_font(8),
             bg=_SIDEBAR_BG,
             fg=_NAV_INACTIVE_FG
-        ).pack(anchor="w")
+        )
+        self._lbl_brand_sub.pack(anchor="w")
 
-        # ── User Profile Chip ─────────────────────────────────────────────────
+        # ── Fetch User & Role ─────────────────────────────────────────────────
         user = auth.SessionManager.get_user() or {}
         role = user.get("role", config.ROLE_ADMIN)
         role_label = config.ROLE_DISPLAY_NAMES.get(role, role)
+        self._user_role_en = role_label
 
+        # ── Bottom Box: User Profile Chip + Theme Toggle & Logout ─────────────
+        bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
+        bottom_box.pack(side="bottom", fill="x")
+
+        # Pinned User Profile Card at bottom (Clickable to view My Profile)
         user_chip = tk.Frame(
-            self.sidebar,
+            bottom_box,
             bg=_USER_CHIP_BG,
             padx=12,
             pady=10,
             highlightbackground=_USER_CHIP_BORDER,
-            highlightthickness=1
+            highlightthickness=1,
+            cursor="hand2"
         )
-        user_chip.pack(fill="x", pady=(0, 22))
+        user_chip.pack(fill="x", pady=(0, 10))
 
         # Determine user initials
         full_name = user.get("full_name", "System Administrator")
@@ -228,40 +464,62 @@ class MainWindow(tk.Tk):
         initials = "".join(w[0].upper() for w in words[:2]) if words else "SA"
 
         avatar_photo = self._make_circle_avatar(initials, size=36)
-        tk.Label(user_chip, image=avatar_photo, bg=_USER_CHIP_BG, bd=0).pack(side="left", padx=(0, 10))
+        lbl_avatar = tk.Label(user_chip, image=avatar_photo, bg=_USER_CHIP_BG, bd=0, cursor="hand2")
+        lbl_avatar.pack(side="left", padx=(0, 10))
 
-        user_text_box = tk.Frame(user_chip, bg=_USER_CHIP_BG)
+        user_text_box = tk.Frame(user_chip, bg=_USER_CHIP_BG, cursor="hand2")
         user_text_box.pack(side="left", fill="x", expand=True)
 
-        tk.Label(
+        lbl_uname = tk.Label(
             user_text_box,
             text=full_name,
-            font=("Segoe UI", 9, "bold"),
+            font=self._ui_font(9, "bold"),
             bg=_USER_CHIP_BG,
-            fg="#ffffff"
-        ).pack(anchor="w")
+            fg="#ffffff",
+            cursor="hand2"
+        )
+        lbl_uname.pack(anchor="w")
+        self._lbl_user_name = lbl_uname
 
-        tk.Label(
+        lbl_urole = tk.Label(
             user_text_box,
             text=role_label,
-            font=("Segoe UI", 8),
+            font=self._ui_font(8),
             bg=_USER_CHIP_BG,
-            fg=_NAV_INACTIVE_FG
-        ).pack(anchor="w", pady=(1, 0))
+            fg=_NAV_INACTIVE_FG,
+            cursor="hand2"
+        )
+        lbl_urole.pack(anchor="w", pady=(1, 0))
+        self._lbl_user_role = lbl_urole
 
-        # ── Navigation Menu Items ─────────────────────────────────────────────
-        self.menu_buttons = {}
-        self.active_key = None
-        self.build_navigation_items(role)
+        # Clicking the user profile chip opens My Profile
+        for w in (user_chip, lbl_avatar, user_text_box, lbl_uname, lbl_urole):
+            w.bind("<Button-1>", lambda e: self.navigate_to("profile"))
 
-        # ── Bottom Logout Action ──────────────────────────────────────────────
-        bottom_box = tk.Frame(self.sidebar, bg=_SIDEBAR_BG)
-        bottom_box.pack(side="bottom", fill="x")
+        btn_settings = tk.Button(
+            bottom_box,
+            text=f"⚙  {self._ui_t('settings')}",
+            font=self._ui_font(9, "bold"),
+            bg="#0c263e",
+            fg=_NAV_INACTIVE_FG,
+            activebackground="#1e293b",
+            activeforeground="#ffffff",
+            relief="flat",
+            cursor="hand2",
+            padx=12,
+            pady=8,
+            highlightbackground=_USER_CHIP_BORDER,
+            highlightthickness=1,
+            command=self._toggle_sidebar_settings
+        )
+        btn_settings.pack(fill="x", pady=(0, 8))
+        self.btn_settings = btn_settings
+        self.btn_theme = btn_settings
 
         btn_logout = tk.Button(
             bottom_box,
-            text="⏻  Sign Out",
-            font=("Segoe UI", 9, "bold"),
+            text=self._ui_t("sign_out"),
+            font=self._ui_font(9, "bold"),
             bg="#0c263e",
             fg=_NAV_INACTIVE_FG,
             activebackground="#1e293b",
@@ -275,42 +533,777 @@ class MainWindow(tk.Tk):
             command=self.handle_logout
         )
         btn_logout.pack(fill="x")
+        self.btn_logout = btn_logout
+
+        # ── Navigation Menu Items ─────────────────────────────────────────────
+        self.menu_buttons = {}
+        self.active_key = None
+        self.build_navigation_items(role)
 
         # ── Right Content Area ────────────────────────────────────────────────
         self.content_area = tk.Frame(shell, bg=config.COLORS["background"])
         self.content_area.pack(side="right", fill="both", expand=True)
 
+    # ── Sidebar Settings Popover (Matches Login Screen Settings UI) ───────────
+    def _sidebar_pop_palette(self) -> dict:
+        is_dark = config.get_theme() == "dark"
+        if is_dark:
+            return {
+                "surface": "#131c2b",
+                "surface_hover": "#1b273b",
+                "border": "#233044",
+                "border_hover": "#334560",
+                "text_primary": "#f8fafc",
+                "text_muted": "#94a3b8",
+                "accent": "#3b72e8",
+                "accent_hover": "#2563eb",
+                "accent_fg": "#ffffff",
+            }
+        return {
+            "surface": "#ffffff",
+            "surface_hover": "#f1f5f9",
+            "border": "#e2e8f0",
+            "border_hover": "#cbd5e1",
+            "text_primary": "#0f172a",
+            "text_muted": "#64748b",
+            "accent": "#2563eb",
+            "accent_hover": "#1d4ed8",
+            "accent_fg": "#ffffff",
+        }
+
+    def _toggle_sidebar_settings(self):
+        self._close_sidebar_dropdown()
+        if self._is_sidebar_settings_open:
+            self._hide_sidebar_settings_popover()
+        else:
+            self._show_sidebar_settings_popover()
+
+    def _hide_sidebar_settings_popover(self):
+        self._close_sidebar_dropdown()
+        self._is_sidebar_settings_open = False
+        if self._sidebar_settings_popover is not None and self._sidebar_settings_popover.winfo_exists():
+            self._sidebar_settings_popover.destroy()
+        self._sidebar_settings_popover = None
+        if self.btn_settings is not None and self.btn_settings.winfo_exists():
+            self.btn_settings.config(fg=_NAV_INACTIVE_FG)
+
+    def _close_sidebar_dropdown(self):
+        if self._sidebar_active_dropdown is not None and self._sidebar_active_dropdown.winfo_exists():
+            self._sidebar_active_dropdown.destroy()
+        self._sidebar_active_dropdown = None
+
+    def _show_sidebar_settings_popover(self):
+        self._close_sidebar_dropdown()
+        if self._sidebar_settings_popover is not None and self._sidebar_settings_popover.winfo_exists():
+            self._sidebar_settings_popover.destroy()
+
+        self._is_sidebar_settings_open = True
+        if self.btn_settings is not None and self.btn_settings.winfo_exists():
+            self.btn_settings.config(fg=_LIME)
+
+        p = self._sidebar_pop_palette()
+        prefs = getattr(config, "UI_PREFS", {})
+        cur_theme = config.get_theme()
+        cur_lang = prefs.get("language", "English")
+        cur_font = prefs.get("font", "Inter")
+        cur_size = prefs.get("text_size", "M")
+
+        pop = tk.Frame(
+            self.main_container,
+            bg=p["surface"],
+            highlightbackground=p["border"],
+            highlightthickness=1,
+            padx=18,
+            pady=16,
+            width=276,
+        )
+        pop._theme_skip = True
+        pop.place(x=270, rely=1.0, y=-18, anchor="sw")
+        pop.lift()
+        self._sidebar_settings_popover = pop
+
+        # Header Row: "Settings" + [×] Close Button
+        self._sp_hdr = tk.Frame(pop, bg=p["surface"])
+        self._sp_hdr.pack(fill="x", pady=(0, 12))
+
+        self._sp_title = tk.Label(
+            self._sp_hdr,
+            text=self._ui_t("settings"),
+            font=self._ui_font(11, "bold"),
+            bg=p["surface"],
+            fg=p["text_primary"],
+        )
+        self._sp_title.pack(side="left")
+
+        self._sp_close = tk.Button(
+            self._sp_hdr,
+            text="×",
+            font=self._ui_font(10, "bold"),
+            bg=p["surface"],
+            fg=p["text_muted"],
+            activebackground=p["surface_hover"],
+            activeforeground=p["text_primary"],
+            relief="flat",
+            bd=0,
+            highlightbackground=p["border"],
+            highlightthickness=1,
+            width=2,
+            pady=2,
+            cursor="hand2",
+            command=self._hide_sidebar_settings_popover,
+        )
+        self._sp_close.pack(side="right")
+
+        # 1. Appearance: Light mode | Dark mode
+        self._sp_lbl_app = tk.Label(
+            pop,
+            text=self._ui_t("appearance"),
+            font=self._ui_font(8),
+            bg=p["surface"],
+            fg=p["text_muted"],
+        )
+        self._sp_lbl_app.pack(anchor="w", pady=(0, 6))
+
+        self._sp_app_row = tk.Frame(pop, bg=p["surface"])
+        self._sp_app_row.pack(fill="x", pady=(0, 12))
+        self._sp_app_row.grid_columnconfigure(0, weight=1, uniform="sp_app")
+        self._sp_app_row.grid_columnconfigure(1, weight=1, uniform="sp_app")
+
+        self._sp_btn_light = self._make_sp_segmented_btn(
+            self._sp_app_row, 0, self._ui_t("light_mode"),
+            active=(cur_theme == "light"),
+            command=lambda: self.set_theme_mode("light"),
+            padx=(0, 4),
+        )
+        self._sp_btn_dark = self._make_sp_segmented_btn(
+            self._sp_app_row, 1, self._ui_t("dark_mode"),
+            active=(cur_theme == "dark"),
+            command=lambda: self.set_theme_mode("dark"),
+            padx=(4, 0),
+        )
+
+        # 2. Language Dropdown
+        self._sp_lbl_lang = tk.Label(
+            pop,
+            text=self._ui_t("language"),
+            font=self._ui_font(8),
+            bg=p["surface"],
+            fg=p["text_muted"],
+        )
+        self._sp_lbl_lang.pack(anchor="w", pady=(0, 6))
+
+        self._sp_lang_box, self._sp_lang_val, self._sp_lang_chv = self._make_sp_dropdown(
+            pop,
+            current_val=cur_lang,
+            options=["English", "Filipino", "Spanish"],
+            on_select=self._on_sidebar_lang_change,
+        )
+        self._sp_lang_box.pack(fill="x", pady=(0, 12))
+
+        # 3. Font Dropdown
+        self._sp_lbl_font = tk.Label(
+            pop,
+            text=self._ui_t("font"),
+            font=self._ui_font(8),
+            bg=p["surface"],
+            fg=p["text_muted"],
+        )
+        self._sp_lbl_font.pack(anchor="w", pady=(0, 6))
+
+        self._sp_font_box, self._sp_font_val, self._sp_font_chv = self._make_sp_dropdown(
+            pop,
+            current_val=cur_font,
+            options=["Inter", "Segoe UI", "Calibri", "Arial", "Consolas"],
+            on_select=self._on_sidebar_font_change,
+        )
+        self._sp_font_box.pack(fill="x", pady=(0, 12))
+
+        # 4. Text size: S | M | L | XL
+        self._sp_lbl_sz = tk.Label(
+            pop,
+            text=self._ui_t("text_size"),
+            font=self._ui_font(8),
+            bg=p["surface"],
+            fg=p["text_muted"],
+        )
+        self._sp_lbl_sz.pack(anchor="w", pady=(0, 6))
+
+        self._sp_sz_row = tk.Frame(pop, bg=p["surface"])
+        self._sp_sz_row.pack(fill="x")
+        self._sp_size_btns = {}
+        for idx, sz in enumerate(["S", "M", "L", "XL"]):
+            self._sp_sz_row.grid_columnconfigure(idx, weight=1, uniform="sp_sz")
+            px = (0, 3) if idx == 0 else ((3, 0) if idx == 3 else (3, 3))
+            self._sp_size_btns[sz] = self._make_sp_segmented_btn(
+                self._sp_sz_row, idx, sz,
+                active=(cur_size == sz),
+                command=lambda s=sz: self._on_sidebar_size_change(s),
+                padx=px,
+            )
+
+    def _make_sp_segmented_btn(self, parent, col, text, active: bool, command, padx=(0, 0)):
+        p = self._sidebar_pop_palette()
+        bg = p["accent"] if active else p["surface"]
+        fg = p["accent_fg"] if active else p["text_primary"]
+        bd_col = p["accent"] if active else p["border"]
+
+        btn = tk.Button(
+            parent,
+            text=text,
+            font=self._ui_font(8, "bold"),
+            bg=bg,
+            fg=fg,
+            activebackground=p["accent_hover"] if active else p["surface_hover"],
+            activeforeground=fg,
+            relief="flat",
+            bd=0,
+            highlightbackground=bd_col,
+            highlightthickness=1,
+            pady=7,
+            padx=10,
+            cursor="hand2",
+            command=command,
+        )
+        btn.grid(row=0, column=col, sticky="ew", padx=padx)
+        return btn
+
+    def _make_sp_dropdown(self, parent, current_val: str, options: list, on_select):
+        p = self._sidebar_pop_palette()
+        box = tk.Frame(
+            parent,
+            bg=p["surface"],
+            highlightbackground=p["border"],
+            highlightthickness=1,
+            padx=10,
+            pady=6,
+            cursor="hand2",
+        )
+        lbl_val = tk.Label(
+            box,
+            text=current_val,
+            font=self._ui_font(9, "bold"),
+            bg=p["surface"],
+            fg=p["text_primary"],
+            anchor="w",
+            cursor="hand2",
+        )
+        lbl_val.pack(side="left", fill="x", expand=True)
+
+        lbl_chev = tk.Label(
+            box,
+            text="⌄",
+            font=self._ui_font(9, "bold"),
+            bg=p["surface"],
+            fg=p["text_muted"],
+            cursor="hand2",
+        )
+        lbl_chev.pack(side="right")
+
+        def open_menu(e):
+            self._open_sp_dropdown_menu(box, options, lbl_val.cget("text"), on_select)
+
+        for w in (box, lbl_val, lbl_chev):
+            w.bind("<Button-1>", open_menu)
+        return box, lbl_val, lbl_chev
+
+    def _open_sp_dropdown_menu(self, anchor_widget, options: list, current_val: str, on_select):
+        self._close_sidebar_dropdown()
+        p = self._sidebar_pop_palette()
+
+        anchor_widget.update_idletasks()
+        ax = anchor_widget.winfo_rootx() - self.main_container.winfo_rootx()
+        ay = anchor_widget.winfo_rooty() - self.main_container.winfo_rooty() + anchor_widget.winfo_height() + 2
+        aw = anchor_widget.winfo_width()
+
+        menu_frame = tk.Frame(
+            self.main_container,
+            bg=p["surface"],
+            highlightbackground=p["border"],
+            highlightthickness=1,
+        )
+        menu_frame._theme_skip = True
+        menu_frame.place(x=ax, y=ay, width=aw)
+        menu_frame.lift()
+        self._sidebar_active_dropdown = menu_frame
+
+        for opt in options:
+            is_sel = (opt == current_val)
+            item = tk.Label(
+                menu_frame,
+                text=opt,
+                font=self._ui_font(9, "bold" if is_sel else "normal"),
+                bg=p["surface_hover"] if is_sel else p["surface"],
+                fg=p["accent"] if is_sel else p["text_primary"],
+                anchor="w",
+                padx=10,
+                pady=6,
+                cursor="hand2",
+            )
+            item.pack(fill="x")
+            item.bind("<Button-1>", lambda e, val=opt: (self._close_sidebar_dropdown(), on_select(val)))
+            item.bind("<Enter>", lambda e, w=item: w.config(bg=self._sidebar_pop_palette()["surface_hover"]))
+            item.bind("<Leave>", lambda e, w=item, s=is_sel: w.config(bg=self._sidebar_pop_palette()["surface_hover"] if s else self._sidebar_pop_palette()["surface"]))
+
+    def _refresh_sidebar_settings_popover(self):
+        """Updates the open sidebar Settings popover in-place without rebuilding it."""
+        if self._sidebar_settings_popover is None or not self._sidebar_settings_popover.winfo_exists():
+            return
+        p = self._sidebar_pop_palette()
+        prefs = getattr(config, "UI_PREFS", {})
+        cur_theme = config.get_theme()
+        cur_lang = prefs.get("language", "English")
+        cur_font = prefs.get("font", "Inter")
+        cur_size = prefs.get("text_size", "M")
+
+        self._sidebar_settings_popover.configure(bg=p["surface"], highlightbackground=p["border"])
+        for f in (self._sp_hdr, self._sp_app_row, self._sp_sz_row):
+            f.configure(bg=p["surface"])
+
+        self._sp_title.configure(text=self._ui_t("settings"), font=self._ui_font(11, "bold"), bg=p["surface"], fg=p["text_primary"])
+        self._sp_close.configure(
+            font=self._ui_font(10, "bold"),
+            bg=p["surface"],
+            fg=p["text_muted"],
+            activebackground=p["surface_hover"],
+            activeforeground=p["text_primary"],
+            highlightbackground=p["border"],
+        )
+
+        for lbl, key in (
+            (self._sp_lbl_app, "appearance"),
+            (self._sp_lbl_lang, "language"),
+            (self._sp_lbl_font, "font"),
+            (self._sp_lbl_sz, "text_size"),
+        ):
+            lbl.configure(text=self._ui_t(key), font=self._ui_font(8), bg=p["surface"], fg=p["text_muted"])
+
+        for btn, active, txt_key in (
+            (self._sp_btn_light, cur_theme == "light", "light_mode"),
+            (self._sp_btn_dark, cur_theme == "dark", "dark_mode"),
+        ):
+            btn.configure(
+                text=self._ui_t(txt_key),
+                font=self._ui_font(8, "bold"),
+                bg=p["accent"] if active else p["surface"],
+                fg=p["accent_fg"] if active else p["text_primary"],
+                activebackground=p["accent_hover"] if active else p["surface_hover"],
+                activeforeground=p["accent_fg"] if active else p["text_primary"],
+                highlightbackground=p["accent"] if active else p["border"],
+            )
+
+        for sz, btn in self._sp_size_btns.items():
+            active = (cur_size == sz)
+            btn.configure(
+                font=self._ui_font(8, "bold"),
+                bg=p["accent"] if active else p["surface"],
+                fg=p["accent_fg"] if active else p["text_primary"],
+                activebackground=p["accent_hover"] if active else p["surface_hover"],
+                activeforeground=p["accent_fg"] if active else p["text_primary"],
+                highlightbackground=p["accent"] if active else p["border"],
+            )
+
+        for box, val_l, chv_l, val_txt in (
+            (self._sp_lang_box, self._sp_lang_val, self._sp_lang_chv, cur_lang),
+            (self._sp_font_box, self._sp_font_val, self._sp_font_chv, cur_font),
+        ):
+            box.configure(bg=p["surface"], highlightbackground=p["border"])
+            val_l.configure(text=val_txt, font=self._ui_font(9, "bold"), bg=p["surface"], fg=p["text_primary"])
+            chv_l.configure(font=self._ui_font(9, "bold"), bg=p["surface"], fg=p["text_muted"])
+
+    def _parse_font_spec(self, raw_font: str) -> tuple:
+        """Parses any Tkinter font spec into (family, base_pt_size, flags_tuple) with caching."""
+        cached = self._font_spec_cache.get(raw_font)
+        if cached is not None:
+            return cached
+        try:
+            f_obj = tkfont.Font(root=self, font=raw_font)
+            act = f_obj.actual()
+            fam = act.get("family", "Segoe UI")
+            sz = int(act.get("size", 10))
+            if sz < 0:
+                sz = max(8, int(round(abs(sz) * 0.75)))
+            flags = []
+            if act.get("weight") == "bold":
+                flags.append("bold")
+            if act.get("slant") == "italic":
+                flags.append("italic")
+            res = (fam, sz, tuple(flags))
+        except Exception:
+            res = ("Segoe UI", 10, ())
+        self._font_spec_cache[raw_font] = res
+        return res
+
+    def _translate_content_text(self, en_text: str, lang: str) -> str:
+        """Translates known UI phrases and patterns across content screens while preserving dynamic values."""
+        if not en_text or lang == "English":
+            return en_text
+
+        exact_map = {
+            "Filipino": {
+                "Pharmacy & Knowledge Studio": "Parmasya at Knowledge Studio",
+                "Administrator": "Administrador",
+                "Inventory Clerk": "Klerk ng Imbentaryo",
+                "Sales Personnel": "Kawani ng Benta",
+                "Academic Instructor": "Instruktor",
+                "Here is how the pharmacy is doing today.": "Narito ang lagay ng parmasya ngayong araw.",
+                "Refresh data": "I-refresh ang datos",
+                "Sales Today": "Benta Ngayon",
+                "Month-to-Date Revenue": "Kita Ngayong Buwan",
+                "Total Products": "Kabuuang Produkto",
+                "Low-Stock Alerts": "Alerto sa Mababang Stak",
+                "Near-Expiry Alerts": "Malapit Nang Mag-expire",
+                "Top Performing Product": "Pinakamabentang Produkto",
+                "Current month": "Kasalukuyang buwan",
+                "Active in catalog": "Aktibo sa katalogo",
+                "Needs restocking": "Kailangang dagdagan",
+                "14-day sales revenue trend": "14-araw na tunguhin ng benta",
+                "Top 5 products by quantity sold": "Nangungunang 5 produkto sa benta",
+                "Sales breakdown by category": "Benta ayon sa kategorya",
+                "Stock health distribution": "Kalagayan ng stak",
+                "products in catalog": "produkto sa katalogo",
+                "Healthy": "Maayos",
+                "Low stock": "Mababang stak",
+                "Out of stock": "Walang stak",
+                "My Profile": "Aking Profile",
+                "Session active": "Aktibo ang sesyon",
+                "Account details": "Detalye ng account",
+                "FULL NAME": "BUONG PANGALAN",
+                "USERNAME": "USERNAME",
+                "EMAIL ADDRESS": "EMAIL ADDRESS",
+                "ASSIGNED ROLE": "TUNGKULIN",
+                "Current session": "Kasalukuyang sesyon",
+                "STARTED": "SINIMULAN",
+                "STATUS": "KATAYUAN",
+                "Active": "Aktibo",
+                "Inventory Management": "Pamamahala ng Imbentaryo",
+                "Product Catalog": "Katalogo ng Produkto",
+                "Stock Movements": "Galaw ng Stak",
+                "Categories & Suppliers": "Mga Kategorya at Supplier",
+                "Point of Sale (POS)": "Punto ng Benta (POS)",
+                "Sales History": "Kasaysayan ng Benta",
+                "👥 User Accounts & Security Audit Trail": "👥 Mga Account at Audit Trail",
+                "+ Add New User": "+ Magdagdag ng User",
+                "✎ Edit User": "✎ I-edit ang User",
+                "🔑 Reset Password": "🔑 I-reset ang Password",
+                "🔓 Unlock Account": "🔓 I-unlock ang Account",
+                "Toggle Active / Inactive": "Palitan Aktibo / Di-Aktibo",
+                "Filter Action:": "Salain ang Aksyon:",
+                "↻ Refresh Log": "↻ I-refresh ang Log",
+                "Select Analysis Task:": "Piliin ang Gawain:",
+                "⚡ Retrain Models": "⚡ Sanayin Muli ang Modelo",
+                "⚙ Prediction Parameters": "⚙ Mga Parameter ng Prediksyon",
+                "Machine Learning Model:": "Modelo ng Machine Learning:",
+                "📊 Prediction Results & Output Visualizer": "📊 Resulta ng Prediksyon",
+                "🚀 Calculate Prediction": "🚀 Kalkulahin ang Prediksyon",
+            },
+            "Spanish": {
+                "Pharmacy & Knowledge Studio": "Estudio de Farmacia y Conocimiento",
+                "Administrator": "Administrador",
+                "Inventory Clerk": "Encargado de Inventario",
+                "Sales Personnel": "Personal de Ventas",
+                "Academic Instructor": "Instructor Académico",
+                "Here is how the pharmacy is doing today.": "Así va la farmacia el día de hoy.",
+                "Refresh data": "Actualizar datos",
+                "Sales Today": "Ventas de Hoy",
+                "Month-to-Date Revenue": "Ingresos del Mes",
+                "Total Products": "Total de Productos",
+                "Low-Stock Alerts": "Alertas de Bajo Stock",
+                "Near-Expiry Alerts": "Alertas de Próximo Vencimiento",
+                "Top Performing Product": "Producto Más Vendido",
+                "Current month": "Mes actual",
+                "Active in catalog": "Activo en catálogo",
+                "Needs restocking": "Necesita reabastecimiento",
+                "14-day sales revenue trend": "Tendencia de ingresos de 14 días",
+                "Top 5 products by quantity sold": "Top 5 productos por cantidad vendida",
+                "Sales breakdown by category": "Ventas por categoría",
+                "Stock health distribution": "Distribución de salud del stock",
+                "products in catalog": "productos en catálogo",
+                "Healthy": "Saludable",
+                "Low stock": "Bajo stock",
+                "Out of stock": "Sin stock",
+                "My Profile": "Mi Perfil",
+                "Session active": "Sesión activa",
+                "Account details": "Detalles de la cuenta",
+                "FULL NAME": "NOMBRE COMPLETO",
+                "USERNAME": "USUARIO",
+                "EMAIL ADDRESS": "CORREO ELECTRÓNICO",
+                "ASSIGNED ROLE": "ROL ASIGNADO",
+                "Current session": "Sesión actual",
+                "STARTED": "INICIADO",
+                "STATUS": "ESTADO",
+                "Active": "Activo",
+                "Inventory Management": "Gestión de Inventario",
+                "Product Catalog": "Catálogo de Productos",
+                "Stock Movements": "Movimientos de Stock",
+                "Categories & Suppliers": "Categorías y Proveedores",
+                "Point of Sale (POS)": "Punto de Venta (POS)",
+                "Sales History": "Historial de Ventas",
+                "👥 User Accounts & Security Audit Trail": "👥 Cuentas de Usuario y Auditoría",
+                "+ Add New User": "+ Añadir Usuario",
+                "✎ Edit User": "✎ Editar Usuario",
+                "🔑 Reset Password": "🔑 Restablecer Contraseña",
+                "🔓 Unlock Account": "🔓 Desbloquear Cuenta",
+                "Toggle Active / Inactive": "Alternar Activo / Inactivo",
+                "Filter Action:": "Filtrar Acción:",
+                "↻ Refresh Log": "↻ Actualizar Registro",
+                "Select Analysis Task:": "Seleccionar Tarea de Análisis:",
+                "⚡ Retrain Models": "⚡ Reentrenar Modelos",
+                "⚙ Prediction Parameters": "⚙ Parámetros de Predicción",
+                "Machine Learning Model:": "Modelo de Aprendizaje Automático:",
+                "📊 Prediction Results & Output Visualizer": "📊 Resultados de Predicción",
+                "🚀 Calculate Prediction": "🚀 Calcular Predicción",
+            },
+        }
+
+        lang_dict = exact_map.get(lang, {})
+        if en_text in lang_dict:
+            return lang_dict[en_text]
+
+        # Prefix / suffix pattern translations
+        if en_text.startswith("Welcome back, "):
+            name = en_text[len("Welcome back, "):]
+            if lang == "Filipino":
+                return f"Maligayang pagbabalik, {name}"
+            if lang == "Spanish":
+                return f"Bienvenido de nuevo, {name}"
+        if en_text.startswith("Role: "):
+            r_val = en_text[len("Role: "):]
+            r_tr = lang_dict.get(r_val, r_val)
+            if lang == "Filipino":
+                return f"Tungkulin: {r_tr}"
+            if lang == "Spanish":
+                return f"Rol: {r_tr}"
+        if en_text.endswith(" transactions"):
+            cnt = en_text[:-len(" transactions")]
+            if lang == "Filipino":
+                return f"{cnt} transaksyon"
+            if lang == "Spanish":
+                return f"{cnt} transacciones"
+        if en_text.endswith(" units sold"):
+            cnt = en_text[:-len(" units sold")]
+            if lang == "Filipino":
+                return f"{cnt} pirasong naibenta"
+            if lang == "Spanish":
+                return f"{cnt} unidades vendidas"
+        if en_text.startswith("Within ") and en_text.endswith(" days"):
+            days = en_text[len("Within "):-len(" days")]
+            if lang == "Filipino":
+                return f"Sa loob ng {days} araw"
+            if lang == "Spanish":
+                return f"Dentro de {days} días"
+        if en_text.endswith(" products expire within 90 days."):
+            cnt = en_text[:-len(" products expire within 90 days.")]
+            if lang == "Filipino":
+                return f"{cnt} produkto ang mag-e-expire sa loob ng 90 araw."
+            if lang == "Spanish":
+                return f"{cnt} productos vencen en 90 días."
+        return en_text
+
+    def _sync_widget_tree_typography(self, root_widget, fam: str, off: int, lang: str):
+        """Recursively updates fonts, text sizes, and translations across all widgets in root_widget."""
+        if root_widget is None:
+            return
+        try:
+            if not root_widget.winfo_exists():
+                return
+        except Exception:
+            return
+
+        stack = [root_widget]
+        while stack:
+            w = stack.pop()
+            try:
+                if not w.winfo_exists() or getattr(w, "_typo_skip", False):
+                    continue
+            except Exception:
+                continue
+
+            # 1. Update widget font if supported
+            try:
+                cur_font_str = str(w.cget("font"))
+            except Exception:
+                cur_font_str = ""
+
+            if cur_font_str:
+                try:
+                    last_set_font = getattr(w, "_last_set_font_str", None)
+                    if not hasattr(w, "_base_font_spec") or (last_set_font is not None and cur_font_str != last_set_font):
+                        w._base_font_spec = self._parse_font_spec(cur_font_str)
+
+                    orig_fam, base_sz, flags = w._base_font_spec
+                    target_fam = orig_fam if (orig_fam == "Courier New" and fam != "Consolas") else fam
+                    if getattr(w, "_fixed_pill_badge", False):
+                        new_sz = max(7, base_sz + min(1, max(-1, off)))
+                    else:
+                        new_sz = max(7, base_sz + off)
+                    new_font = (target_fam, new_sz, *flags) if flags else (target_fam, new_sz)
+                    w.configure(font=new_font)
+                    w._last_set_font_str = str(w.cget("font"))
+                except Exception:
+                    pass
+
+            # 2. Update widget text translation if supported (Labels, Buttons, Checkbuttons, Radiobuttons)
+            if isinstance(w, (tk.Label, tk.Button, tk.Checkbutton, tk.Radiobutton, tk.LabelFrame)):
+                try:
+                    cur_txt = str(w.cget("text"))
+                    if cur_txt:
+                        last_set_txt = getattr(w, "_last_set_text_str", None)
+                        if not hasattr(w, "_base_en_text") or (last_set_txt is not None and cur_txt != last_set_txt):
+                            w._base_en_text = cur_txt
+                        tr_txt = self._translate_content_text(w._base_en_text, lang)
+                        if tr_txt != cur_txt:
+                            w.configure(text=tr_txt)
+                        w._last_set_text_str = tr_txt
+                except Exception:
+                    pass
+
+            # 3. Update Canvas text items if widget is a tk.Canvas
+            if isinstance(w, tk.Canvas):
+                try:
+                    base_fonts = getattr(w, "_canvas_base_fonts", None)
+                    if base_fonts is None:
+                        base_fonts = {}
+                        w._canvas_base_fonts = base_fonts
+                    for item_id in w.find_all():
+                        if w.type(item_id) == "text":
+                            if item_id not in base_fonts:
+                                item_f = str(w.itemcget(item_id, "font"))
+                                base_fonts[item_id] = self._parse_font_spec(item_f) if item_f else ("Segoe UI", 10, ())
+                            orig_fam, base_sz, flags = base_fonts[item_id]
+                            new_sz = max(7, base_sz + off)
+                            new_font = (fam, new_sz, *flags) if flags else (fam, new_sz)
+                            w.itemconfigure(item_id, font=new_font)
+                except Exception:
+                    pass
+
+            try:
+                children = w.winfo_children()
+                if children:
+                    stack.extend(children)
+            except Exception:
+                pass
+
+    def _on_any_widget_map(self, event=None):
+        """Debounced handler so newly opened tabs, refreshed views, or dialogs inherit typography."""
+        if self.sidebar is None or self._typo_idle_scheduled:
+            return
+        self._typo_idle_scheduled = True
+        self.after_idle(self._run_deferred_typography_sync)
+
+    def _run_deferred_typography_sync(self):
+        self._typo_idle_scheduled = False
+        if self.sidebar is None:
+            return
+        fam = self._resolve_ui_font_family()
+        prefs = getattr(config, "UI_PREFS", {})
+        sz = prefs.get("text_size", "M")
+        off = {"S": -1, "M": 0, "L": 2, "XL": 3}.get(sz, 0)
+        lang = prefs.get("language", "English")
+        if self.content_area is not None and self.content_area.winfo_exists():
+            self._sync_widget_tree_typography(self.content_area, fam, off, lang)
+        for child in self.winfo_children():
+            if isinstance(child, tk.Toplevel) and child.winfo_exists():
+                self._sync_widget_tree_typography(child, fam, off, lang)
+
+    def _apply_global_typography(self):
+        """Updates TTK styles, sidebar labels, and the entire active content screen in-place."""
+        fam = self._resolve_ui_font_family()
+        prefs = getattr(config, "UI_PREFS", {})
+        sz = prefs.get("text_size", "M")
+        off = {"S": -1, "M": 0, "L": 2, "XL": 3}.get(sz, 0)
+        lang = prefs.get("language", "English")
+
+        self.setup_ttk_styles()
+
+        # Update Sidebar Brand & User Chip
+        if getattr(self, "_lbl_brand_title", None) is not None and self._lbl_brand_title.winfo_exists():
+            self._lbl_brand_title.configure(font=self._ui_font(16, "bold"))
+        if getattr(self, "_lbl_brand_sub", None) is not None and self._lbl_brand_sub.winfo_exists():
+            self._lbl_brand_sub.configure(
+                text=self._translate_content_text("Pharmacy & Knowledge Studio", lang),
+                font=self._ui_font(8),
+            )
+        if getattr(self, "_lbl_user_name", None) is not None and self._lbl_user_name.winfo_exists():
+            self._lbl_user_name.configure(font=self._ui_font(9, "bold"))
+        if getattr(self, "_lbl_user_role", None) is not None and self._lbl_user_role.winfo_exists():
+            role_en = getattr(self, "_user_role_en", "Administrator")
+            self._lbl_user_role.configure(
+                text=self._translate_content_text(role_en, lang),
+                font=self._ui_font(8),
+            )
+
+        if self.btn_settings is not None and self.btn_settings.winfo_exists():
+            self.btn_settings.configure(text=f"⚙  {self._ui_t('settings')}", font=self._ui_font(9, "bold"))
+        if self.btn_logout is not None and self.btn_logout.winfo_exists():
+            self.btn_logout.configure(text=self._ui_t("sign_out"), font=self._ui_font(9, "bold"))
+
+        nav_keys = {
+            "dashboard": "nav_dashboard",
+            "inventory": "nav_inventory",
+            "sales": "nav_sales",
+            "users": "nav_users",
+            "analysis": "nav_analysis",
+            "profile": "nav_profile",
+        }
+        for k, btn in getattr(self, "menu_buttons", {}).items():
+            if btn.winfo_exists():
+                btn.configure(text=self._ui_t(nav_keys.get(k, k)), font=self._ui_font(9, "bold"))
+
+        # Update the whole content area and any open Toplevel dialogs
+        if self.content_area is not None and self.content_area.winfo_exists():
+            self._sync_widget_tree_typography(self.content_area, fam, off, lang)
+        for child in self.winfo_children():
+            if isinstance(child, tk.Toplevel) and child.winfo_exists():
+                self._sync_widget_tree_typography(child, fam, off, lang)
+
+        # Update Matplotlib chart typography on Dashboard if present
+        if self.current_screen is not None and hasattr(self.current_screen, "_mpl_charts"):
+            for chart_type, fig, ax, canvas, extra in getattr(self.current_screen, "_mpl_charts", []):
+                try:
+                    if chart_type == "trend":
+                        ax.tick_params(labelsize=max(6, 8 + off))
+                    elif chart_type == "donut":
+                        if "txt_pct" in extra:
+                            extra["txt_pct"].set_fontsize(max(12, 18 + off))
+                        if "txt_cat" in extra:
+                            extra["txt_cat"].set_fontsize(max(7, 9 + off))
+                    canvas.draw_idle()
+                except Exception:
+                    pass
+
+        self._refresh_sidebar_settings_popover()
+
+    def _on_sidebar_lang_change(self, lang: str):
+        if hasattr(config, "UI_PREFS"):
+            config.UI_PREFS["language"] = lang
+        self._apply_global_typography()
+
+    def _on_sidebar_font_change(self, font_name: str):
+        if hasattr(config, "UI_PREFS"):
+            config.UI_PREFS["font"] = font_name
+        self._apply_global_typography()
+
+    def _on_sidebar_size_change(self, sz: str):
+        if hasattr(config, "UI_PREFS"):
+            config.UI_PREFS["text_size"] = sz
+        self._apply_global_typography()
+
     def build_navigation_items(self, role):
         """Constructs role-tailored sidebar menu items with sleek pill highlights."""
         items = [
-            ("dashboard", "⊞   Dashboard")
+            ("dashboard", self._ui_t("nav_dashboard")),
+            ("inventory", self._ui_t("nav_inventory")),
+            ("sales", self._ui_t("nav_sales")),
+            ("users", self._ui_t("nav_users")),
+            ("analysis", self._ui_t("nav_analysis")),
+            ("profile", self._ui_t("nav_profile")),
         ]
-
-        if role in [config.ROLE_INVENTORY_CLERK, config.ROLE_INSTRUCTOR]:
-            items.append(("inventory", "◫   Inventory Management"))
-        elif role == config.ROLE_ADMIN:
-            items.append(("inventory", "◫   Inventory Catalog"))
-
-        if role in [config.ROLE_SALES_PERSONNEL, config.ROLE_INSTRUCTOR]:
-            items.append(("sales", "💳   Point of Sale (POS)"))
-        elif role == config.ROLE_ADMIN:
-            items.append(("sales", "💳   Sales History"))
-
-        if role in [config.ROLE_ADMIN, config.ROLE_INSTRUCTOR]:
-            items.append(("users", "👥   User Management & Logs"))
-
-        if role == config.ROLE_ADMIN:
-            items.append(("analysis", "📈   Knowledge Analysis (Predict)"))
-        elif role == config.ROLE_INSTRUCTOR:
-            items.append(("analysis", "📈   Knowledge Analysis Studio"))
-
-        items.append(("profile", "👤   My Profile"))
 
         for key, label in items:
             btn = tk.Button(
                 self.sidebar,
                 text=label,
-                font=("Segoe UI", 9, "bold"),
+                font=self._ui_font(9, "bold"),
                 bg=_SIDEBAR_BG,
                 fg=_NAV_INACTIVE_FG,
                 activebackground=_NAV_HOVER_BG,
@@ -344,18 +1337,19 @@ class MainWindow(tk.Tk):
                 # Active item styled as vibrant lime pill with dark text
                 btn.config(
                     bg=_LIME,
-                    fg="#071d32",
-                    font=("Segoe UI", 9, "bold")
+                    fg="#0A101C",
+                    font=self._ui_font(9, "bold")
                 )
             else:
                 btn.config(
                     bg=_SIDEBAR_BG,
                     fg=_NAV_INACTIVE_FG,
-                    font=("Segoe UI", 9, "bold")
+                    font=self._ui_font(9, "bold")
                 )
 
     def navigate_to(self, screen_name):
         """Routes and displays the requested screen inside content_area with RBAC enforcement."""
+        self._hide_sidebar_settings_popover()
         # Enforce RBAC
         role = auth.SessionManager.get_role()
         
@@ -400,6 +1394,7 @@ class MainWindow(tk.Tk):
 
         if self.current_screen:
             self.current_screen.pack(fill="both", expand=True)
+            self._apply_global_typography()
 
     def _make_pill_badge(self, parent, text, fill_color, text_color, parent_bg, border_color=None):
         """Creates a smooth antialiased rounded pill badge label."""
@@ -436,6 +1431,7 @@ class MainWindow(tk.Tk):
             padx=0,
             pady=0
         )
+        lbl._fixed_pill_badge = True
         return lbl
 
     def handle_logout(self):
@@ -467,7 +1463,7 @@ class ProfileScreen(tk.Frame):
 
         full_name = user.get("full_name") or "System Administrator"
         username = user.get("username") or "admin"
-        email = user.get("email") or "admin@pharmacare.local"
+        email = user.get("email") or "admin@restinpills.local"
         role_raw = user.get("role") or config.ROLE_ADMIN
         role_label = config.ROLE_DISPLAY_NAMES.get(role_raw, role_raw)
 
