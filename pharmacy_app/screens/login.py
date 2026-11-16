@@ -716,8 +716,8 @@ class LoginScreen(tk.Frame):
             w.bind("<Leave>", lambda e: self._hover_card(self.settings_btn_wrap, [self.lbl_gear, self.lbl_set_txt], False))
         # ── Centered Form Box ─────────────────────────────────────────────────
         self.form_wrap = tk.Frame(parent, bg=p["right_bg"])
-        self.form_wrap.place(relx=0.5, rely=0.5, anchor="center")
-        self.form = tk.Frame(self.form_wrap, bg=p["right_bg"], width=390)
+        self.form_wrap.place(relx=0.5, rely=0.5, anchor="center", width=380)
+        self.form = tk.Frame(self.form_wrap, bg=p["right_bg"])
         self.form.pack(fill="both", expand=True)
         # 1. Welcome back heading
         self.lbl_welcome = tk.Label(
@@ -962,9 +962,8 @@ class LoginScreen(tk.Frame):
             highlightthickness=1,
             padx=18,
             pady=16,
-            width=276,
         )
-        self.settings_popover.place(relx=1.0, x=-24, y=58, anchor="ne")
+        self.settings_popover.place(relx=1.0, x=-24, y=58, anchor="ne", width=276)
         self.settings_popover.lift()
         # ── Header Row: "Settings" + [×] Close Button ─────────────────────────
         self._pop_hdr = tk.Frame(self.settings_popover, bg=p["surface"])
