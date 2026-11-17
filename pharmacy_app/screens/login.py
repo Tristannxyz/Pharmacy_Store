@@ -715,16 +715,29 @@ class LoginScreen(tk.Frame):
             w.bind("<Enter>", lambda e: self._hover_card(self.settings_btn_wrap, [self.lbl_gear, self.lbl_set_txt], True))
             w.bind("<Leave>", lambda e: self._hover_card(self.settings_btn_wrap, [self.lbl_gear, self.lbl_set_txt], False))
         # ── Centered Form Box ─────────────────────────────────────────────────
-        self.form_wrap = tk.Frame(parent, bg=p["right_bg"])
+        # Elevated surface keeps the login content readable over the ambient
+        # background animation while preserving the existing form layout.
+        self.form_card = tk.Frame(
+            parent,
+            bg=p["surface"],
+            highlightbackground=p["border"],
+            highlightthickness=1,
+            bd=0,
+            padx=24,
+            pady=28,
+        )
+        self.form_card.place(relx=0.5, rely=0.5, anchor="center", width=430, height=520)
+        self.form_wrap = tk.Frame(parent, bg=p["surface"])
         self.form_wrap.place(relx=0.5, rely=0.5, anchor="center", width=380)
-        self.form = tk.Frame(self.form_wrap, bg=p["right_bg"])
+        self.form_card.lower(self.form_wrap)
+        self.form = tk.Frame(self.form_wrap, bg=p["surface"])
         self.form.pack(fill="both", expand=True)
         # 1. Welcome back heading
         self.lbl_welcome = tk.Label(
             self.form,
             text=self._t("welcome"),
             font=self._f(20, "bold"),
-            bg=p["right_bg"],
+            bg=p["surface"],
             fg=p["text_primary"],
         )
         self.lbl_welcome.pack(anchor="w")
@@ -732,7 +745,7 @@ class LoginScreen(tk.Frame):
             self.form,
             text=self._t("welcome_sub"),
             font=self._f(10),
-            bg=p["right_bg"],
+            bg=p["surface"],
             fg=p["text_muted"],
         )
         self.lbl_welcome_sub.pack(anchor="w", pady=(4, 22))
@@ -741,7 +754,7 @@ class LoginScreen(tk.Frame):
             self.form,
             text=self._t("username"),
             font=self._f(9, "bold"),
-            bg=p["right_bg"],
+            bg=p["surface"],
             fg=p["text_primary"],
         )
         self.lbl_user_title.pack(anchor="w", pady=(0, 6))
@@ -753,11 +766,11 @@ class LoginScreen(tk.Frame):
             self.form,
             text=self._t("password"),
             font=self._f(9, "bold"),
-            bg=p["right_bg"],
+            bg=p["surface"],
             fg=p["text_primary"],
         )
         self.lbl_pwd_title.pack(anchor="w", pady=(0, 6))
-        self.pwd_row = tk.Frame(self.form, bg=p["right_bg"])
+        self.pwd_row = tk.Frame(self.form, bg=p["surface"])
         self.pwd_row.pack(fill="x", pady=(0, 4))
         self.pwd_box, self.ent_pwd = self._create_entry_box(self.pwd_row, show="" if self.is_pwd_visible else "•")
         self.pwd_box.pack(side="left", fill="x", expand=True)
@@ -786,7 +799,7 @@ class LoginScreen(tk.Frame):
             self.form,
             text="",
             font=self._f(9),
-            bg=p["right_bg"],
+            bg=p["surface"],
             fg=config.COLORS["danger"],
             wraplength=380,
             justify="left",
@@ -811,7 +824,7 @@ class LoginScreen(tk.Frame):
         self.btn_login.bind("<Enter>", lambda e: self.btn_login.config(bg=self._p()["accent_hover"]))
         self.btn_login.bind("<Leave>", lambda e: self.btn_login.config(bg=self._p()["accent"]))
         # 6. Quick Access Divider
-        self.div_row = tk.Frame(self.form, bg=p["right_bg"])
+        self.div_row = tk.Frame(self.form, bg=p["surface"])
         self.div_row.pack(fill="x", pady=(0, 14))
         self.div_line_l = tk.Frame(self.div_row, bg=p["right_divider"], height=1)
         self.div_line_l.pack(side="left", fill="x", expand=True, pady=6)
@@ -819,14 +832,14 @@ class LoginScreen(tk.Frame):
             self.div_row,
             text=self._t("quick_access"),
             font=self._f(8),
-            bg=p["right_bg"],
+            bg=p["surface"],
             fg=p["text_muted"],
         )
         self.lbl_quick_access.pack(side="left")
         self.div_line_r = tk.Frame(self.div_row, bg=p["right_divider"], height=1)
         self.div_line_r.pack(side="left", fill="x", expand=True, pady=6)
         # 7. Quick Access Demo Pills (2x2 Grid)
-        self.chips_grid = tk.Frame(self.form, bg=p["right_bg"])
+        self.chips_grid = tk.Frame(self.form, bg=p["surface"])
         self.chips_grid.pack(fill="x")
         self.chips_grid.grid_columnconfigure(0, weight=1, uniform="q_col")
         self.chips_grid.grid_columnconfigure(1, weight=1, uniform="q_col")
@@ -1210,13 +1223,14 @@ class LoginScreen(tk.Frame):
         self.lbl_gear.configure(bg=p["surface"], fg=p["text_muted"])
         self.lbl_set_txt.configure(bg=p["surface"], fg=p["text_primary"])
         # Right panel form
+        self.form_card.configure(bg=p["surface"], highlightbackground=p["border"])
         for f in (self.form_wrap, self.form, self.pwd_row, self.div_row, self.chips_grid):
-            f.configure(bg=p["right_bg"])
+            f.configure(bg=p["surface"])
         for lbl in (self.lbl_welcome, self.lbl_user_title, self.lbl_pwd_title):
-            lbl.configure(bg=p["right_bg"], fg=p["text_primary"])
+            lbl.configure(bg=p["surface"], fg=p["text_primary"])
         for lbl in (self.lbl_welcome_sub, self.lbl_quick_access):
-            lbl.configure(bg=p["right_bg"], fg=p["text_muted"])
-        self.lbl_msg.configure(bg=p["right_bg"])
+            lbl.configure(bg=p["surface"], fg=p["text_muted"])
+        self.lbl_msg.configure(bg=p["surface"])
         self.div_line_l.configure(bg=p["right_divider"])
         self.div_line_r.configure(bg=p["right_divider"])
         # Entries
