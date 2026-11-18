@@ -1,4 +1,5 @@
 import logging
+from contextlib import contextmanager
 import mysql.connector
 from mysql.connector import errorcode
 import bcrypt
@@ -27,6 +28,21 @@ def get_connection(use_database=True):
     except mysql.connector.Error as err:
         logger.error(f"MySQL Connection Error: {err}")
         raise err
+
+@contextmanager
+def transaction():
+    """Run related SQL statements on one connection and commit or roll back together."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        yield cursor
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cursor.close()
+        conn.close()
 
 def execute_query(query, params=None, fetchone=False, fetchall=False, commit=False):
     """

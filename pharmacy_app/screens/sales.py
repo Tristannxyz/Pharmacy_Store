@@ -1739,51 +1739,57 @@ class SalesScreen(tk.Frame):
         user_id = auth.SessionManager.get_user_id()
 
         # Generate unique Invoice No
-        inv_no = f"INV-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        inv_no = f"INV-{datetime.now().strftime('%Y%m%d%H%M%S%f')}"
 
         try:
-            # 1. Insert Sales Header
-            sale_id = db.execute_query("""
-                INSERT INTO sales (invoice_no, user_id, subtotal, discount_percent, discount_amount, total_amount, payment_method, amount_paid, change_amount, customer_name)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (inv_no, user_id, subtotal, discount_pct, discount_amt, total, pay_method, paid, change, customer), commit=True)
+            with db.transaction() as cursor:
+                cursor.execute("""
+                    INSERT INTO sales (invoice_no, user_id, subtotal, discount_percent, discount_amount, total_amount, payment_method, amount_paid, change_amount, customer_name)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (inv_no, user_id, subtotal, discount_pct, discount_amt, total, pay_method, paid, change, customer))
+                sale_id = cursor.lastrowid
 
-            # 2. Insert Items & Deduct Stock
-            for item in self.cart:
-                # Insert item
-                db.execute_query("""
-                    INSERT INTO sales_items (sale_id, product_id, quantity, unit_price, unit_cost, line_total)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, (sale_id, item["product_id"], item["qty"], item["price"], item["cost"], item["line_total"]), commit=True)
+                for item in self.cart:
+                    cursor.execute("""
+                        UPDATE products
+                        SET stock_qty = stock_qty - %s
+                        WHERE id = %s AND stock_qty >= %s
+                    """, (item["qty"], item["product_id"], item["qty"]))
+                    if cursor.rowcount != 1:
+                        raise ValueError(
+                            f"Not enough stock remains for {item.get('name', 'a product')}. Refresh the catalog and try again."
+                        )
 
-                # Deduct stock
-                db.execute_query("""
-                    UPDATE products 
-                    SET stock_qty = stock_qty - %s 
-                    WHERE id = %s
-                """, (item["qty"], item["product_id"]), commit=True)
+                    cursor.execute("""
+                        INSERT INTO sales_items (sale_id, product_id, quantity, unit_price, unit_cost, line_total)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                    """, (sale_id, item["product_id"], item["qty"], item["price"], item["cost"], item["line_total"]))
 
-                # Record stock movement OUT
-                db.execute_query("""
-                    INSERT INTO stock_movements (product_id, movement_type, quantity, reference_note, user_id)
-                    VALUES (%s, 'OUT', %s, %s, %s)
-                """, (item["product_id"], item["qty"], f"Sale: {inv_no}", user_id), commit=True)
-
-            # Audit log
-            auth.log_audit("SALE_COMPLETE", f"Processed invoice {inv_no} for {customer}. Total: {config.CURRENCY}{total:.2f}")
-
-            # Show receipt dialog
-            self.show_receipt_dialog(inv_no, customer, pay_method, list(self.cart), subtotal, discount_amt, total, paid, change)
-
-            # Reset cart & UI
-            self.clear_cart()
-            self.ent_paid.delete(0, tk.END)
-            self.lbl_short.config(text="")
-            self.load_catalog_products()
-            self.load_sales_history()
+                    cursor.execute("""
+                        INSERT INTO stock_movements (product_id, movement_type, quantity, reference_note, user_id)
+                        VALUES (%s, 'OUT', %s, %s, %s)
+                    """, (item["product_id"], item["qty"], f"Sale: {inv_no}", user_id))
 
         except Exception as e:
             messagebox.showerror("Transaction Error", f"Failed to complete transaction: {e}")
+            return
+
+        # The transaction is committed. Clear the cart before opening optional UI so
+        # a receipt-window error cannot leave a completed sale ready to submit again.
+        receipt_items = list(self.cart)
+        self.clear_cart()
+        self.ent_paid.delete(0, tk.END)
+        self.lbl_short.config(text="")
+        self.load_catalog_products()
+        self.load_sales_history()
+        auth.log_audit("SALE_COMPLETE", f"Processed invoice {inv_no} for {customer}. Total: {config.CURRENCY}{total:.2f}")
+        try:
+            self.show_receipt_dialog(inv_no, customer, pay_method, receipt_items, subtotal, discount_amt, total, paid, change)
+        except Exception as e:
+            messagebox.showwarning(
+                "Sale Completed",
+                f"Invoice {inv_no} was saved, but the receipt could not be opened: {e}",
+            )
 
     def show_receipt_dialog(self, inv_no, customer, pay_method, cart_items, subtotal, discount_amt, total, paid, change):
         """Displays official printable receipt modal dialog."""

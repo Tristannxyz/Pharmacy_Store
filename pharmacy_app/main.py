@@ -1258,8 +1258,16 @@ class MainWindow(tk.Tk):
 
         # Update Matplotlib chart typography on Dashboard if present
         if self.current_screen is not None and hasattr(self.current_screen, "_mpl_charts"):
-            for chart_type, fig, ax, canvas, extra in getattr(self.current_screen, "_mpl_charts", []):
+            for chart in getattr(self.current_screen, "_mpl_charts", []):
                 try:
+                    if len(chart) == 5:
+                        chart_type, fig, ax, canvas, extra = chart
+                    elif len(chart) == 3:
+                        fig, ax, canvas = chart
+                        chart_type, extra = None, {}
+                    else:
+                        continue
+
                     if chart_type == "trend":
                         ax.tick_params(labelsize=max(6, 8 + off))
                     elif chart_type == "donut":

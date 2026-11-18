@@ -173,9 +173,9 @@ _TRANSLATIONS = {
         "role_sales": "Sales Personnel",
     },
 }
-_SIZE_OFFSETS = {"S": -1, "M": 0, "L": 2, "XL": 3}
 _FONT_OPTIONS = ["Inter", "Segoe UI", "Calibri", "Arial", "Consolas"]
 _LANG_OPTIONS = ["English", "Filipino", "Spanish"]
+_SIZE_OFFSETS = {"S": -1, "M": 0, "L": 2, "XL": 3}
 # Precomputed unit cross vertices (normalized to size=1.0)
 _CROSS_RATIO = 0.36
 _UNIT_CROSS = (

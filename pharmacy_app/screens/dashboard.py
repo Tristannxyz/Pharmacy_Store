@@ -675,10 +675,17 @@ class DashboardScreen(tk.Frame):
 
         try:
             cat_data = db.execute_query("""
-                SELECT c.name, COALESCE(SUM(si.line_total), 0) as total_rev
+                SELECT c.name,
+                       COALESCE(SUM(
+                           CASE WHEN s.subtotal > 0
+                                THEN si.line_total * s.total_amount / s.subtotal
+                                ELSE 0
+                           END
+                       ), 0) as total_rev
                 FROM categories c
                 LEFT JOIN products p ON p.category_id = c.id
                 LEFT JOIN sales_items si ON si.product_id = p.id
+                LEFT JOIN sales s ON s.id = si.sale_id
                 GROUP BY c.id, c.name
                 ORDER BY total_rev DESC
                 LIMIT 3
