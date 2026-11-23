@@ -516,7 +516,89 @@ function startBackgroundMotionLoop() {
 /* ───────────────────────────────────────────────────────────────────────────
    4. SETTINGS POPOVER & GLOBAL APPEARANCE / TYPOGRAPHY / LANGUAGE
    ─────────────────────────────────────────────────────────────────────────── */
+function ensureLiveDOMUpgrades() {
+  // 1. Ensure 100vw x 100vh Global Moving Background Canvas exists even if an older HTML template was cached
+  let globalCanvas = document.getElementById("global-bg-canvas");
+  if (!globalCanvas) {
+    globalCanvas = document.createElement("canvas");
+    globalCanvas.id = "global-bg-canvas";
+    globalCanvas.className = "global-bg-canvas";
+    document.body.prepend(globalCanvas);
+  }
+  ["login-bg-canvas", "inner-bg-canvas"].forEach((oldId) => {
+    const oldCanvas = document.getElementById(oldId);
+    if (oldCanvas) oldCanvas.remove();
+  });
+
+  // 2. Ensure Fullscreen button exists next to Settings on Login top bar
+  const loginTopBar = document.querySelector(".login-top-bar");
+  if (loginTopBar && !document.getElementById("btn-login-fullscreen")) {
+    const fsBtn = document.createElement("button");
+    fsBtn.id = "btn-login-fullscreen";
+    fsBtn.type = "button";
+    fsBtn.className = "settings-pill-btn fullscreen-pill-btn";
+    fsBtn.title = "Toggle Fullscreen (F11)";
+    fsBtn.setAttribute("onclick", "toggleFullscreen()");
+    fsBtn.innerHTML = `${iconSvg("fullscreen", 15)}<span class="fs-btn-text" data-i18n="fullscreen">${escapeHtml(t("fullscreen"))}</span>`;
+    loginTopBar.prepend(fsBtn);
+  }
+
+  // 3. Ensure Fullscreen button exists beside Settings in the inner Sidebar
+  const sidebarBottom = document.querySelector(".sidebar-bottom");
+  const sidebarSettingsBtn = document.getElementById("btn-sidebar-settings");
+  if (sidebarBottom && sidebarSettingsBtn && !document.getElementById("btn-sidebar-fullscreen")) {
+    let splitWrap = sidebarBottom.querySelector(".sidebar-actions-split");
+    if (!splitWrap) {
+      splitWrap = document.createElement("div");
+      splitWrap.className = "sidebar-actions-split";
+      sidebarBottom.insertBefore(splitWrap, sidebarSettingsBtn);
+      splitWrap.appendChild(sidebarSettingsBtn);
+    }
+    const sFsBtn = document.createElement("button");
+    sFsBtn.id = "btn-sidebar-fullscreen";
+    sFsBtn.type = "button";
+    sFsBtn.className = "sidebar-action-btn";
+    sFsBtn.title = "Toggle Fullscreen (F11)";
+    sFsBtn.setAttribute("onclick", "toggleFullscreen()");
+    sFsBtn.innerHTML = `${iconSvg("fullscreen", 15)}<span class="fs-btn-text" data-i18n="fullscreen">${escapeHtml(t("fullscreen"))}</span>`;
+    splitWrap.insertBefore(sFsBtn, sidebarSettingsBtn);
+  }
+
+  // 4. Ensure all 4 Quick Access role buttons have their colored circle dots (Green, Blue, Purple, Orange)
+  ensureQuickAccessDots();
+}
+
+function ensureQuickAccessDots() {
+  const isDark = (STATE.prefs.theme || "light") === "dark";
+  const roleDotSpecs = [
+    { match: "admin", cls: "dot-green", color: isDark ? "#22c55e" : "#16a34a" },
+    { match: "instructor", cls: "dot-blue", color: isDark ? "#38bdf8" : "#0ea5e9" },
+    { match: "inventory_clerk", cls: "dot-purple", color: isDark ? "#a855f7" : "#9333ea" },
+    { match: "sales_personnel", cls: "dot-orange", color: isDark ? "#f97316" : "#ea580c" },
+  ];
+
+  const buttons = document.querySelectorAll(".quick-access-grid .quick-pill-btn");
+  buttons.forEach((btn, idx) => {
+    const onclickAttr = btn.getAttribute("onclick") || "";
+    const roleAttr = btn.getAttribute("data-role") || "";
+    const spec =
+      roleDotSpecs.find((s) => roleAttr === s.match || onclickAttr.includes(`'${s.match}'`)) ||
+      roleDotSpecs[idx];
+    if (!spec) return;
+
+    let dot = btn.querySelector(".quick-dot");
+    if (!dot) {
+      dot = document.createElement("span");
+      btn.prepend(dot);
+    }
+    dot.className = `quick-dot ${spec.cls}`;
+    dot.style.cssText = `display:inline-flex !important;align-items:center;justify-content:center;width:10px !important;height:10px !important;min-width:10px !important;min-height:10px !important;border-radius:50% !important;flex-shrink:0 !important;background:${spec.color} !important;color:${spec.color} !important;`;
+    dot.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style="display:block;flex-shrink:0;"><circle cx="5" cy="5" r="4.5" fill="${spec.color}"/></svg>`;
+  });
+}
+
 function applyPrefsToDOM() {
+  ensureLiveDOMUpgrades();
   const html = document.documentElement;
   html.setAttribute("data-theme", STATE.prefs.theme || "light");
   html.setAttribute("data-font", STATE.prefs.font || "Inter");
@@ -542,6 +624,7 @@ function applyPrefsToDOM() {
     const key = el.getAttribute("data-i18n");
     el.textContent = t(key);
   });
+  ensureQuickAccessDots();
   updateFullscreenButtonsUI();
 
   if (STATE.user) {
@@ -3084,6 +3167,7 @@ function escapeHtml(str) {
 }
 
 async function initApp() {
+  ensureLiveDOMUpgrades();
   startBackgroundMotionLoop();
   try {
     const res = await fetch("/api/bootstrap");

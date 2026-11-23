@@ -563,42 +563,55 @@ textarea {
 }
 
 .quick-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 10px !important;
+  height: 10px !important;
+  min-width: 10px !important;
+  min-height: 10px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
 }
 
 .dot-green {
-  background: #16a34a;
+  background: #16a34a !important;
+  color: #16a34a !important;
 }
 
 .dot-blue {
-  background: #0ea5e9;
+  background: #0ea5e9 !important;
+  color: #0ea5e9 !important;
 }
 
 .dot-purple {
-  background: #9333ea;
+  background: #9333ea !important;
+  color: #9333ea !important;
 }
 
 .dot-orange {
-  background: #ea580c;
+  background: #ea580c !important;
+  color: #ea580c !important;
 }
 
 html[data-theme="dark"] .dot-green {
-  background: #22c55e;
+  background: #22c55e !important;
+  color: #22c55e !important;
 }
 
 html[data-theme="dark"] .dot-blue {
-  background: #38bdf8;
+  background: #38bdf8 !important;
+  color: #38bdf8 !important;
 }
 
 html[data-theme="dark"] .dot-purple {
-  background: #a855f7;
+  background: #a855f7 !important;
+  color: #a855f7 !important;
 }
 
 html[data-theme="dark"] .dot-orange {
-  background: #f97316;
+  background: #f97316 !important;
+  color: #f97316 !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
