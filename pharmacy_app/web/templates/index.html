@@ -11,12 +11,17 @@
 </head>
 <body>
   <!-- ═════════════════════════════════════════════════════════════════════════
-       1. SPLIT-SCREEN LOGIN VIEW (Matches RestInPills Reference UI & Animation)
+       0. GLOBAL FULL-VIEWPORT (100% WIDTH x 100% HEIGHT) MOVING MOTION BACKGROUND
+          Spans the ENTIRE Login Screen (not just half) AND all Inner Screens!
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <canvas id="global-bg-canvas" class="global-bg-canvas"></canvas>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       1. SPLIT-SCREEN LOGIN VIEW (Full-Screen Motion BG Behind Both Halves)
        ═════════════════════════════════════════════════════════════════════════ -->
   <section id="login-view" class="login-view">
-    <!-- Left 50% Panel: 60-FPS Animated Pharmacy & Analytics Background + Features -->
+    <!-- Left 50% Panel: Brand & 4 Core Pillars -->
     <div class="login-left">
-      <canvas id="login-bg-canvas" class="login-bg-canvas"></canvas>
       <div class="login-left-content">
         <div class="login-brand-row">
           <svg class="brand-cross-svg" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -146,16 +151,16 @@
   </section>
 
   <!-- ═════════════════════════════════════════════════════════════════════════
-       2. MAIN APPLICATION SHELL (Left Sidebar + Right Content Area with Motion BG)
+       2. MAIN APPLICATION SHELL (Color-Synced Light/Dark Sidebar + Inner Views)
        ═════════════════════════════════════════════════════════════════════════ -->
   <section id="app-shell" class="app-shell hidden">
-    <!-- Left Sidebar (#0D1524) -->
+    <!-- Left Sidebar (Synced to Light/Dark Theme) -->
     <aside class="app-sidebar">
       <div class="sidebar-top">
         <div class="sidebar-brand">
           <div class="sidebar-logo-badge">
             <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-              <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="#a3e635" stroke-width="2.5" stroke-linejoin="round" />
+              <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
             </svg>
           </div>
           <div class="sidebar-brand-text">
@@ -204,10 +209,8 @@
       </div>
     </aside>
 
-    <!-- Right Content Area with Full-Viewport Animated Motion Background -->
+    <!-- Right Content Area (Transparent over Global Moving Motion Background) -->
     <main id="content-area" class="content-area">
-      <canvas id="inner-bg-canvas" class="inner-bg-canvas"></canvas>
-      <!-- Dynamic Screen Container -->
       <div id="screen-container" class="screen-container"></div>
     </main>
   </section>

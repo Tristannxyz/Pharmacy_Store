@@ -309,33 +309,35 @@ let bgAnimId = null;
 const bgParticles = {
   phase: 0,
   crosses: [
-    { rx: 0.12, ry: 0.14, size: 12, speed: 0.011, phase: 0.4, sway: 18 },
-    { rx: 0.84, ry: 0.18, size: 14, speed: 0.009, phase: 1.9, sway: 22 },
-    { rx: 0.72, ry: 0.48, size: 10, speed: 0.013, phase: 3.1, sway: 15 },
-    { rx: 0.24, ry: 0.84, size: 13, speed: 0.010, phase: 4.5, sway: 18 },
-    { rx: 0.88, ry: 0.76, size: 10, speed: 0.014, phase: 5.7, sway: 16 },
-    { rx: 0.46, ry: 0.32, size: 11, speed: 0.010, phase: 2.4, sway: 17 },
-    { rx: 0.54, ry: 0.72, size: 12, speed: 0.012, phase: 3.8, sway: 19 },
+    { rx: 0.07, ry: 0.14, size: 12, speed: 0.011, phase: 0.4, sway: 18 },
+    { rx: 0.22, ry: 0.78, size: 13, speed: 0.010, phase: 4.5, sway: 18 },
+    { rx: 0.35, ry: 0.32, size: 11, speed: 0.010, phase: 2.4, sway: 17 },
+    { rx: 0.52, ry: 0.68, size: 12, speed: 0.012, phase: 3.8, sway: 19 },
+    { rx: 0.66, ry: 0.22, size: 14, speed: 0.009, phase: 1.9, sway: 22 },
+    { rx: 0.81, ry: 0.52, size: 11, speed: 0.013, phase: 3.1, sway: 16 },
+    { rx: 0.93, ry: 0.82, size: 12, speed: 0.012, phase: 5.7, sway: 16 },
   ],
   capsules: [
-    { rx: 0.68, ry: 0.12, len: 24, rad: 6, angle: 0.55, speed: 0.008, rot: 0.35, phase: 0.8 },
-    { rx: 0.89, ry: 0.38, len: 20, rad: 5, angle: -0.4, speed: 0.010, rot: -0.3, phase: 2.3 },
-    { rx: 0.62, ry: 0.86, len: 22, rad: 5, angle: 0.75, speed: 0.009, rot: 0.28, phase: 4.1 },
-    { rx: 0.18, ry: 0.55, len: 22, rad: 5, angle: -0.6, speed: 0.009, rot: 0.32, phase: 1.5 },
-    { rx: 0.42, ry: 0.16, len: 20, rad: 5, angle: 0.42, speed: 0.008, rot: -0.25, phase: 5.0 },
+    { rx: 0.12, ry: 0.52, len: 23, rad: 5.5, angle: -0.6, speed: 0.009, rot: 0.32, phase: 1.5 },
+    { rx: 0.29, ry: 0.18, len: 21, rad: 5.0, angle: 0.42, speed: 0.008, rot: -0.25, phase: 5.0 },
+    { rx: 0.46, ry: 0.85, len: 22, rad: 5.0, angle: 0.75, speed: 0.009, rot: 0.28, phase: 4.1 },
+    { rx: 0.63, ry: 0.14, len: 24, rad: 6.0, angle: 0.55, speed: 0.008, rot: 0.35, phase: 0.8 },
+    { rx: 0.78, ry: 0.72, len: 21, rad: 5.0, angle: -0.45, speed: 0.010, rot: -0.30, phase: 2.9 },
+    { rx: 0.91, ry: 0.36, len: 22, rad: 5.5, angle: -0.4, speed: 0.010, rot: -0.3, phase: 2.3 },
   ],
   nodes: [
-    { rx: 0.16, ry: 0.24, ax: 18, ay: 14, sx: 0.48, sy: 0.42, ph: 0.6, r: 3.4 },
-    { rx: 0.34, ry: 0.18, ax: 20, ay: 15, sx: 0.44, sy: 0.50, ph: 1.8, r: 3.8 },
-    { rx: 0.52, ry: 0.26, ax: 17, ay: 18, sx: 0.52, sy: 0.38, ph: 2.9, r: 3.5 },
-    { rx: 0.68, ry: 0.18, ax: 18, ay: 14, sx: 0.55, sy: 0.45, ph: 0.2, r: 3.5 },
-    { rx: 0.82, ry: 0.28, ax: 22, ay: 16, sx: 0.42, sy: 0.52, ph: 1.4, r: 4.2 },
-    { rx: 0.92, ry: 0.20, ax: 15, ay: 18, sx: 0.60, sy: 0.38, ph: 2.7, r: 3.0 },
-    { rx: 0.74, ry: 0.46, ax: 20, ay: 15, sx: 0.48, sy: 0.46, ph: 3.5, r: 3.8 },
-    { rx: 0.88, ry: 0.54, ax: 17, ay: 20, sx: 0.38, sy: 0.56, ph: 4.8, r: 4.2 },
-    { rx: 0.76, ry: 0.70, ax: 21, ay: 14, sx: 0.50, sy: 0.40, ph: 5.4, r: 3.4 },
-    { rx: 0.89, ry: 0.84, ax: 16, ay: 16, sx: 0.44, sy: 0.50, ph: 1.0, r: 3.8 },
-    { rx: 0.38, ry: 0.68, ax: 19, ay: 15, sx: 0.46, sy: 0.44, ph: 4.2, r: 3.6 },
+    { rx: 0.08, ry: 0.24, ax: 18, ay: 14, sx: 0.48, sy: 0.42, ph: 0.6, r: 3.5 },
+    { rx: 0.19, ry: 0.42, ax: 20, ay: 16, sx: 0.42, sy: 0.48, ph: 1.3, r: 3.8 },
+    { rx: 0.28, ry: 0.20, ax: 20, ay: 15, sx: 0.44, sy: 0.50, ph: 1.8, r: 3.8 },
+    { rx: 0.36, ry: 0.66, ax: 19, ay: 15, sx: 0.46, sy: 0.44, ph: 4.2, r: 3.6 },
+    { rx: 0.45, ry: 0.38, ax: 17, ay: 18, sx: 0.52, sy: 0.38, ph: 2.9, r: 3.6 },
+    { rx: 0.54, ry: 0.18, ax: 18, ay: 14, sx: 0.55, sy: 0.45, ph: 0.2, r: 3.5 },
+    { rx: 0.61, ry: 0.56, ax: 20, ay: 16, sx: 0.45, sy: 0.46, ph: 2.1, r: 3.9 },
+    { rx: 0.70, ry: 0.30, ax: 22, ay: 16, sx: 0.42, sy: 0.52, ph: 1.4, r: 4.2 },
+    { rx: 0.76, ry: 0.74, ax: 21, ay: 14, sx: 0.50, sy: 0.40, ph: 5.4, r: 3.6 },
+    { rx: 0.84, ry: 0.48, ax: 18, ay: 18, sx: 0.38, sy: 0.56, ph: 4.8, r: 4.2 },
+    { rx: 0.91, ry: 0.22, ax: 16, ay: 18, sx: 0.60, sy: 0.38, ph: 2.7, r: 3.4 },
+    { rx: 0.94, ry: 0.80, ax: 16, ay: 16, sx: 0.44, sy: 0.50, ph: 1.0, r: 3.8 },
   ],
 };
 
@@ -343,8 +345,8 @@ function drawMotionCanvas(canvas, dt) {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
-  const w = canvas.clientWidth || 800;
-  const h = canvas.clientHeight || 800;
+  const w = window.innerWidth || canvas.clientWidth || 1280;
+  const h = window.innerHeight || canvas.clientHeight || 800;
   if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
     canvas.width = Math.floor(w * dpr);
     canvas.height = Math.floor(h * dpr);
@@ -354,12 +356,12 @@ function drawMotionCanvas(canvas, dt) {
   ctx.clearRect(0, 0, w, h);
 
   const isDark = STATE.prefs.theme === "dark";
-  const colWave1 = isDark ? "rgba(59, 114, 232, 0.22)" : "rgba(37, 99, 235, 0.16)";
-  const colWave2 = isDark ? "rgba(20, 184, 166, 0.18)" : "rgba(13, 148, 136, 0.14)";
-  const colNode  = isDark ? "rgba(59, 130, 246, 0.34)" : "rgba(37, 99, 235, 0.24)";
-  const colEdge  = isDark ? "rgba(59, 130, 246, 0.15)" : "rgba(37, 99, 235, 0.11)";
-  const colCross = isDark ? "rgba(59, 130, 246, 0.30)" : "rgba(37, 99, 235, 0.21)";
-  const colPill  = isDark ? "rgba(20, 184, 166, 0.28)" : "rgba(37, 99, 235, 0.19)";
+  const colWave1 = isDark ? "rgba(59, 114, 232, 0.26)" : "rgba(37, 99, 235, 0.20)";
+  const colWave2 = isDark ? "rgba(20, 184, 166, 0.22)" : "rgba(13, 148, 136, 0.17)";
+  const colNode  = isDark ? "rgba(59, 130, 246, 0.38)" : "rgba(37, 99, 235, 0.28)";
+  const colEdge  = isDark ? "rgba(59, 130, 246, 0.18)" : "rgba(37, 99, 235, 0.14)";
+  const colCross = isDark ? "rgba(59, 130, 246, 0.34)" : "rgba(37, 99, 235, 0.24)";
+  const colPill  = isDark ? "rgba(20, 184, 166, 0.32)" : "rgba(37, 99, 235, 0.22)";
 
   const ph = bgParticles.phase;
 
@@ -479,12 +481,7 @@ function startBackgroundMotionLoop() {
       if (cp.ry < -0.06) cp.ry = 1.06;
     });
 
-    const loginView = document.getElementById("login-view");
-    if (loginView && !loginView.classList.contains("hidden")) {
-      drawMotionCanvas(document.getElementById("login-bg-canvas"), dt);
-    } else {
-      drawMotionCanvas(document.getElementById("inner-bg-canvas"), dt);
-    }
+    drawMotionCanvas(document.getElementById("global-bg-canvas"), dt);
     bgAnimId = requestAnimationFrame(tick);
   }
 
@@ -805,12 +802,13 @@ async function renderDashboardScreen(fetchFresh = true) {
   const sh = d.stock_health;
   const user = STATE.user || { username: "admin", full_name: "System Administrator", role_display: "Administrator" };
 
+  const isDark = STATE.prefs.theme === "dark";
   const topProdName = m.top_product_name && m.top_product_name.length > 18 ? m.top_product_name.slice(0, 18).trim() : m.top_product_name;
   const maxTopQty = Math.max(1, ...(d.top_5_products || []).map((p) => p.qty));
   const top5Html = (d.top_5_products || [])
     .map((p, idx) => {
       const pct = Math.round((p.qty / maxTopQty) * 100);
-      const fillCol = idx === 0 ? "#a3e635" : "#2563eb";
+      const fillCol = idx === 0 ? (isDark ? "#a3e635" : "#0d9488") : (isDark ? "#3b72e8" : "#2563eb");
       return `
         <div class="bar-row">
           <div class="bar-label" title="${escapeHtml(p.full_name)}">${escapeHtml(p.name)}</div>
@@ -821,7 +819,7 @@ async function renderDashboardScreen(fetchFresh = true) {
     })
     .join("");
 
-  const catColors = ["#0d9488", "#2563eb", "#a3e635"];
+  const catColors = isDark ? ["#14b8a6", "#3b72e8", "#a3e635"] : ["#2563eb", "#0d9488", "#0ea5e9"];
   const cats = d.sales_by_category || [];
   const topCat = cats[0] || { name: "Analgesics", pct: 79 };
   const legendHtml = cats
@@ -1087,8 +1085,8 @@ function drawDashboardDonutChart(cats) {
   const cy = size / 2;
   const rOuter = 78;
   const rInner = 55;
-  const palette = ["#0d9488", "#2563eb", "#a3e635"];
   const isDark = STATE.prefs.theme === "dark";
+  const palette = isDark ? ["#14b8a6", "#3b72e8", "#a3e635"] : ["#2563eb", "#0d9488", "#0ea5e9"];
   const surfaceCol = isDark ? "#131c2e" : "#ffffff";
 
   const vals = cats.map((c) => Math.max(0.5, c.pct));
@@ -2946,13 +2944,13 @@ function renderProfileScreen() {
     <div class="profile-hero">
       <div class="profile-avatar-big">${escapeHtml(getInitials(u.full_name))}</div>
       <div>
-        <div style="font-size:1.35rem;font-weight:800;color:#ffffff">${escapeHtml(u.full_name)}</div>
-        <div style="font-size:0.88rem;color:#94a3b8;margin:0.15rem 0 0.65rem">${escapeHtml(u.email)}</div>
+        <div class="profile-hero-name">${escapeHtml(u.full_name)}</div>
+        <div class="profile-hero-email">${escapeHtml(u.email)}</div>
         <div style="display:flex;gap:0.5rem">
-          <span style="background:#b4e633;color:#0c1b2e;font-size:0.76rem;font-weight:800;padding:0.22rem 0.75rem;border-radius:999px">
+          <span class="profile-role-pill">
             ${escapeHtml(u.role_display)}
           </span>
-          <span style="background:#132338;color:#e2e8f0;border:1px solid #2a3f5a;font-size:0.76rem;font-weight:700;padding:0.22rem 0.75rem;border-radius:999px">
+          <span class="profile-session-pill">
             Session active
           </span>
         </div>
