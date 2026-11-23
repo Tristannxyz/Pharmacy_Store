@@ -105,6 +105,10 @@ function iconSvg(name, size = 16) {
       return `<svg ${attrs}><polyline points="20 6 9 17 4 12"/></svg>`;
     case "close":
       return `<svg ${attrs}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+    case "fullscreen":
+      return `<svg ${attrs}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
+    case "fullscreen-exit":
+      return `<svg ${attrs}><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>`;
     default:
       return "";
   }
@@ -115,6 +119,8 @@ function iconSvg(name, size = 16) {
    ─────────────────────────────────────────────────────────────────────────── */
 const I18N = {
   English: {
+    fullscreen: "Fullscreen",
+    exit_fullscreen: "Exit fullscreen",
     settings: "Settings",
     appearance: "Appearance",
     light_mode: "Light mode",
@@ -172,6 +178,8 @@ const I18N = {
     out_of_stock: "Out of stock",
   },
   Filipino: {
+    fullscreen: "Fullscreen",
+    exit_fullscreen: "Lumabas",
     settings: "Settings",
     appearance: "Hitsura",
     light_mode: "Light mode",
@@ -229,6 +237,8 @@ const I18N = {
     out_of_stock: "Walang stak",
   },
   Spanish: {
+    fullscreen: "Pantalla completa",
+    exit_fullscreen: "Salir",
     settings: "Ajustes",
     appearance: "Apariencia",
     light_mode: "Modo claro",
@@ -510,6 +520,7 @@ function applyPrefsToDOM() {
     const key = el.getAttribute("data-i18n");
     el.textContent = t(key);
   });
+  updateFullscreenButtonsUI();
 
   if (STATE.user) {
     renderSidebar();
@@ -568,6 +579,32 @@ function setTextSize(sz) {
   applyPrefsToDOM();
   syncPrefsToBackend();
 }
+
+function updateFullscreenButtonsUI() {
+  const isFs = Boolean(document.fullscreenElement);
+  const labelText = isFs ? t("exit_fullscreen") : t("fullscreen");
+  const svgHtml = iconSvg(isFs ? "fullscreen-exit" : "fullscreen", 15);
+  ["btn-login-fullscreen", "btn-sidebar-fullscreen"].forEach((id) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.innerHTML = `${svgHtml}<span class="fs-btn-text">${escapeHtml(labelText)}</span>`;
+  });
+}
+
+async function toggleFullscreen() {
+  try {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch (err) {
+    showToast("Fullscreen toggle could not be activated by the browser.");
+  }
+  updateFullscreenButtonsUI();
+}
+
+document.addEventListener("fullscreenchange", updateFullscreenButtonsUI);
 
 /* ───────────────────────────────────────────────────────────────────────────
    5. AUTHENTICATION, QUICK ACCESS & RBAC NAVIGATION

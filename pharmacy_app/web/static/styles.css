@@ -287,6 +287,9 @@ button, input, select, textarea {
   top: 1.25rem;
   right: 1.5rem;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
 .settings-pill-btn {
@@ -688,6 +691,12 @@ html[data-theme="dark"] .dot-orange { background: #f97316; }
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.sidebar-actions-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
 }
 
 .sidebar-user-chip {

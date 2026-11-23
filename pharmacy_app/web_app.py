@@ -38,6 +38,14 @@ app = Flask(
 app.secret_key = os.getenv("PHARMACY_WEB_SECRET", "restinpills-pharmacy-secret-key-2026")
 
 
+@app.after_request
+def _add_no_cache_headers(response):
+    """Ensures browser always loads fresh CSS/JS/API responses during development & testing."""
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    return response
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Transparent MySQL -> SQLite Fallback Mirror (When WAMP/MySQL is offline)
 # ─────────────────────────────────────────────────────────────────────────────

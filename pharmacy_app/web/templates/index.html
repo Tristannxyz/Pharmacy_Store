@@ -64,9 +64,16 @@
       </div>
     </div>
 
-    <!-- Right 50% Panel: Top-Right Settings Button + Welcome Back Form + Quick Access -->
+    <!-- Right 50% Panel: Top-Right Fullscreen + Settings Buttons + Welcome Back Form + Quick Access -->
     <div class="login-right">
       <div class="login-top-bar">
+        <button id="btn-login-fullscreen" type="button" class="settings-pill-btn fullscreen-pill-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)" aria-label="Toggle Fullscreen">
+          <svg class="fs-icon-expand svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+          <span class="fs-btn-text" data-i18n="fullscreen">Fullscreen</span>
+        </button>
+
         <button id="btn-login-settings" type="button" class="settings-pill-btn" onclick="toggleSettingsPopover('login')">
           <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -118,19 +125,19 @@
 
         <div class="quick-access-grid">
           <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('admin', 'admin123', 'Administrator')">
-            <span class="quick-dot dot-green"></span>
+            <span class="quick-dot dot-green" style="background:#16a34a"></span>
             <span class="quick-label" data-i18n="role_admin">Administrator</span>
           </button>
           <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('instructor', 'instructor123', 'Instructor')">
-            <span class="quick-dot dot-blue"></span>
+            <span class="quick-dot dot-blue" style="background:#0ea5e9"></span>
             <span class="quick-label" data-i18n="role_instructor">Instructor</span>
           </button>
           <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('inventory_clerk', 'clerk123', 'Inventory Clerk')">
-            <span class="quick-dot dot-purple"></span>
+            <span class="quick-dot dot-purple" style="background:#9333ea"></span>
             <span class="quick-label" data-i18n="role_clerk">Inventory Clerk</span>
           </button>
           <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('sales_personnel', 'sales123', 'Sales Personnel')">
-            <span class="quick-dot dot-orange"></span>
+            <span class="quick-dot dot-orange" style="background:#ea580c"></span>
             <span class="quick-label" data-i18n="role_sales">Sales Personnel</span>
           </button>
         </div>
@@ -169,13 +176,22 @@
           </div>
         </div>
 
-        <button id="btn-sidebar-settings" type="button" class="sidebar-action-btn" onclick="toggleSettingsPopover('sidebar')">
-          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-          <span data-i18n="settings">Settings</span>
-        </button>
+        <div class="sidebar-actions-split">
+          <button id="btn-sidebar-fullscreen" type="button" class="sidebar-action-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)">
+            <svg class="fs-icon-expand svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+            <span class="fs-btn-text" data-i18n="fullscreen">Fullscreen</span>
+          </button>
+
+          <button id="btn-sidebar-settings" type="button" class="sidebar-action-btn" onclick="toggleSettingsPopover('sidebar')">
+            <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span data-i18n="settings">Settings</span>
+          </button>
+        </div>
 
         <button id="btn-sidebar-logout" type="button" class="sidebar-action-btn logout-btn" onclick="handleLogout()">
           <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
