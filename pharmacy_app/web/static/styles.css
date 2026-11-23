@@ -459,6 +459,16 @@ textarea {
   font-size: 0.92rem;
 }
 
+.pwd-masked-input {
+  -webkit-text-security: disc;
+  text-security: disc;
+}
+
+.pwd-masked-input.pwd-revealed {
+  -webkit-text-security: none !important;
+  text-security: none !important;
+}
+
 .login-pwd-row {
   display: flex;
   align-items: stretch;

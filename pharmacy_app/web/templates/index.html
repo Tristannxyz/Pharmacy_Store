@@ -10,7 +10,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="/static/styles.css?v=6" />
+  <link rel="stylesheet" href="/static/styles.css?v=7" />
 </head>
 
 <body>
@@ -104,16 +104,20 @@
         <h2 class="login-welcome-title" data-i18n="welcome">Welcome back</h2>
         <p class="login-welcome-sub" data-i18n="sign_in_sub">Sign in to access your designated workspace</p>
 
-        <form id="login-form" onsubmit="handleLoginSubmit(event)">
+        <div id="login-form" class="login-form-box">
           <label class="login-field-label" for="login-username" data-i18n="username">Username</label>
           <div class="login-input-wrap">
-            <input id="login-username" type="text" autocomplete="username" placeholder="" />
+            <input id="login-username" type="text" autocomplete="off" spellcheck="false" data-lpignore="true"
+              data-form-type="other" placeholder=""
+              onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('login-password')?.focus();}" />
           </div>
 
           <label class="login-field-label" for="login-password" data-i18n="password">Password</label>
           <div class="login-pwd-row">
             <div class="login-input-wrap pwd-input-wrap">
-              <input id="login-password" type="password" autocomplete="current-password" placeholder="" />
+              <input id="login-password" type="text" class="pwd-masked-input" autocomplete="off" spellcheck="false"
+                data-lpignore="true" data-form-type="other" placeholder=""
+                onkeydown="if(event.key==='Enter'){event.preventDefault();handleLoginSubmit(event);}" />
             </div>
             <button id="btn-toggle-pwd" type="button" class="pwd-eye-btn" onclick="togglePasswordVisibility()"
               title="Show / Hide Password" aria-label="Toggle password visibility">
@@ -127,7 +131,7 @@
 
           <div id="login-msg" class="login-msg"></div>
 
-          <button id="btn-login-submit" type="submit" class="login-submit-btn">
+          <button id="btn-login-submit" type="button" class="login-submit-btn" onclick="handleLoginSubmit(event)">
             <span data-i18n="sign_in_btn">Sign in to system</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
               stroke-linecap="round" stroke-linejoin="round">
@@ -135,7 +139,7 @@
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
           </button>
-        </form>
+        </div>
 
         <div class="quick-access-divider">
           <span class="divider-line"></span>
@@ -316,7 +320,7 @@
   <!-- Toast Notification -->
   <div id="toast-container" class="toast-container"></div>
 
-  <script src="/static/app.js?v=6"></script>
+  <script src="/static/app.js?v=7"></script>
 </body>
 
 </html>

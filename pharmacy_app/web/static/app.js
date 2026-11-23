@@ -566,6 +566,71 @@ function ensureLiveDOMUpgrades() {
 
   // 4. Ensure all 4 Quick Access role buttons have their colored circle dots (Green, Blue, Purple, Orange)
   ensureQuickAccessDots();
+
+  // 5. Upgrade #login-form from <form> to non-submitting <div> + masked text input
+  //    so Chromium's Password Manager never intercepts form submission to exit Fullscreen!
+  upgradeLoginFormForFullscreenPersistence();
+}
+
+function upgradeLoginFormForFullscreenPersistence() {
+  const formEl = document.getElementById("login-form");
+  if (formEl && formEl.tagName.toLowerCase() === "form") {
+    const divEl = document.createElement("div");
+    divEl.id = "login-form";
+    divEl.className = "login-form-box";
+    while (formEl.firstChild) {
+      divEl.appendChild(formEl.firstChild);
+    }
+    formEl.parentNode.replaceChild(divEl, formEl);
+  }
+
+  const uInp = document.getElementById("login-username");
+  if (uInp) {
+    uInp.setAttribute("autocomplete", "off");
+    uInp.setAttribute("spellcheck", "false");
+    uInp.setAttribute("data-lpignore", "true");
+    uInp.setAttribute("data-form-type", "other");
+    if (!uInp.dataset.fsBound) {
+      uInp.dataset.fsBound = "1";
+      uInp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("login-password")?.focus();
+        }
+      });
+    }
+  }
+
+  const pInp = document.getElementById("login-password");
+  if (pInp) {
+    const supportsTextSecurity =
+      typeof CSS !== "undefined" &&
+      typeof CSS.supports === "function" &&
+      (CSS.supports("-webkit-text-security", "disc") || CSS.supports("text-security", "disc"));
+    if (supportsTextSecurity && pInp.type === "password") {
+      pInp.type = "text";
+    }
+    pInp.classList.add("pwd-masked-input");
+    pInp.setAttribute("autocomplete", "off");
+    pInp.setAttribute("spellcheck", "false");
+    pInp.setAttribute("data-lpignore", "true");
+    pInp.setAttribute("data-form-type", "other");
+    if (!pInp.dataset.fsBound) {
+      pInp.dataset.fsBound = "1";
+      pInp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleLoginSubmit(e);
+        }
+      });
+    }
+  }
+
+  const subBtn = document.getElementById("btn-login-submit");
+  if (subBtn) {
+    subBtn.type = "button";
+    subBtn.setAttribute("onclick", "handleLoginSubmit(event)");
+  }
 }
 
 function ensureQuickAccessDots() {
@@ -720,7 +785,16 @@ async function ensureFullscreenMaintained() {
   updateFullscreenButtonsUI();
 }
 
-document.addEventListener("fullscreenchange", updateFullscreenButtonsUI);
+document.addEventListener("fullscreenchange", () => {
+  if (STATE.isTransitioningView && STATE.wantsFullscreen && !document.fullscreenElement) {
+    ensureFullscreenMaintained();
+    return;
+  }
+  if (!STATE.isTransitioningView) {
+    STATE.wantsFullscreen = Boolean(document.fullscreenElement);
+  }
+  updateFullscreenButtonsUI();
+});
 
 /* ───────────────────────────────────────────────────────────────────────────
    5. AUTHENTICATION, QUICK ACCESS & RBAC NAVIGATION
@@ -729,12 +803,24 @@ function togglePasswordVisibility() {
   const inp = document.getElementById("login-password");
   const btn = document.getElementById("btn-toggle-pwd");
   if (!inp || !btn) return;
-  if (inp.type === "password") {
+  const supportsTextSecurity =
+    typeof CSS !== "undefined" &&
+    typeof CSS.supports === "function" &&
+    (CSS.supports("-webkit-text-security", "disc") || CSS.supports("text-security", "disc"));
+
+  if (supportsTextSecurity) {
     inp.type = "text";
-    btn.innerHTML = iconSvg("eye-off", 17);
+    inp.classList.add("pwd-masked-input");
+    const isRevealed = inp.classList.toggle("pwd-revealed");
+    btn.innerHTML = iconSvg(isRevealed ? "eye-off" : "eye", 17);
   } else {
-    inp.type = "password";
-    btn.innerHTML = iconSvg("eye", 17);
+    if (inp.type === "password") {
+      inp.type = "text";
+      btn.innerHTML = iconSvg("eye-off", 17);
+    } else {
+      inp.type = "password";
+      btn.innerHTML = iconSvg("eye", 17);
+    }
   }
 }
 
@@ -751,15 +837,19 @@ function fillQuickCredentials(username, password, roleLabel) {
 }
 
 async function handleLoginSubmit(event) {
-  event.preventDefault();
-  if (document.fullscreenElement) {
-    STATE.wantsFullscreen = true;
+  if (event && typeof event.preventDefault === "function") {
+    event.preventDefault();
   }
+  const wasFullscreen = Boolean(document.fullscreenElement) || Boolean(STATE.wantsFullscreen);
+  STATE.wantsFullscreen = wasFullscreen;
+  STATE.isTransitioningView = true;
+
   const u = (document.getElementById("login-username")?.value || "").trim();
   const p = document.getElementById("login-password")?.value || "";
   const msg = document.getElementById("login-msg");
 
   if (!u || !p) {
+    STATE.isTransitioningView = false;
     if (msg) {
       msg.style.color = "#dc2626";
       msg.textContent = "Please enter both username and password.";
@@ -780,6 +870,7 @@ async function handleLoginSubmit(event) {
     });
     const data = await res.json();
     if (!res.ok || !data.ok) {
+      STATE.isTransitioningView = false;
       if (msg) {
         msg.style.color = "#dc2626";
         msg.textContent = data.message || "Invalid username or password.";
@@ -798,8 +889,17 @@ async function handleLoginSubmit(event) {
     STATE.user = data.user;
     closeSettingsPopover();
     enterAppShell();
-    await ensureFullscreenMaintained();
+    if (wasFullscreen) {
+      await ensureFullscreenMaintained();
+      requestAnimationFrame(() => ensureFullscreenMaintained());
+      setTimeout(() => ensureFullscreenMaintained(), 60);
+      setTimeout(() => ensureFullscreenMaintained(), 180);
+    }
+    setTimeout(() => {
+      STATE.isTransitioningView = false;
+    }, 350);
   } catch (err) {
+    STATE.isTransitioningView = false;
     if (msg) {
       msg.style.color = "#dc2626";
       msg.textContent = `Connection error: ${err.message}`;
@@ -807,11 +907,34 @@ async function handleLoginSubmit(event) {
   }
 }
 
-async function handleLogout() {
-  if (!confirm("Are you sure you want to log out of your session?")) return;
+function handleLogout() {
   if (document.fullscreenElement) {
     STATE.wantsFullscreen = true;
   }
+  closeSettingsPopover();
+  showModal(`
+    <div class="modal-header">
+      <div class="modal-title">Confirm Sign Out</div>
+      <button type="button" class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.94rem;color:var(--text-dark);line-height:1.5;">
+        Are you sure you want to log out of your current RestInPills session?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button type="button" class="btn btn-danger" onclick="executeConfirmedLogout()">Sign Out</button>
+    </div>
+  `);
+}
+
+async function executeConfirmedLogout() {
+  const wasFullscreen = Boolean(document.fullscreenElement) || Boolean(STATE.wantsFullscreen);
+  if (wasFullscreen) {
+    STATE.wantsFullscreen = true;
+  }
+  closeModal();
   closeSettingsPopover();
   try {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -820,10 +943,19 @@ async function handleLogout() {
   document.getElementById("app-shell").classList.add("hidden");
   document.getElementById("login-view").classList.remove("hidden");
   const pEl = document.getElementById("login-password");
-  if (pEl) pEl.value = "";
+  if (pEl) {
+    pEl.value = "";
+    pEl.classList.remove("pwd-revealed");
+  }
+  const btnEye = document.getElementById("btn-toggle-pwd");
+  if (btnEye) btnEye.innerHTML = iconSvg("eye", 17);
   const msg = document.getElementById("login-msg");
   if (msg) msg.textContent = "";
-  await ensureFullscreenMaintained();
+  if (wasFullscreen) {
+    await ensureFullscreenMaintained();
+    requestAnimationFrame(() => ensureFullscreenMaintained());
+    setTimeout(() => ensureFullscreenMaintained(), 60);
+  }
 }
 
 function isNavAllowed(key) {
