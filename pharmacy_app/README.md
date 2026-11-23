@@ -75,7 +75,7 @@ With WAMP running, execute:
 python database/setup_db.py
 ```
 This will automatically:
-1. Create database `pharmacy_db`
+1. Create database `pharmacy`
 2. Run all `schema.sql` table definitions
 3. Seed 4 user accounts with bcrypt-hashed passwords
 4. Seed 8 product categories, 6 suppliers, 57 realistic pharmacy products
@@ -83,8 +83,8 @@ This will automatically:
 
 ### Option B — phpMyAdmin Manual Import
 1. Open **phpMyAdmin** at `http://localhost/phpmyadmin`
-2. Click **New** → create database `pharmacy_db` with charset `utf8mb4_unicode_ci`
-3. Select `pharmacy_db` → **Import** → choose `database/schema.sql` → **Go**
+2. Click **New** → create database `pharmacy` with charset `utf8mb4_unicode_ci`
+3. Select `pharmacy` → **Import** → choose `database/schema.sql` → **Go**
 4. Then run: `python database/setup_db.py` (for seed data only)
 
 ---
@@ -198,7 +198,7 @@ Edit `config.py` to change database settings without touching any other file:
 DB_HOST = "localhost"    # MySQL host
 DB_USER = "root"         # MySQL username  
 DB_PASSWORD = ""         # MySQL password (empty for WAMP default)
-DB_NAME = "pharmacy_db"  # Database name
+DB_NAME = "pharmacy"     # Database name
 DB_PORT = 3306           # MySQL port
 
 LOW_STOCK_THRESHOLD = 15     # Alert if stock <= this
