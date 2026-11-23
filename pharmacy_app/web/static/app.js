@@ -912,19 +912,71 @@ function handleLogout() {
     STATE.wantsFullscreen = true;
   }
   closeSettingsPopover();
+  const u = STATE.user || {
+    username: "admin",
+    full_name: "System Administrator",
+    role_display: "Administrator",
+  };
+  const initials = getInitials(u.full_name);
+  const lang = STATE.prefs.language || "English";
+  const titleTxt =
+    lang === "Filipino"
+      ? "Mag-sign out sa RestInPills?"
+      : lang === "Spanish"
+      ? "¿Cerrar sesión en RestInPills?"
+      : "Sign out of RestInPills?";
+  const subTxt =
+    lang === "Filipino"
+      ? "Pagpapatunay ng Sesyon"
+      : lang === "Spanish"
+      ? "Verificación de cierre de sesión"
+      : "Session Sign-Out Verification";
+  const descTxt =
+    lang === "Filipino"
+      ? "Isasara ang iyong kasalukuyang workspace session at ibabalik ka sa login screen."
+      : lang === "Spanish"
+      ? "Su sesión activa se cerrará de forma segura y volverá a la pantalla de inicio de sesión."
+      : "Your active pharmacy workspace session will be safely closed and you will be returned to the sign-in screen.";
+  const cancelTxt =
+    lang === "Filipino" ? "Manatili" : lang === "Spanish" ? "Cancelar" : "Stay Signed In";
+  const confirmTxt = t("sign_out");
+
+  const logoutSvg = `<svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`;
+  const btnLogoutSvg = `<svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`;
+
   showModal(`
-    <div class="modal-header">
-      <div class="modal-title">Confirm Sign Out</div>
-      <button type="button" class="modal-close" onclick="closeModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:0.94rem;color:var(--text-dark);line-height:1.5;">
-        Are you sure you want to log out of your current RestInPills session?
-      </p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button type="button" class="btn btn-danger" onclick="executeConfirmedLogout()">Sign Out</button>
+    <div class="signout-modal-wrap">
+      <div class="signout-top-row">
+        <div class="signout-icon-title">
+          <div class="signout-icon-badge">${logoutSvg}</div>
+          <div>
+            <div class="signout-heading">${escapeHtml(titleTxt)}</div>
+            <div class="signout-subheading">${escapeHtml(subTxt)}</div>
+          </div>
+        </div>
+        <button type="button" class="signout-close-x" onclick="closeModal()" aria-label="Close">${iconSvg("close", 15)}</button>
+      </div>
+
+      <div class="signout-user-card">
+        <div class="signout-user-left">
+          <div class="signout-user-avatar">${escapeHtml(initials)}</div>
+          <div style="min-width:0;">
+            <div class="signout-user-name">${escapeHtml(u.full_name)}</div>
+            <div class="signout-user-sub">@${escapeHtml(u.username)} • Active Session</div>
+          </div>
+        </div>
+        <span class="signout-role-pill">${escapeHtml(u.role_display)}</span>
+      </div>
+
+      <p class="signout-desc">${escapeHtml(descTxt)}</p>
+
+      <div class="signout-actions">
+        <button type="button" class="btn-signout-cancel" onclick="closeModal()">${escapeHtml(cancelTxt)}</button>
+        <button type="button" class="btn-signout-confirm" onclick="executeConfirmedLogout()">
+          ${btnLogoutSvg}
+          <span>${escapeHtml(confirmTxt)}</span>
+        </button>
+      </div>
     </div>
   `);
 }
