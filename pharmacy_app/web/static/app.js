@@ -2083,19 +2083,13 @@ function renderPosTerminalTab() {
           </div>
         </div>
 
-        <!-- Payment Method -->
+        <!-- Payment Method (Exclusively CASH) -->
         <div style="margin-bottom:0.55rem">
           <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.25rem">Payment Method</div>
           <div class="chip-group">
-            ${["CASH", "CARD", "GCASH"]
-              .map(
-                (pm) => `
-                <button type="button" class="filter-chip ${STATE.payMethod === pm ? "active" : ""}" style="padding:0.28rem 0.65rem;font-size:0.76rem" onclick="setPosPayMethod('${pm}')">
-                  ${pm}
-                </button>
-              `
-              )
-              .join("")}
+            <button type="button" class="filter-chip active" style="padding:0.28rem 0.75rem;font-size:0.76rem;cursor:default">
+              CASH
+            </button>
           </div>
         </div>
 
@@ -2214,8 +2208,8 @@ function setPosDiscount(pct) {
   STATE.discountPct = pct;
   renderPosTerminalTab();
 }
-function setPosPayMethod(pm) {
-  STATE.payMethod = pm;
+function setPosPayMethod() {
+  STATE.payMethod = "CASH";
   renderPosTerminalTab();
 }
 
@@ -2297,7 +2291,7 @@ async function submitPosCheckout() {
     body: JSON.stringify({
       cart: STATE.cart,
       discount_percent: STATE.discountPct,
-      payment_method: STATE.payMethod,
+      payment_method: "CASH",
       customer_name: document.getElementById("pos-customer")?.value || "Walk-in Customer",
       amount_paid: paidVal,
     }),

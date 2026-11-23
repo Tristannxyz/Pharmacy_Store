@@ -916,7 +916,7 @@ def api_sales_checkout():
 
     discount_pct = max(0.0, min(100.0, float(data.get("discount_percent") or 0.0)))
     customer = (data.get("customer_name") or "").strip() or "Walk-in Customer"
-    pay_method = (data.get("payment_method") or "CASH").upper()
+    pay_method = "CASH"
 
     subtotal = 0.0
     resolved_items = []
