@@ -51,7 +51,7 @@ class AnalysisScreen(tk.Frame):
         header = tk.Frame(self, bg=config.COLORS["surface"], padx=30, pady=16, highlightbackground=config.COLORS["border"], highlightthickness=1)
         header.pack(fill="x", side="top")
 
-        title_text = "🧠 Knowledge Analysis Studio (Instructor Mode)" if self.is_instructor else "🧠 Knowledge Analysis & Demand Prediction"
+        title_text = "Knowledge Analysis Studio (Instructor Mode)" if self.is_instructor else "Knowledge Analysis & Demand Prediction"
         lbl_title = tk.Label(header, text=title_text, font=config.FONTS["h2"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"])
         lbl_title.pack(side="left")
 
@@ -72,7 +72,7 @@ class AnalysisScreen(tk.Frame):
         self.combo_task.bind("<<ComboboxSelected>>", self.on_task_changed)
 
         if self.is_instructor:
-            btn_retrain = tk.Button(task_f, text="⚡ Retrain Models", font=config.FONTS["small"], bg=config.COLORS["secondary"], fg="white", relief="flat", cursor="hand2", padx=10, pady=4, command=self.handle_retrain)
+            btn_retrain = tk.Button(task_f, text="↻ Retrain Models", font=config.FONTS["small"], bg=config.COLORS["secondary"], fg="white", relief="flat", cursor="hand2", padx=10, pady=4, command=self.handle_retrain)
             btn_retrain.pack(side="left")
 
         # Main Layout: If Instructor, Notebook with Prediction Tab + Instructor Tabs. If Admin, single Prediction View.
@@ -123,7 +123,7 @@ class AnalysisScreen(tk.Frame):
         left_card = tk.Frame(paned, bg=config.COLORS["surface"], padx=20, pady=20, highlightbackground=config.COLORS["border"], highlightthickness=1)
         paned.add(left_card, width=460)
 
-        tk.Label(left_card, text="⚙ Prediction Parameters", font=config.FONTS["h3"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"]).pack(anchor="w", pady=(0, 10))
+        tk.Label(left_card, text="Prediction Parameters", font=config.FONTS["h3"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"]).pack(anchor="w", pady=(0, 10))
 
         # Form fields container with scroll
         form_scroll = tk.Frame(left_card, bg=config.COLORS["surface"])
@@ -142,7 +142,7 @@ class AnalysisScreen(tk.Frame):
 
         btn_run = tk.Button(
             left_card,
-            text="🚀 Calculate Prediction",
+            text="▸ Calculate Prediction",
             font=config.FONTS["body_bold"],
             bg=config.COLORS["secondary"],
             fg="white",
@@ -157,7 +157,7 @@ class AnalysisScreen(tk.Frame):
         right_card = tk.Frame(paned, bg=config.COLORS["surface"], padx=20, pady=20, highlightbackground=config.COLORS["border"], highlightthickness=1)
         paned.add(right_card, width=620)
 
-        tk.Label(right_card, text="📊 Prediction Results & Output Visualizer", font=config.FONTS["h3"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"]).pack(anchor="w", pady=(0, 10))
+        tk.Label(right_card, text="Prediction Results & Output Visualizer", font=config.FONTS["h3"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"]).pack(anchor="w", pady=(0, 10))
 
         self.output_banner = tk.Frame(right_card, bg=config.COLORS["surface_alt"], padx=18, pady=14, highlightbackground=config.COLORS["border"], highlightthickness=1)
         self.output_banner.pack(fill="x", pady=(0, 15))

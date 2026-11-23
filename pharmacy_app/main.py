@@ -15,7 +15,7 @@ from PIL import Image, ImageTk, ImageDraw, ImageFont
 import config
 import db
 import auth
-from theme import ThemeAnimator, collect_transition_targets
+from theme import ThemeAnimator, collect_transition_targets, attach_motion_bg
 from screens.login import LoginScreen
 from screens.dashboard import DashboardScreen
 
@@ -239,13 +239,13 @@ class MainWindow(tk.Tk):
                 "language": "Language",
                 "font": "Font",
                 "text_size": "Text size",
-                "sign_out": "⏻  Sign Out",
-                "nav_dashboard": "⊞   Dashboard",
-                "nav_inventory": "◫   Inventory Management",
-                "nav_sales": "💳   Point of Sale (POS)",
-                "nav_users": "👥   User Management & Logs",
-                "nav_analysis": "📈   Knowledge Analysis Studio",
-                "nav_profile": "👤   My Profile",
+                "sign_out": "  Sign Out",
+                "nav_dashboard": "   Dashboard",
+                "nav_inventory": "   Inventory Management",
+                "nav_sales": "   Point of Sale (POS)",
+                "nav_users": "   User Management & Logs",
+                "nav_analysis": "   Knowledge Analysis Studio",
+                "nav_profile": "   My Profile",
             },
             "Filipino": {
                 "settings": "Settings",
@@ -255,13 +255,13 @@ class MainWindow(tk.Tk):
                 "language": "Wika",
                 "font": "Font",
                 "text_size": "Laki ng teksto",
-                "sign_out": "⏻  Mag-sign Out",
-                "nav_dashboard": "⊞   Dashboard",
-                "nav_inventory": "◫   Pamamahala ng Imbentaryo",
-                "nav_sales": "💳   Point of Sale (POS)",
-                "nav_users": "👥   Mga User at Logs",
-                "nav_analysis": "📈   Knowledge Analysis Studio",
-                "nav_profile": "👤   Aking Profile",
+                "sign_out": "  Mag-sign Out",
+                "nav_dashboard": "   Dashboard",
+                "nav_inventory": "   Pamamahala ng Imbentaryo",
+                "nav_sales": "   Point of Sale (POS)",
+                "nav_users": "   Mga User at Logs",
+                "nav_analysis": "   Knowledge Analysis Studio",
+                "nav_profile": "   Aking Profile",
             },
             "Spanish": {
                 "settings": "Ajustes",
@@ -271,17 +271,89 @@ class MainWindow(tk.Tk):
                 "language": "Idioma",
                 "font": "Fuente",
                 "text_size": "Tamaño de texto",
-                "sign_out": "⏻  Cerrar sesión",
-                "nav_dashboard": "⊞   Panel Principal",
-                "nav_inventory": "◫   Gestión de Inventario",
-                "nav_sales": "💳   Punto de Venta (POS)",
-                "nav_users": "👥   Usuarios y Registros",
-                "nav_analysis": "📈   Estudio de Analítica",
-                "nav_profile": "👤   Mi Perfil",
+                "sign_out": "  Cerrar sesión",
+                "nav_dashboard": "   Panel Principal",
+                "nav_inventory": "   Gestión de Inventario",
+                "nav_sales": "   Punto de Venta (POS)",
+                "nav_users": "   Usuarios y Registros",
+                "nav_analysis": "   Estudio de Analítica",
+                "nav_profile": "   Mi Perfil",
             },
         }
         tmap = translations.get(lang, translations["English"])
         return tmap.get(key, translations["English"].get(key, key))
+
+    def _make_nav_icon(self, kind: str, color: str, size: int = 16):
+        """Draws crisp 3x supersampled vector icons for sidebar navigation and action buttons."""
+        if not hasattr(self, "_nav_icon_cache"):
+            self._nav_icon_cache = {}
+        cache_key = (kind, color, size)
+        if cache_key in self._nav_icon_cache:
+            return self._nav_icon_cache[cache_key]
+
+        scale = 3
+        s = size * scale
+        lw = max(3, int(1.9 * scale))
+        img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+
+        if kind == "dashboard":
+            g = int(s * 0.14)
+            m = int(s * 0.46)
+            e = s - g
+            r = int(scale * 2)
+            d.rounded_rectangle([g, g, m, m], radius=r, outline=color, width=lw)
+            d.rounded_rectangle([s - m, g, e, m], radius=r, outline=color, width=lw)
+            d.rounded_rectangle([g, s - m, m, e], radius=r, outline=color, width=lw)
+            d.rounded_rectangle([s - m, s - m, e, e], radius=r, outline=color, width=lw)
+        elif kind == "inventory":
+            cx, cy = s // 2, s // 2
+            w = int(s * 0.34)
+            h = int(s * 0.20)
+            top = [(cx, cy - h * 2), (cx + w, cy - h), (cx, cy), (cx - w, cy - h)]
+            d.polygon(top, outline=color)
+            d.line([(cx - w, cy - h), (cx - w, cy + h), (cx, cy + h * 2), (cx + w, cy + h), (cx + w, cy - h)], fill=color, width=lw)
+            d.line([(cx, cy), (cx, cy + h * 2)], fill=color, width=lw)
+        elif kind == "sales":
+            x1, y1, x2, y2 = int(s * 0.12), int(s * 0.22), int(s * 0.88), int(s * 0.78)
+            d.rounded_rectangle([x1, y1, x2, y2], radius=int(scale * 2.5), outline=color, width=lw)
+            d.line([(x1, int(s * 0.42)), (x2, int(s * 0.42))], fill=color, width=lw)
+        elif kind == "users":
+            r = int(s * 0.16)
+            cx, cy = int(s * 0.42), int(s * 0.34)
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=color, width=lw)
+            d.arc([int(s * 0.14), int(s * 0.54), int(s * 0.70), int(s * 0.94)], start=180, end=360, fill=color, width=lw)
+            d.arc([int(s * 0.56), int(s * 0.20), int(s * 0.84), int(s * 0.48)], start=270, end=90, fill=color, width=lw)
+        elif kind == "analysis":
+            pts = [(int(s * 0.10), int(s * 0.56)), (int(s * 0.30), int(s * 0.56)), (int(s * 0.44), int(s * 0.20)), (int(s * 0.60), int(s * 0.82)), (int(s * 0.74), int(s * 0.48)), (int(s * 0.90), int(s * 0.48))]
+            d.line(pts, fill=color, width=lw)
+        elif kind == "profile":
+            r = int(s * 0.18)
+            cx, cy = s // 2, int(s * 0.34)
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=color, width=lw)
+            d.arc([int(s * 0.18), int(s * 0.56), int(s * 0.82), int(s * 0.96)], start=180, end=360, fill=color, width=lw)
+        elif kind == "settings":
+            import math
+            cx, cy = s // 2, s // 2
+            r_in = int(s * 0.16)
+            r_out = int(s * 0.34)
+            d.ellipse([cx - r_in, cy - r_in, cx + r_in, cy + r_in], outline=color, width=lw)
+            for i in range(8):
+                ang = i * (math.pi / 4)
+                x1 = cx + int(math.cos(ang) * (r_out - scale * 1.5))
+                y1 = cy + int(math.sin(ang) * (r_out - scale * 1.5))
+                x2 = cx + int(math.cos(ang) * (r_out + scale * 2.2))
+                y2 = cy + int(math.sin(ang) * (r_out + scale * 2.2))
+                d.line([(x1, y1), (x2, y2)], fill=color, width=lw)
+        elif kind == "logout":
+            cx, cy = s // 2, int(s * 0.54)
+            r = int(s * 0.32)
+            d.arc([cx - r, cy - r, cx + r, cy + r], start=300, end=240, fill=color, width=lw)
+            d.line([(cx, int(s * 0.14)), (cx, cy)], fill=color, width=lw)
+
+        photo = ImageTk.PhotoImage(img.resize((size, size), Image.LANCZOS))
+        self._nav_icon_cache[cache_key] = photo
+        return photo
 
     def set_theme_mode(self, target_mode: str):
         """Smoothly transitions to the requested Light/Dark theme in place."""
@@ -498,7 +570,9 @@ class MainWindow(tk.Tk):
 
         btn_settings = tk.Button(
             bottom_box,
-            text=f"⚙  {self._ui_t('settings')}",
+            text=f"  {self._ui_t('settings')}",
+            image=self._make_nav_icon("settings", _NAV_INACTIVE_FG, 15),
+            compound="left",
             font=self._ui_font(9, "bold"),
             bg="#0c263e",
             fg=_NAV_INACTIVE_FG,
@@ -519,6 +593,8 @@ class MainWindow(tk.Tk):
         btn_logout = tk.Button(
             bottom_box,
             text=self._ui_t("sign_out"),
+            image=self._make_nav_icon("logout", _NAV_INACTIVE_FG, 15),
+            compound="left",
             font=self._ui_font(9, "bold"),
             bg="#0c263e",
             fg=_NAV_INACTIVE_FG,
@@ -1233,9 +1309,19 @@ class MainWindow(tk.Tk):
             )
 
         if self.btn_settings is not None and self.btn_settings.winfo_exists():
-            self.btn_settings.configure(text=f"⚙  {self._ui_t('settings')}", font=self._ui_font(9, "bold"))
+            self.btn_settings.configure(
+                text=f"  {self._ui_t('settings')}",
+                image=self._make_nav_icon("settings", _LIME if self._is_sidebar_settings_open else _NAV_INACTIVE_FG, 15),
+                compound="left",
+                font=self._ui_font(9, "bold"),
+            )
         if self.btn_logout is not None and self.btn_logout.winfo_exists():
-            self.btn_logout.configure(text=self._ui_t("sign_out"), font=self._ui_font(9, "bold"))
+            self.btn_logout.configure(
+                text=self._ui_t("sign_out"),
+                image=self._make_nav_icon("logout", _NAV_INACTIVE_FG, 15),
+                compound="left",
+                font=self._ui_font(9, "bold"),
+            )
 
         nav_keys = {
             "dashboard": "nav_dashboard",
@@ -1247,7 +1333,13 @@ class MainWindow(tk.Tk):
         }
         for k, btn in getattr(self, "menu_buttons", {}).items():
             if btn.winfo_exists():
-                btn.configure(text=self._ui_t(nav_keys.get(k, k)), font=self._ui_font(9, "bold"))
+                ic_col = "#0A101C" if k == self.active_key else _NAV_INACTIVE_FG
+                btn.configure(
+                    text=self._ui_t(nav_keys.get(k, k)),
+                    image=self._make_nav_icon(k, ic_col, 16),
+                    compound="left",
+                    font=self._ui_font(9, "bold"),
+                )
 
         # Update the whole content area and any open Toplevel dialogs
         if self.content_area is not None and self.content_area.winfo_exists():
@@ -1335,6 +1427,8 @@ class MainWindow(tk.Tk):
             btn = tk.Button(
                 self.sidebar,
                 text=label,
+                image=self._make_nav_icon(key, _NAV_INACTIVE_FG, 16),
+                compound="left",
                 font=self._ui_font(9, "bold"),
                 bg=_SIDEBAR_BG,
                 fg=_NAV_INACTIVE_FG,
@@ -1352,10 +1446,10 @@ class MainWindow(tk.Tk):
             # Hover animations
             def on_enter(e, b=btn, k=key):
                 if self.active_key != k:
-                    b.config(bg=_NAV_HOVER_BG, fg="#ffffff")
+                    b.config(bg=_NAV_HOVER_BG, fg="#ffffff", image=self._make_nav_icon(k, "#ffffff", 16))
             def on_leave(e, b=btn, k=key):
                 if self.active_key != k:
-                    b.config(bg=_SIDEBAR_BG, fg=_NAV_INACTIVE_FG)
+                    b.config(bg=_SIDEBAR_BG, fg=_NAV_INACTIVE_FG, image=self._make_nav_icon(k, _NAV_INACTIVE_FG, 16))
 
             btn.bind("<Enter>", on_enter)
             btn.bind("<Leave>", on_leave)
@@ -1370,12 +1464,14 @@ class MainWindow(tk.Tk):
                 btn.config(
                     bg=_LIME,
                     fg="#0A101C",
+                    image=self._make_nav_icon(key, "#0A101C", 16),
                     font=self._ui_font(9, "bold")
                 )
             else:
                 btn.config(
                     bg=_SIDEBAR_BG,
                     fg=_NAV_INACTIVE_FG,
+                    image=self._make_nav_icon(key, _NAV_INACTIVE_FG, 16),
                     font=self._ui_font(9, "bold")
                 )
 
@@ -1480,6 +1576,7 @@ class ProfileScreen(tk.Frame):
         self.setup_ui()
 
     def setup_ui(self):
+        self._motion_bg = attach_motion_bg(self, bg_key="background")
         user = auth.SessionManager.get_user() or {}
         is_dark = config.get_theme() == "dark" if hasattr(config, "get_theme") else False
         c = config.COLORS
@@ -1713,6 +1810,8 @@ class ProfileScreen(tk.Frame):
 
     def apply_theme(self):
         """Seamless live theme update: removes border in dark mode."""
+        if getattr(self, "_motion_bg", None) is not None:
+            self._motion_bg.apply_theme()
         is_dark = config.get_theme() == "dark" if hasattr(config, "get_theme") else False
         c = config.COLORS
         page_bg = c["background"]

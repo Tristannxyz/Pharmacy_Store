@@ -19,7 +19,7 @@ from PIL import Image, ImageTk, ImageDraw
 import config
 import db
 import auth
-from theme import SmoothScroller
+from theme import SmoothScroller, attach_motion_bg
 
 
 # ── Accent Tokens Shared Across Themes ────────────────────────────────────────
@@ -287,6 +287,9 @@ class DashboardScreen(tk.Frame):
         self._kpi_icon_refs.clear()
         self._pill_refs.clear()
         self._mpl_charts.clear()
+
+        # Attach 60-FPS moving motion background behind dashboard content
+        self._motion_bg = attach_motion_bg(self.scrollable_frame, bg_key="background")
 
         metrics = self.fetch_metrics()
 
@@ -897,6 +900,8 @@ class DashboardScreen(tk.Frame):
 
     def apply_theme(self):
         """Re-themes dashboard icons, pill tracks, and Matplotlib figures in place without DB re-query."""
+        if getattr(self, "_motion_bg", None) is not None:
+            self._motion_bg.apply_theme()
         c = self._theme()
         for lbl_icon, icon_type, color, bg_key in self._kpi_icon_refs:
             if lbl_icon.winfo_exists():

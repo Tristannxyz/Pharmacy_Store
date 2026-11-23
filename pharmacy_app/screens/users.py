@@ -20,7 +20,7 @@ class UsersScreen(tk.Frame):
         header = tk.Frame(self, bg=config.COLORS["surface"], padx=30, pady=16, highlightbackground=config.COLORS["border"], highlightthickness=1)
         header.pack(fill="x", side="top")
 
-        lbl_title = tk.Label(header, text="👥 User Accounts & Security Audit Trail", font=config.FONTS["h2"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"])
+        lbl_title = tk.Label(header, text="User Accounts & Security Audit Trail", font=config.FONTS["h2"], bg=config.COLORS["surface"], fg=config.COLORS["text_dark"])
         lbl_title.pack(side="left")
 
         # Notebook tabs: Users and Audit Log
@@ -48,10 +48,10 @@ class UsersScreen(tk.Frame):
         btn_edit = tk.Button(bar, text="✎ Edit User", font=config.FONTS["body_bold"], bg=config.COLORS["surface_alt"], fg=config.COLORS["text_dark"], relief="flat", cursor="hand2", padx=10, pady=5, command=self.open_edit_user_dialog)
         btn_edit.pack(side="left", padx=4)
 
-        btn_reset_pw = tk.Button(bar, text="🔑 Reset Password", font=config.FONTS["body_bold"], bg=config.COLORS["accent"], fg="white", relief="flat", cursor="hand2", padx=10, pady=5, command=self.open_reset_password_dialog)
+        btn_reset_pw = tk.Button(bar, text="◈ Reset Password", font=config.FONTS["body_bold"], bg=config.COLORS["accent"], fg="white", relief="flat", cursor="hand2", padx=10, pady=5, command=self.open_reset_password_dialog)
         btn_reset_pw.pack(side="left", padx=4)
 
-        btn_unlock = tk.Button(bar, text="🔓 Unlock Account", font=config.FONTS["body_bold"], bg=config.COLORS["warning"], fg="white", relief="flat", cursor="hand2", padx=10, pady=5, command=self.handle_unlock_account)
+        btn_unlock = tk.Button(bar, text="◉ Unlock Account", font=config.FONTS["body_bold"], bg=config.COLORS["warning"], fg="white", relief="flat", cursor="hand2", padx=10, pady=5, command=self.handle_unlock_account)
         btn_unlock.pack(side="left", padx=4)
 
         btn_toggle_active = tk.Button(bar, text="Toggle Active / Inactive", font=config.FONTS["small"], bg=config.COLORS["surface_alt"], fg=config.COLORS["danger"], relief="flat", cursor="hand2", padx=10, pady=5, command=self.handle_toggle_active)
