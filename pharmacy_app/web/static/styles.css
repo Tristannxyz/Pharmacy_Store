@@ -9,14 +9,14 @@
   --font-scale: 1;
 
   /* ── Light Mode Palette (100% Color-Synced with Login Royal Blue & Ice-Slate) ── */
-  --bg: #eef4ff;
-  --surface: rgba(255, 255, 255, 0.84);
-  --surface-solid: #ffffff;
-  --surface-alt: rgba(241, 246, 255, 0.92);
-  --surface-header: rgba(235, 242, 255, 0.95);
-  --hover-row: rgba(37, 99, 235, 0.055);
-  --border: rgba(203, 216, 240, 0.85);
-  --border-hover: #93b4f5;
+  --bg: #eaf2ff;
+  --surface: rgba(255, 255, 255, 0.68);
+  --surface-solid: rgba(255, 255, 255, 0.90);
+  --surface-alt: rgba(238, 245, 255, 0.74);
+  --surface-header: rgba(230, 240, 255, 0.82);
+  --hover-row: rgba(37, 99, 235, 0.07);
+  --border: rgba(186, 206, 238, 0.85);
+  --border-hover: #7da6f2;
   --text-dark: #0f172a;
   --text-muted: #52637a;
   --text-subtle: #7c8ea6;
@@ -37,8 +37,8 @@
   --card-shadow: 0 10px 28px -8px rgba(30, 64, 175, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
 
   /* Sidebar Tokens (Light Mode — Clean Frosted White/Ice-Blue Synced with Login!) */
-  --sidebar-bg: rgba(255, 255, 255, 0.86);
-  --sidebar-border: rgba(203, 216, 240, 0.9);
+  --sidebar-bg: rgba(255, 255, 255, 0.72);
+  --sidebar-border: rgba(186, 206, 238, 0.9);
   --sidebar-title: #0f172a;
   --sidebar-sub: #64748b;
   --sidebar-logo-bg: rgba(37, 99, 235, 0.10);
@@ -78,22 +78,22 @@
   --tile-star-bg: #e0f2fe;
 
   /* Login Split-Screen Tokens (Light — Translucent so Full-Screen Motion BG Shows Everywhere) */
-  --login-left-bg: rgba(235, 243, 255, 0.45);
-  --login-right-bg: rgba(248, 250, 252, 0.52);
-  --login-hairline: rgba(203, 216, 240, 0.8);
+  --login-left-bg: rgba(235, 243, 255, 0.22);
+  --login-right-bg: rgba(248, 250, 252, 0.26);
+  --login-hairline: rgba(191, 210, 240, 0.75);
   --login-divider: #cbd5e1;
   --login-brand-cross: #2563eb;
 }
 
 html[data-theme="dark"] {
   --bg: #0b111e;
-  --surface: rgba(19, 28, 46, 0.80);
-  --surface-solid: #131c2e;
-  --surface-alt: rgba(30, 41, 59, 0.86);
-  --surface-header: rgba(13, 21, 36, 0.95);
-  --hover-row: rgba(59, 130, 246, 0.09);
-  --border: rgba(36, 52, 79, 0.9);
-  --border-hover: #3b5378;
+  --surface: rgba(19, 28, 46, 0.64);
+  --surface-solid: rgba(19, 28, 46, 0.90);
+  --surface-alt: rgba(30, 41, 59, 0.70);
+  --surface-header: rgba(13, 21, 36, 0.82);
+  --hover-row: rgba(59, 130, 246, 0.11);
+  --border: rgba(45, 65, 98, 0.88);
+  --border-hover: #4b6a96;
   --text-dark: #f8fafc;
   --text-muted: #94a3b8;
   --text-subtle: #64748b;
@@ -114,8 +114,8 @@ html[data-theme="dark"] {
   --card-shadow: 0 14px 32px -10px rgba(0, 0, 0, 0.45);
 
   /* Sidebar Tokens (Dark Mode) */
-  --sidebar-bg: rgba(13, 21, 36, 0.86);
-  --sidebar-border: #1a263d;
+  --sidebar-bg: rgba(13, 21, 36, 0.72);
+  --sidebar-border: #1e2d47;
   --sidebar-title: #ffffff;
   --sidebar-sub: #9fb0c8;
   --sidebar-logo-bg: rgba(163, 230, 53, 0.12);
@@ -155,8 +155,8 @@ html[data-theme="dark"] {
   --tile-star-bg: #132a42;
 
   /* Login Split-Screen Tokens (Dark — Translucent over Global Motion BG) */
-  --login-left-bg: rgba(15, 23, 38, 0.48);
-  --login-right-bg: rgba(11, 15, 23, 0.56);
+  --login-left-bg: rgba(15, 23, 38, 0.24);
+  --login-right-bg: rgba(11, 15, 23, 0.28);
   --login-hairline: rgba(36, 52, 79, 0.85);
   --login-divider: #1e293b;
   --login-brand-cross: #3b72e8;
@@ -166,12 +166,15 @@ html[data-theme="dark"] {
 html[data-font="Inter"] {
   --font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
+
 html[data-font="Segoe UI"] {
   --font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
 }
+
 html[data-font="Space Grotesk"] {
   --font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
+
 html[data-font="Consolas"] {
   --font-family: 'Consolas', 'Courier New', monospace;
 }
@@ -181,34 +184,41 @@ html[data-size="S"] {
   --font-scale: 0.91;
   font-size: 14.5px;
 }
+
 html[data-size="M"] {
   --font-scale: 1;
   font-size: 16px;
 }
+
 html[data-size="L"] {
   --font-scale: 1.12;
   font-size: 17.8px;
 }
+
 html[data-size="XL"] {
   --font-scale: 1.2;
   font-size: 19px;
 }
 
 /* Global Reset & System-Wide Hidden Scrollbars */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
+
 *::-webkit-scrollbar {
   width: 0 !important;
   height: 0 !important;
   display: none !important;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -229,7 +239,10 @@ html, body {
   z-index: 0;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: inherit;
 }
@@ -556,6 +569,38 @@ button, input, select, textarea {
   flex-shrink: 0;
 }
 
+.dot-green {
+  background: #16a34a;
+}
+
+.dot-blue {
+  background: #0ea5e9;
+}
+
+.dot-purple {
+  background: #9333ea;
+}
+
+.dot-orange {
+  background: #ea580c;
+}
+
+html[data-theme="dark"] .dot-green {
+  background: #22c55e;
+}
+
+html[data-theme="dark"] .dot-blue {
+  background: #38bdf8;
+}
+
+html[data-theme="dark"] .dot-purple {
+  background: #a855f7;
+}
+
+html[data-theme="dark"] .dot-orange {
+  background: #f97316;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    2. FLOATING SETTINGS POPOVER
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -614,6 +659,7 @@ button, input, select, textarea {
 .pop-section {
   margin-bottom: 0.85rem;
 }
+
 .pop-section:last-child {
   margin-bottom: 0;
 }
@@ -624,18 +670,22 @@ button, input, select, textarea {
   margin-bottom: 0.38rem;
 }
 
-.pop-seg-row, .pop-size-row {
+.pop-seg-row,
+.pop-size-row {
   display: grid;
   gap: 0.45rem;
 }
+
 .pop-seg-row {
   grid-template-columns: 1fr 1fr;
 }
+
 .pop-size-row {
   grid-template-columns: repeat(4, 1fr);
 }
 
-.pop-seg-btn, .pop-size-btn {
+.pop-seg-btn,
+.pop-size-btn {
   padding: 0.45rem 0.5rem;
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -647,11 +697,13 @@ button, input, select, textarea {
   transition: all 0.14s ease;
 }
 
-.pop-seg-btn:hover, .pop-size-btn:hover {
+.pop-seg-btn:hover,
+.pop-size-btn:hover {
   background: var(--surface-alt);
 }
 
-.pop-seg-btn.active, .pop-size-btn.active {
+.pop-seg-btn.active,
+.pop-size-btn.active {
   background: var(--accent);
   color: #ffffff;
   border-color: var(--accent);
@@ -923,7 +975,10 @@ button, input, select, textarea {
   gap: 0.65rem;
 }
 
-.btn-surface, .btn-lime, .btn-teal, .btn-danger {
+.btn-surface,
+.btn-lime,
+.btn-teal,
+.btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1756,7 +1811,8 @@ button, input, select, textarea {
   color: var(--text-dark);
 }
 
-.form-row input, .form-row select {
+.form-row input,
+.form-row select {
   width: 215px;
   padding: 0.45rem 0.65rem;
   border-radius: 7px;
@@ -1767,7 +1823,8 @@ button, input, select, textarea {
   outline: none;
 }
 
-.form-row input:focus, .form-row select:focus {
+.form-row input:focus,
+.form-row select:focus {
   border-color: var(--accent);
 }
 

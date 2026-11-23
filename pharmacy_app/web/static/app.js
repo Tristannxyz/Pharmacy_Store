@@ -309,35 +309,39 @@ let bgAnimId = null;
 const bgParticles = {
   phase: 0,
   crosses: [
-    { rx: 0.07, ry: 0.14, size: 12, speed: 0.011, phase: 0.4, sway: 18 },
-    { rx: 0.22, ry: 0.78, size: 13, speed: 0.010, phase: 4.5, sway: 18 },
-    { rx: 0.35, ry: 0.32, size: 11, speed: 0.010, phase: 2.4, sway: 17 },
-    { rx: 0.52, ry: 0.68, size: 12, speed: 0.012, phase: 3.8, sway: 19 },
-    { rx: 0.66, ry: 0.22, size: 14, speed: 0.009, phase: 1.9, sway: 22 },
-    { rx: 0.81, ry: 0.52, size: 11, speed: 0.013, phase: 3.1, sway: 16 },
-    { rx: 0.93, ry: 0.82, size: 12, speed: 0.012, phase: 5.7, sway: 16 },
+    { rx: 0.06, ry: 0.14, size: 15, speed: 0.012, phase: 0.4, sway: 20 },
+    { rx: 0.18, ry: 0.78, size: 16, speed: 0.010, phase: 4.5, sway: 22 },
+    { rx: 0.31, ry: 0.30, size: 14, speed: 0.011, phase: 2.4, sway: 19 },
+    { rx: 0.44, ry: 0.86, size: 15, speed: 0.013, phase: 1.1, sway: 20 },
+    { rx: 0.56, ry: 0.64, size: 16, speed: 0.012, phase: 3.8, sway: 21 },
+    { rx: 0.68, ry: 0.20, size: 17, speed: 0.009, phase: 1.9, sway: 24 },
+    { rx: 0.79, ry: 0.50, size: 14, speed: 0.013, phase: 3.1, sway: 18 },
+    { rx: 0.88, ry: 0.15, size: 15, speed: 0.011, phase: 0.9, sway: 19 },
+    { rx: 0.94, ry: 0.82, size: 15, speed: 0.012, phase: 5.7, sway: 18 },
   ],
   capsules: [
-    { rx: 0.12, ry: 0.52, len: 23, rad: 5.5, angle: -0.6, speed: 0.009, rot: 0.32, phase: 1.5 },
-    { rx: 0.29, ry: 0.18, len: 21, rad: 5.0, angle: 0.42, speed: 0.008, rot: -0.25, phase: 5.0 },
-    { rx: 0.46, ry: 0.85, len: 22, rad: 5.0, angle: 0.75, speed: 0.009, rot: 0.28, phase: 4.1 },
-    { rx: 0.63, ry: 0.14, len: 24, rad: 6.0, angle: 0.55, speed: 0.008, rot: 0.35, phase: 0.8 },
-    { rx: 0.78, ry: 0.72, len: 21, rad: 5.0, angle: -0.45, speed: 0.010, rot: -0.30, phase: 2.9 },
-    { rx: 0.91, ry: 0.36, len: 22, rad: 5.5, angle: -0.4, speed: 0.010, rot: -0.3, phase: 2.3 },
+    { rx: 0.11, ry: 0.50, len: 28, rad: 7.0, angle: -0.6, speed: 0.010, rot: 0.35, phase: 1.5 },
+    { rx: 0.26, ry: 0.16, len: 26, rad: 6.5, angle: 0.42, speed: 0.009, rot: -0.28, phase: 5.0 },
+    { rx: 0.39, ry: 0.60, len: 27, rad: 6.5, angle: -0.35, speed: 0.011, rot: 0.30, phase: 3.4 },
+    { rx: 0.50, ry: 0.84, len: 26, rad: 6.5, angle: 0.75, speed: 0.009, rot: 0.28, phase: 4.1 },
+    { rx: 0.63, ry: 0.14, len: 29, rad: 7.2, angle: 0.55, speed: 0.009, rot: 0.35, phase: 0.8 },
+    { rx: 0.76, ry: 0.72, len: 26, rad: 6.5, angle: -0.45, speed: 0.010, rot: -0.30, phase: 2.9 },
+    { rx: 0.91, ry: 0.36, len: 27, rad: 6.8, angle: -0.4, speed: 0.011, rot: -0.32, phase: 2.3 },
   ],
   nodes: [
-    { rx: 0.08, ry: 0.24, ax: 18, ay: 14, sx: 0.48, sy: 0.42, ph: 0.6, r: 3.5 },
-    { rx: 0.19, ry: 0.42, ax: 20, ay: 16, sx: 0.42, sy: 0.48, ph: 1.3, r: 3.8 },
-    { rx: 0.28, ry: 0.20, ax: 20, ay: 15, sx: 0.44, sy: 0.50, ph: 1.8, r: 3.8 },
-    { rx: 0.36, ry: 0.66, ax: 19, ay: 15, sx: 0.46, sy: 0.44, ph: 4.2, r: 3.6 },
-    { rx: 0.45, ry: 0.38, ax: 17, ay: 18, sx: 0.52, sy: 0.38, ph: 2.9, r: 3.6 },
-    { rx: 0.54, ry: 0.18, ax: 18, ay: 14, sx: 0.55, sy: 0.45, ph: 0.2, r: 3.5 },
-    { rx: 0.61, ry: 0.56, ax: 20, ay: 16, sx: 0.45, sy: 0.46, ph: 2.1, r: 3.9 },
-    { rx: 0.70, ry: 0.30, ax: 22, ay: 16, sx: 0.42, sy: 0.52, ph: 1.4, r: 4.2 },
-    { rx: 0.76, ry: 0.74, ax: 21, ay: 14, sx: 0.50, sy: 0.40, ph: 5.4, r: 3.6 },
-    { rx: 0.84, ry: 0.48, ax: 18, ay: 18, sx: 0.38, sy: 0.56, ph: 4.8, r: 4.2 },
-    { rx: 0.91, ry: 0.22, ax: 16, ay: 18, sx: 0.60, sy: 0.38, ph: 2.7, r: 3.4 },
-    { rx: 0.94, ry: 0.80, ax: 16, ay: 16, sx: 0.44, sy: 0.50, ph: 1.0, r: 3.8 },
+    { rx: 0.07, ry: 0.24, ax: 22, ay: 16, sx: 0.48, sy: 0.42, ph: 0.6, r: 4.5 },
+    { rx: 0.16, ry: 0.44, ax: 24, ay: 18, sx: 0.42, sy: 0.48, ph: 1.3, r: 4.8 },
+    { rx: 0.24, ry: 0.70, ax: 20, ay: 16, sx: 0.50, sy: 0.40, ph: 2.5, r: 4.4 },
+    { rx: 0.29, ry: 0.20, ax: 22, ay: 16, sx: 0.44, sy: 0.50, ph: 1.8, r: 4.8 },
+    { rx: 0.37, ry: 0.64, ax: 21, ay: 17, sx: 0.46, sy: 0.44, ph: 4.2, r: 4.6 },
+    { rx: 0.46, ry: 0.36, ax: 20, ay: 20, sx: 0.52, sy: 0.38, ph: 2.9, r: 4.6 },
+    { rx: 0.54, ry: 0.18, ax: 22, ay: 16, sx: 0.55, sy: 0.45, ph: 0.2, r: 4.5 },
+    { rx: 0.61, ry: 0.56, ax: 23, ay: 18, sx: 0.45, sy: 0.46, ph: 2.1, r: 5.0 },
+    { rx: 0.70, ry: 0.28, ax: 24, ay: 18, sx: 0.42, sy: 0.52, ph: 1.4, r: 5.2 },
+    { rx: 0.76, ry: 0.74, ax: 23, ay: 16, sx: 0.50, sy: 0.40, ph: 5.4, r: 4.6 },
+    { rx: 0.84, ry: 0.48, ax: 20, ay: 20, sx: 0.38, sy: 0.56, ph: 4.8, r: 5.2 },
+    { rx: 0.91, ry: 0.22, ax: 18, ay: 20, sx: 0.60, sy: 0.38, ph: 2.7, r: 4.4 },
+    { rx: 0.94, ry: 0.80, ax: 18, ay: 18, sx: 0.44, sy: 0.50, ph: 1.0, r: 4.8 },
   ],
 };
 
@@ -356,23 +360,27 @@ function drawMotionCanvas(canvas, dt) {
   ctx.clearRect(0, 0, w, h);
 
   const isDark = STATE.prefs.theme === "dark";
-  const colWave1 = isDark ? "rgba(59, 114, 232, 0.26)" : "rgba(37, 99, 235, 0.20)";
-  const colWave2 = isDark ? "rgba(20, 184, 166, 0.22)" : "rgba(13, 148, 136, 0.17)";
-  const colNode  = isDark ? "rgba(59, 130, 246, 0.38)" : "rgba(37, 99, 235, 0.28)";
-  const colEdge  = isDark ? "rgba(59, 130, 246, 0.18)" : "rgba(37, 99, 235, 0.14)";
-  const colCross = isDark ? "rgba(59, 130, 246, 0.34)" : "rgba(37, 99, 235, 0.24)";
-  const colPill  = isDark ? "rgba(20, 184, 166, 0.32)" : "rgba(37, 99, 235, 0.22)";
+  const colWave1     = isDark ? "rgba(59, 130, 246, 0.55)"  : "rgba(37, 99, 235, 0.44)";
+  const colWave1Fill = isDark ? "rgba(59, 130, 246, 0.08)"  : "rgba(37, 99, 235, 0.07)";
+  const colWave2     = isDark ? "rgba(20, 184, 166, 0.48)"  : "rgba(13, 148, 136, 0.38)";
+  const colNode      = isDark ? "rgba(96, 165, 250, 0.78)"  : "rgba(37, 99, 235, 0.62)";
+  const colNodeHalo  = isDark ? "rgba(59, 130, 246, 0.24)"  : "rgba(37, 99, 235, 0.18)";
+  const colEdge      = isDark ? "rgba(59, 130, 246, 0.38)"  : "rgba(37, 99, 235, 0.30)";
+  const colCross     = isDark ? "rgba(96, 165, 250, 0.62)"  : "rgba(37, 99, 235, 0.50)";
+  const colCrossFill = isDark ? "rgba(59, 130, 246, 0.13)"  : "rgba(37, 99, 235, 0.09)";
+  const colPill      = isDark ? "rgba(45, 212, 191, 0.60)"  : "rgba(13, 148, 136, 0.48)";
+  const colPillFill  = isDark ? "rgba(20, 184, 166, 0.16)"  : "rgba(37, 99, 235, 0.11)";
 
   const ph = bgParticles.phase;
 
-  // 1. Dual Stock Pulse Sine Waves at Bottom
+  // 1. Dual Stock Pulse Sine Waves at Bottom (with soft area glow)
   [
-    { base: 0.90, amp: 15, freq: 2.2, speed: 1.0, col: colWave1, lw: 2 },
-    { base: 0.94, amp: 11, freq: 3.1, speed: -0.75, col: colWave2, lw: 1.6 },
+    { base: 0.88, amp: 18, freq: 2.2, speed: 1.05, col: colWave1, fill: colWave1Fill, lw: 2.8 },
+    { base: 0.93, amp: 13, freq: 3.1, speed: -0.80, col: colWave2, fill: null, lw: 2.2 },
   ].forEach((wv) => {
     ctx.beginPath();
     const baseY = h * wv.base;
-    const steps = 48;
+    const steps = 54;
     for (let i = 0; i <= steps; i++) {
       const x = (w * i) / steps;
       const angle = (i / steps) * Math.PI * wv.freq + ph * wv.speed;
@@ -383,18 +391,26 @@ function drawMotionCanvas(canvas, dt) {
     ctx.strokeStyle = wv.col;
     ctx.lineWidth = wv.lw;
     ctx.stroke();
+
+    if (wv.fill) {
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fillStyle = wv.fill;
+      ctx.fill();
+    }
   });
 
   // 2. Knowledge Analytics Constellation Nodes & Connecting Lines
   const coords = bgParticles.nodes.map((nd) => ({
     x: nd.rx * w + Math.sin(ph * nd.sx + nd.ph) * nd.ax,
     y: nd.ry * h + Math.cos(ph * nd.sy + nd.ph) * nd.ay,
-    r: nd.r + Math.sin(ph * 1.2 + nd.ph) * 0.7,
+    r: nd.r + Math.sin(ph * 1.2 + nd.ph) * 0.8,
   }));
 
-  const maxDistSq = Math.pow(Math.min(w, h) * 0.25, 2);
+  const maxDistSq = Math.pow(Math.min(w, h) * 0.28, 2);
   ctx.strokeStyle = colEdge;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 1.6;
   for (let i = 0; i < coords.length; i++) {
     for (let j = i + 1; j < coords.length; j++) {
       const dx = coords[i].x - coords[j].x;
@@ -409,14 +425,20 @@ function drawMotionCanvas(canvas, dt) {
   }
   coords.forEach((c) => {
     ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r * 2.1, 0, Math.PI * 2);
+    ctx.fillStyle = colNodeHalo;
+    ctx.fill();
+
+    ctx.beginPath();
     ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
     ctx.fillStyle = colNode;
     ctx.fill();
   });
 
-  // 3. Drifting Hollow Medical Crosses (✚)
+  // 3. Drifting Hollow Medical Crosses (✚) with soft fill
   ctx.strokeStyle = colCross;
-  ctx.lineWidth = 1.6;
+  ctx.fillStyle = colCrossFill;
+  ctx.lineWidth = 2.2;
   bgParticles.crosses.forEach((cr) => {
     const cx = cr.rx * w + Math.sin(ph * 0.7 + cr.phase) * cr.sway;
     const cy = cr.ry * h;
@@ -436,14 +458,16 @@ function drawMotionCanvas(canvas, dt) {
     ctx.lineTo(cx - s, cy - a);
     ctx.lineTo(cx - a, cy - a);
     ctx.closePath();
+    ctx.fill();
     ctx.stroke();
   });
 
-  // 4. Floating Tilted Pill Capsules
+  // 4. Floating Tilted Pill Capsules with two-tone fill
   ctx.strokeStyle = colPill;
-  ctx.lineWidth = 1.6;
+  ctx.fillStyle = colPillFill;
+  ctx.lineWidth = 2.2;
   bgParticles.capsules.forEach((cp) => {
-    const cx = cp.rx * w + Math.cos(ph * 0.55 + cp.phase) * 15;
+    const cx = cp.rx * w + Math.cos(ph * 0.55 + cp.phase) * 16;
     const cy = cp.ry * h;
     const ang = cp.angle + Math.sin(ph * cp.rot + cp.phase) * 0.25;
     ctx.save();
@@ -453,6 +477,7 @@ function drawMotionCanvas(canvas, dt) {
     const r = cp.rad;
     ctx.beginPath();
     ctx.roundRect(-hl, -r, cp.len, r * 2, r);
+    ctx.fill();
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(0, -r);
@@ -591,12 +616,23 @@ function updateFullscreenButtonsUI() {
 async function toggleFullscreen() {
   try {
     if (!document.fullscreenElement) {
+      STATE.wantsFullscreen = true;
       await document.documentElement.requestFullscreen();
     } else {
+      STATE.wantsFullscreen = false;
       await document.exitFullscreen();
     }
   } catch (err) {
     showToast("Fullscreen toggle could not be activated by the browser.");
+  }
+  updateFullscreenButtonsUI();
+}
+
+async function ensureFullscreenMaintained() {
+  if (STATE.wantsFullscreen && !document.fullscreenElement) {
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (e) {}
   }
   updateFullscreenButtonsUI();
 }
@@ -633,6 +669,9 @@ function fillQuickCredentials(username, password, roleLabel) {
 
 async function handleLoginSubmit(event) {
   event.preventDefault();
+  if (document.fullscreenElement) {
+    STATE.wantsFullscreen = true;
+  }
   const u = (document.getElementById("login-username")?.value || "").trim();
   const p = document.getElementById("login-password")?.value || "";
   const msg = document.getElementById("login-msg");
@@ -670,9 +709,13 @@ async function handleLoginSubmit(event) {
       msg.style.color = "#16a34a";
       msg.textContent = "Login successful! Redirecting…";
     }
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
     STATE.user = data.user;
     closeSettingsPopover();
     enterAppShell();
+    await ensureFullscreenMaintained();
   } catch (err) {
     if (msg) {
       msg.style.color = "#dc2626";
@@ -683,6 +726,9 @@ async function handleLoginSubmit(event) {
 
 async function handleLogout() {
   if (!confirm("Are you sure you want to log out of your session?")) return;
+  if (document.fullscreenElement) {
+    STATE.wantsFullscreen = true;
+  }
   closeSettingsPopover();
   try {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -694,6 +740,7 @@ async function handleLogout() {
   if (pEl) pEl.value = "";
   const msg = document.getElementById("login-msg");
   if (msg) msg.textContent = "";
+  await ensureFullscreenMaintained();
 }
 
 function isNavAllowed(key) {
