@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light" data-font="Inter" data-size="M">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RestInPills — Pharmacy Store Business Management System with Knowledge Analysis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=4" />
 </head>
+
 <body>
   <!-- ═════════════════════════════════════════════════════════════════════════
        0. GLOBAL FULL-VIEWPORT (100% WIDTH x 100% HEIGHT) MOVING MOTION BACKGROUND
@@ -25,7 +29,8 @@
       <div class="login-left-content">
         <div class="login-brand-row">
           <svg class="brand-cross-svg" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round" />
+            <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="currentColor" stroke-width="2.3"
+              stroke-linejoin="round" />
           </svg>
           <span class="login-brand-name">RestInPills</span>
         </div>
@@ -72,17 +77,24 @@
     <!-- Right 50% Panel: Top-Right Fullscreen + Settings Buttons + Welcome Back Form + Quick Access -->
     <div class="login-right">
       <div class="login-top-bar">
-        <button id="btn-login-fullscreen" type="button" class="settings-pill-btn fullscreen-pill-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)" aria-label="Toggle Fullscreen">
-          <svg class="fs-icon-expand svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        <button id="btn-login-fullscreen" type="button" class="settings-pill-btn fullscreen-pill-btn"
+          onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)" aria-label="Toggle Fullscreen">
+          <svg class="fs-icon-expand svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+            </path>
           </svg>
           <span class="fs-btn-text" data-i18n="fullscreen">Fullscreen</span>
         </button>
 
-        <button id="btn-login-settings" type="button" class="settings-pill-btn" onclick="toggleSettingsPopover('login')">
-          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button id="btn-login-settings" type="button" class="settings-pill-btn"
+          onclick="toggleSettingsPopover('login')">
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+            </path>
           </svg>
           <span data-i18n="settings">Settings</span>
         </button>
@@ -103,8 +115,10 @@
             <div class="login-input-wrap pwd-input-wrap">
               <input id="login-password" type="password" autocomplete="current-password" placeholder="" />
             </div>
-            <button id="btn-toggle-pwd" type="button" class="pwd-eye-btn" onclick="togglePasswordVisibility()" title="Show / Hide Password" aria-label="Toggle password visibility">
-              <svg id="eye-icon-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button id="btn-toggle-pwd" type="button" class="pwd-eye-btn" onclick="togglePasswordVisibility()"
+              title="Show / Hide Password" aria-label="Toggle password visibility">
+              <svg id="eye-icon-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
@@ -115,7 +129,8 @@
 
           <button id="btn-login-submit" type="submit" class="login-submit-btn">
             <span data-i18n="sign_in_btn">Sign in to system</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+              stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
@@ -129,19 +144,23 @@
         </div>
 
         <div class="quick-access-grid">
-          <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('admin', 'admin123', 'Administrator')">
+          <button type="button" class="quick-pill-btn"
+            onclick="fillQuickCredentials('admin', 'admin123', 'Administrator')">
             <span class="quick-dot dot-green" style="background:#16a34a"></span>
             <span class="quick-label" data-i18n="role_admin">Administrator</span>
           </button>
-          <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('instructor', 'instructor123', 'Instructor')">
+          <button type="button" class="quick-pill-btn"
+            onclick="fillQuickCredentials('instructor', 'instructor123', 'Instructor')">
             <span class="quick-dot dot-blue" style="background:#0ea5e9"></span>
             <span class="quick-label" data-i18n="role_instructor">Instructor</span>
           </button>
-          <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('inventory_clerk', 'clerk123', 'Inventory Clerk')">
+          <button type="button" class="quick-pill-btn"
+            onclick="fillQuickCredentials('inventory_clerk', 'clerk123', 'Inventory Clerk')">
             <span class="quick-dot dot-purple" style="background:#9333ea"></span>
             <span class="quick-label" data-i18n="role_clerk">Inventory Clerk</span>
           </button>
-          <button type="button" class="quick-pill-btn" onclick="fillQuickCredentials('sales_personnel', 'sales123', 'Sales Personnel')">
+          <button type="button" class="quick-pill-btn"
+            onclick="fillQuickCredentials('sales_personnel', 'sales123', 'Sales Personnel')">
             <span class="quick-dot dot-orange" style="background:#ea580c"></span>
             <span class="quick-label" data-i18n="role_sales">Sales Personnel</span>
           </button>
@@ -160,7 +179,8 @@
         <div class="sidebar-brand">
           <div class="sidebar-logo-badge">
             <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-              <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
+              <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="currentColor" stroke-width="2.5"
+                stroke-linejoin="round" />
             </svg>
           </div>
           <div class="sidebar-brand-text">
@@ -182,24 +202,32 @@
         </div>
 
         <div class="sidebar-actions-split">
-          <button id="btn-sidebar-fullscreen" type="button" class="sidebar-action-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)">
-            <svg class="fs-icon-expand svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          <button id="btn-sidebar-fullscreen" type="button" class="sidebar-action-btn" onclick="toggleFullscreen()"
+            title="Toggle Fullscreen (F11)">
+            <svg class="fs-icon-expand svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+              </path>
             </svg>
             <span class="fs-btn-text" data-i18n="fullscreen">Fullscreen</span>
           </button>
 
-          <button id="btn-sidebar-settings" type="button" class="sidebar-action-btn" onclick="toggleSettingsPopover('sidebar')">
-            <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button id="btn-sidebar-settings" type="button" class="sidebar-action-btn"
+            onclick="toggleSettingsPopover('sidebar')">
+            <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
             </svg>
             <span data-i18n="settings">Settings</span>
           </button>
         </div>
 
         <button id="btn-sidebar-logout" type="button" class="sidebar-action-btn logout-btn" onclick="handleLogout()">
-          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -222,7 +250,8 @@
     <div class="pop-header">
       <span class="pop-title" data-i18n="settings">Settings</span>
       <button type="button" class="pop-close-btn" onclick="closeSettingsPopover()" aria-label="Close settings">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+          stroke-linecap="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
@@ -232,8 +261,10 @@
     <div class="pop-section">
       <div class="pop-label" data-i18n="appearance">Appearance</div>
       <div class="pop-seg-row">
-        <button id="btn-theme-light" type="button" class="pop-seg-btn active" onclick="setThemeMode('light')" data-i18n="light_mode">Light mode</button>
-        <button id="btn-theme-dark" type="button" class="pop-seg-btn" onclick="setThemeMode('dark')" data-i18n="dark_mode">Dark mode</button>
+        <button id="btn-theme-light" type="button" class="pop-seg-btn active" onclick="setThemeMode('light')"
+          data-i18n="light_mode">Light mode</button>
+        <button id="btn-theme-dark" type="button" class="pop-seg-btn" onclick="setThemeMode('dark')"
+          data-i18n="dark_mode">Dark mode</button>
       </div>
     </div>
 
@@ -277,6 +308,7 @@
   <!-- Toast Notification -->
   <div id="toast-container" class="toast-container"></div>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=4"></script>
 </body>
+
 </html>

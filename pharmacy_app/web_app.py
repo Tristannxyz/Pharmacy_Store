@@ -36,6 +36,9 @@ app = Flask(
     static_url_path="/static",
 )
 app.secret_key = os.getenv("PHARMACY_WEB_SECRET", "restinpills-pharmacy-secret-key-2026")
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+app.jinja_env.auto_reload = True
 
 
 @app.after_request
@@ -1432,4 +1435,4 @@ ensure_database_ready()
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     logger.info("Starting RestInPills Web Server at http://127.0.0.1:%s", port)
-    app.run(host="127.0.0.1", port=port, debug=False)
+    app.run(host="127.0.0.1", port=port, debug=True, use_reloader=True)
