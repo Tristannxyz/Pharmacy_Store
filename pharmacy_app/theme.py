@@ -12,12 +12,24 @@ _LIME_HEX = "#a3e635"
 
 
 def hex_to_rgb(hex_str: str):
+    """Return the RGB components of a CSS-style ``#RRGGBB`` color."""
+    if not isinstance(hex_str, str):
+        raise TypeError("hex_str must be a string")
+
     h = hex_str.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+    if len(h) != 6:
+        raise ValueError(f"expected a 6-digit hex color, got {hex_str!r}")
+    try:
+        return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+    except ValueError as exc:
+        raise ValueError(f"invalid hex color: {hex_str!r}") from exc
 
 
 def lerp_hex(c1: str, c2: str, t: float) -> str:
     """Linearly interpolates two #RRGGBB colors for t in [0.0, 1.0]."""
+    # Callers can provide a timer-derived value slightly outside the interval;
+    # clamping prevents invalid colors during the first/last animation frame.
+    t = max(0.0, min(1.0, float(t)))
     r1, g1, b1 = hex_to_rgb(c1)
     r2, g2, b2 = hex_to_rgb(c2)
     r = round(r1 + (r2 - r1) * t)
@@ -155,7 +167,11 @@ def collect_transition_targets(root_widget, prev_mode: str, new_mode: str, in_lo
                 if dest and dest != val:
                     targets.append((w, attr, val, dest))
 
-        for child in w.winfo_children():
+        try:
+            children = w.winfo_children()
+        except tk.TclError:
+            return
+        for child in children:
             walk(child)
 
     walk(root_widget)
@@ -241,7 +257,7 @@ class ThemeAnimator:
 
 
 _CURRENT_ACTIVE_CANVAS = None
-_GLOBAL_WHEEL_INITIALIZED = False
+_GLOBAL_WHEEL_ROOT = None
 
 def _on_global_mousewheel(event):
     global _CURRENT_ACTIVE_CANVAS
@@ -249,27 +265,43 @@ def _on_global_mousewheel(event):
         return _CURRENT_ACTIVE_CANVAS._smooth_scroller.on_wheel(event)
 
 
+def _on_global_wheel_button(event):
+    """Translate X11 wheel buttons into the same event shape as Windows/macOS."""
+    event.delta = 120 if event.num == 4 else -120
+    return _on_global_mousewheel(event)
+
+
 class SmoothScroller:
     """Provides buttery-smooth momentum scrolling for Tkinter Canvas widgets."""
 
     def __init__(self, canvas, friction=0.82, speed_factor=3.6):
-        global _GLOBAL_WHEEL_INITIALIZED
+        global _GLOBAL_WHEEL_ROOT
         self.canvas = canvas
         self.canvas._smooth_scroller = self
-        self.friction = friction
-        self.speed_factor = speed_factor
+        self.friction = max(0.0, min(1.0, float(friction)))
+        self.speed_factor = max(0.0, float(speed_factor))
         self.velocity = 0.0
         self._anim_job = None
 
-        if not _GLOBAL_WHEEL_INITIALIZED:
+        # Bind once per Tk interpreter.  The previous boolean-only approach
+        # silently failed when a second Tk root was created in the same process.
+        try:
+            bind_root = canvas.winfo_toplevel()
+            needs_binding = _GLOBAL_WHEEL_ROOT is not bind_root
+        except tk.TclError:
+            return
+
+        if needs_binding:
             try:
                 canvas.bind_all("<MouseWheel>", _on_global_mousewheel)
-                _GLOBAL_WHEEL_INITIALIZED = True
+                canvas.bind_all("<Button-4>", _on_global_wheel_button)
+                canvas.bind_all("<Button-5>", _on_global_wheel_button)
+                _GLOBAL_WHEEL_ROOT = bind_root
             except Exception:
                 pass
 
     def on_wheel(self, event):
-        delta = event.delta
+        delta = getattr(event, "delta", 0)
         if delta == 0:
             return "break"
         direction = -1.0 if delta > 0 else 1.0

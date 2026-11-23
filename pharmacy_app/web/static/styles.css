@@ -80,7 +80,9 @@
   /* Login Split-Screen Tokens (Light — Translucent so Full-Screen Motion BG Shows Everywhere) */
   --login-left-bg: rgba(235, 243, 255, 0.22);
   --login-right-bg: rgba(248, 250, 252, 0.26);
-  --login-hairline: rgba(191, 210, 240, 0.75);
+  --login-hairline: rgba(167, 190, 225, 0.72);
+  --login-card-border: rgba(155, 180, 218, 0.82);
+  --login-control-border: rgba(170, 192, 225, 0.78);
   --login-divider: #cbd5e1;
   --login-brand-cross: #2563eb;
 }
@@ -157,7 +159,9 @@ html[data-theme="dark"] {
   /* Login Split-Screen Tokens (Dark — Translucent over Global Motion BG) */
   --login-left-bg: rgba(15, 23, 38, 0.24);
   --login-right-bg: rgba(11, 15, 23, 0.28);
-  --login-hairline: rgba(36, 52, 79, 0.85);
+  --login-hairline: rgba(75, 104, 148, 0.62);
+  --login-card-border: rgba(76, 106, 153, 0.78);
+  --login-control-border: rgba(63, 89, 131, 0.82);
   --login-divider: #1e293b;
   --login-brand-cross: #3b72e8;
 }
@@ -408,10 +412,10 @@ textarea {
   max-width: 410px;
   background: var(--surface);
   backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  border: 1px solid var(--login-card-border);
   border-radius: 14px;
   padding: 2rem 2.1rem;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--card-shadow), 0 0 0 1px rgba(88, 125, 184, 0.08);
 }
 
 .login-welcome-title {
@@ -439,7 +443,7 @@ textarea {
 .login-input-wrap {
   width: 100%;
   background: var(--surface-solid);
-  border: 1px solid var(--border);
+  border: 1px solid var(--login-control-border);
   border-radius: 7px;
   margin-bottom: 1rem;
   transition: border-color 0.15s ease;
@@ -485,7 +489,7 @@ textarea {
   width: 44px;
   background: var(--surface-solid);
   color: var(--text-muted);
-  border: 1px solid var(--border);
+  border: 1px solid var(--login-control-border);
   border-radius: 7px;
   cursor: pointer;
   display: flex;
@@ -558,7 +562,7 @@ textarea {
   padding: 0.68rem 0.85rem;
   background: var(--surface-solid);
   color: var(--text-dark);
-  border: 1px solid var(--border);
+  border: 1px solid var(--login-control-border);
   border-radius: 7px;
   font-size: 0.84rem;
   font-weight: 700;

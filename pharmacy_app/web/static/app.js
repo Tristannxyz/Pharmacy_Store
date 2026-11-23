@@ -319,14 +319,19 @@ const bgParticles = {
     { rx: 0.88, ry: 0.15, size: 15, speed: 0.011, phase: 0.9, sway: 19 },
     { rx: 0.94, ry: 0.82, size: 15, speed: 0.012, phase: 5.7, sway: 18 },
   ],
+  // Matrix-inspired red and blue pills falling in vertical streams.
   capsules: [
-    { rx: 0.11, ry: 0.50, len: 28, rad: 7.0, angle: -0.6, speed: 0.010, rot: 0.35, phase: 1.5 },
-    { rx: 0.26, ry: 0.16, len: 26, rad: 6.5, angle: 0.42, speed: 0.009, rot: -0.28, phase: 5.0 },
-    { rx: 0.39, ry: 0.60, len: 27, rad: 6.5, angle: -0.35, speed: 0.011, rot: 0.30, phase: 3.4 },
-    { rx: 0.50, ry: 0.84, len: 26, rad: 6.5, angle: 0.75, speed: 0.009, rot: 0.28, phase: 4.1 },
-    { rx: 0.63, ry: 0.14, len: 29, rad: 7.2, angle: 0.55, speed: 0.009, rot: 0.35, phase: 0.8 },
-    { rx: 0.76, ry: 0.72, len: 26, rad: 6.5, angle: -0.45, speed: 0.010, rot: -0.30, phase: 2.9 },
-    { rx: 0.91, ry: 0.36, len: 27, rad: 6.8, angle: -0.4, speed: 0.011, rot: -0.32, phase: 2.3 },
+    { rx: 0.07, ry: -0.10, len: 34, rad: 8, angle: 0.08, speed: 0.16, rot: 0.22, phase: 1.5, color: "red" },
+    { rx: 0.15, ry: 0.34, len: 28, rad: 7, angle: -0.12, speed: 0.12, rot: -0.18, phase: 5.0, color: "blue" },
+    { rx: 0.23, ry: 0.72, len: 32, rad: 8, angle: 0.10, speed: 0.15, rot: 0.16, phase: 3.4, color: "red" },
+    { rx: 0.32, ry: 0.08, len: 27, rad: 7, angle: -0.10, speed: 0.11, rot: 0.20, phase: 4.1, color: "blue" },
+    { rx: 0.41, ry: 0.54, len: 35, rad: 8, angle: 0.06, speed: 0.14, rot: -0.17, phase: 0.8, color: "red" },
+    { rx: 0.50, ry: -0.18, len: 29, rad: 7, angle: -0.08, speed: 0.17, rot: 0.14, phase: 2.9, color: "blue" },
+    { rx: 0.59, ry: 0.30, len: 33, rad: 8, angle: 0.12, speed: 0.13, rot: -0.16, phase: 2.3, color: "red" },
+    { rx: 0.68, ry: 0.82, len: 28, rad: 7, angle: -0.08, speed: 0.15, rot: 0.19, phase: 1.2, color: "blue" },
+    { rx: 0.77, ry: 0.12, len: 34, rad: 8, angle: 0.10, speed: 0.12, rot: -0.20, phase: 4.6, color: "red" },
+    { rx: 0.86, ry: 0.58, len: 29, rad: 7, angle: -0.10, speed: 0.16, rot: 0.16, phase: 5.7, color: "blue" },
+    { rx: 0.95, ry: 0.00, len: 32, rad: 8, angle: 0.06, speed: 0.13, rot: -0.14, phase: 3.1, color: "red" },
   ],
   nodes: [
     { rx: 0.07, ry: 0.24, ax: 22, ay: 16, sx: 0.48, sy: 0.42, ph: 0.6, r: 4.5 },
@@ -462,26 +467,47 @@ function drawMotionCanvas(canvas, dt) {
     ctx.stroke();
   });
 
-  // 4. Floating Tilted Pill Capsules with two-tone fill
-  ctx.strokeStyle = colPill;
-  ctx.fillStyle = colPillFill;
-  ctx.lineWidth = 2.2;
+  // 4. Matrix-inspired falling red and blue pills with a soft vertical trail.
   bgParticles.capsules.forEach((cp) => {
-    const cx = cp.rx * w + Math.cos(ph * 0.55 + cp.phase) * 16;
+    const cx = cp.rx * w + Math.cos(ph * 0.55 + cp.phase) * 10;
     const cy = cp.ry * h;
-    const ang = cp.angle + Math.sin(ph * cp.rot + cp.phase) * 0.25;
+    const ang = cp.angle + Math.sin(ph * cp.rot + cp.phase) * 0.12;
+    const isRed = cp.color === "red";
+    const glow = isRed ? "rgba(248, 62, 80, 0.28)" : "rgba(55, 150, 255, 0.30)";
+    const bright = isRed ? "#ff5368" : "#4da3ff";
+    const dark = isRed ? "#b51235" : "#1455b8";
+    const trail = isRed ? "rgba(248, 62, 80, 0.14)" : "rgba(55, 150, 255, 0.15)";
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(ang);
     const hl = cp.len * 0.5;
     const r = cp.rad;
+
+    const trailGradient = ctx.createLinearGradient(0, -h * 0.20, 0, 0);
+    trailGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+    trailGradient.addColorStop(1, trail);
+    ctx.fillStyle = trailGradient;
+    ctx.fillRect(-1.5, -h * 0.20, 3, h * 0.20);
+
+    ctx.shadowColor = glow;
+    ctx.shadowBlur = 16;
     ctx.beginPath();
     ctx.roundRect(-hl, -r, cp.len, r * 2, r);
+    ctx.fillStyle = dark;
     ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = bright;
+    ctx.fillRect(-hl, -r, cp.len * 0.52, r * 2);
+    ctx.restore();
+    ctx.strokeStyle = bright;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(0, -r);
     ctx.lineTo(0, r);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
     ctx.stroke();
     ctx.restore();
   });
@@ -502,8 +528,8 @@ function startBackgroundMotionLoop() {
       if (cr.ry < -0.06) cr.ry = 1.06;
     });
     bgParticles.capsules.forEach((cp) => {
-      cp.ry -= cp.speed * dt;
-      if (cp.ry < -0.06) cp.ry = 1.06;
+      cp.ry += cp.speed * dt;
+      if (cp.ry > 1.06) cp.ry = -0.12;
     });
 
     drawMotionCanvas(document.getElementById("global-bg-canvas"), dt);
