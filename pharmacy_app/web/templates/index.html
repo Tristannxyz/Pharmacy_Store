@@ -68,7 +68,10 @@
     <div class="login-right">
       <div class="login-top-bar">
         <button id="btn-login-settings" type="button" class="settings-pill-btn" onclick="toggleSettingsPopover('login')">
-          <span class="gear-icon">⚙</span>
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
           <span data-i18n="settings">Settings</span>
         </button>
       </div>
@@ -88,13 +91,22 @@
             <div class="login-input-wrap pwd-input-wrap">
               <input id="login-password" type="password" autocomplete="current-password" placeholder="" />
             </div>
-            <button id="btn-toggle-pwd" type="button" class="pwd-eye-btn" onclick="togglePasswordVisibility()" title="Show / Hide Password">👁</button>
+            <button id="btn-toggle-pwd" type="button" class="pwd-eye-btn" onclick="togglePasswordVisibility()" title="Show / Hide Password" aria-label="Toggle password visibility">
+              <svg id="eye-icon-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
           </div>
 
           <div id="login-msg" class="login-msg"></div>
 
           <button id="btn-login-submit" type="submit" class="login-submit-btn">
-            <span data-i18n="sign_in_btn">Sign in to system  →</span>
+            <span data-i18n="sign_in_btn">Sign in to system</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </button>
         </form>
 
@@ -127,14 +139,18 @@
   </section>
 
   <!-- ═════════════════════════════════════════════════════════════════════════
-       2. MAIN APPLICATION SHELL (Left Sidebar + Right Content Area)
+       2. MAIN APPLICATION SHELL (Left Sidebar + Right Content Area with Motion BG)
        ═════════════════════════════════════════════════════════════════════════ -->
   <section id="app-shell" class="app-shell hidden">
     <!-- Left Sidebar (#0D1524) -->
     <aside class="app-sidebar">
       <div class="sidebar-top">
         <div class="sidebar-brand">
-          <img src="/assets/logo.png" alt="RestInPills" class="sidebar-logo-img" onerror="this.style.display='none'" />
+          <div class="sidebar-logo-badge">
+            <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path d="M12 4.5H20V12H27.5V20H20V27.5H12V20H4.5V12H12V4.5Z" stroke="#a3e635" stroke-width="2.5" stroke-linejoin="round" />
+            </svg>
+          </div>
           <div class="sidebar-brand-text">
             <div class="sidebar-brand-title">RestInPills</div>
             <div class="sidebar-brand-sub" data-i18n="brand_sub">Pharmacy &amp; Knowledge Studio</div>
@@ -154,18 +170,27 @@
         </div>
 
         <button id="btn-sidebar-settings" type="button" class="sidebar-action-btn" onclick="toggleSettingsPopover('sidebar')">
-          <span>⚙</span>
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
           <span data-i18n="settings">Settings</span>
         </button>
 
         <button id="btn-sidebar-logout" type="button" class="sidebar-action-btn logout-btn" onclick="handleLogout()">
-          <span data-i18n="sign_out">⏻  Sign Out</span>
+          <svg class="svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span data-i18n="sign_out">Sign Out</span>
         </button>
       </div>
     </aside>
 
-    <!-- Right Content Area -->
+    <!-- Right Content Area with Full-Viewport Animated Motion Background -->
     <main id="content-area" class="content-area">
+      <canvas id="inner-bg-canvas" class="inner-bg-canvas"></canvas>
       <!-- Dynamic Screen Container -->
       <div id="screen-container" class="screen-container"></div>
     </main>
@@ -177,7 +202,12 @@
   <div id="settings-popover" class="settings-popover hidden" role="dialog" aria-label="Settings">
     <div class="pop-header">
       <span class="pop-title" data-i18n="settings">Settings</span>
-      <button type="button" class="pop-close-btn" onclick="closeSettingsPopover()">×</button>
+      <button type="button" class="pop-close-btn" onclick="closeSettingsPopover()" aria-label="Close settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
 
     <div class="pop-section">

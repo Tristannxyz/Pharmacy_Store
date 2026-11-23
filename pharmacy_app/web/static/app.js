@@ -1,6 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    RestInPills — Complete Web Frontend Controller (app.js)
-   Mirrors Login Screen, 60-FPS Canvas Animation, Settings Popover, & All 6 Screens
+   Features:
+   • 60-FPS Moving Motion Background on BOTH Login & Inner Workspace (#inner-bg-canvas)
+   • Clean Vector SVG Icons (Zero Emoji Clutter)
+   • Live Global Settings Popover (Theme, Language, Font, Text Size)
+   • Full 6-Module Functionality Connected to MySQL / SQLite & Scikit-Learn ML
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const STATE = {
@@ -16,9 +20,7 @@ const STATE = {
   },
   activeScreen: "dashboard",
   settingsContext: null,
-  // Dashboard cache
   dashboardData: null,
-  // Inventory state
   invTab: "catalog",
   invData: null,
   invSearch: "",
@@ -28,7 +30,6 @@ const STATE = {
   invSortDesc: false,
   invSelectedIds: new Set(),
   invMovements: [],
-  // POS state
   posTab: "pos",
   posSearch: "",
   posCatFilter: "All",
@@ -37,13 +38,11 @@ const STATE = {
   payMethod: "CASH",
   salesHistory: [],
   selectedInvoiceId: null,
-  // Users state
   usersTab: "users",
   usersList: [],
   selectedUserId: null,
   auditLogs: [],
   auditActionFilter: "All Actions",
-  // Knowledge Analysis state
   analysisTask: "product_demand",
   analysisTab: "prediction",
   analysisData: null,
@@ -51,7 +50,68 @@ const STATE = {
 };
 
 /* ───────────────────────────────────────────────────────────────────────────
-   1. MULTILINGUAL TRANSLATION DICTIONARY (English / Filipino / Spanish)
+   1. CLEAN VECTOR SVG ICON LIBRARY (Replaces All Emojis)
+   ─────────────────────────────────────────────────────────────────────────── */
+function iconSvg(name, size = 16) {
+  const attrs = `class="svg-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
+  switch (name) {
+    case "dashboard":
+      return `<svg ${attrs}><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`;
+    case "inventory":
+      return `<svg ${attrs}><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`;
+    case "sales":
+      return `<svg ${attrs}><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`;
+    case "users":
+      return `<svg ${attrs}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+    case "analysis":
+      return `<svg ${attrs}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+    case "profile":
+      return `<svg ${attrs}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    case "settings":
+      return `<svg ${attrs}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
+    case "search":
+      return `<svg ${attrs}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
+    case "plus":
+      return `<svg ${attrs}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+    case "edit":
+      return `<svg ${attrs}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    case "arrows":
+      return `<svg ${attrs}><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`;
+    case "trash":
+      return `<svg ${attrs}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+    case "refresh":
+      return `<svg ${attrs}><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`;
+    case "save":
+      return `<svg ${attrs}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
+    case "eye":
+      return `<svg ${attrs}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    case "eye-off":
+      return `<svg ${attrs}><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+    case "print":
+      return `<svg ${attrs}><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+    case "key":
+      return `<svg ${attrs}><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>`;
+    case "unlock":
+      return `<svg ${attrs}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
+    case "bolt":
+      return `<svg ${attrs}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
+    case "play":
+      return `<svg ${attrs}><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+    case "chart":
+      return `<svg ${attrs}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
+    case "award":
+      return `<svg ${attrs}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`;
+    case "check":
+      return `<svg ${attrs}><polyline points="20 6 9 17 4 12"/></svg>`;
+    case "close":
+      return `<svg ${attrs}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+    default:
+      return "";
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   2. MULTILINGUAL TRANSLATION DICTIONARY (English / Filipino / Spanish)
    ─────────────────────────────────────────────────────────────────────────── */
 const I18N = {
   English: {
@@ -77,20 +137,20 @@ const I18N = {
     sign_in_sub: "Sign in to access your designated workspace",
     username: "Username",
     password: "Password",
-    sign_in_btn: "Sign in to system  →",
+    sign_in_btn: "Sign in to system",
     quick_access: "Quick access",
     role_admin: "Administrator",
     role_instructor: "Instructor",
     role_clerk: "Inventory Clerk",
     role_sales: "Sales Personnel",
     brand_sub: "Pharmacy & Knowledge Studio",
-    sign_out: "⏻  Sign Out",
-    nav_dashboard: "⊞   Dashboard",
-    nav_inventory: "◫   Inventory Management",
-    nav_sales: "💳   Point of Sale (POS)",
-    nav_users: "👥   User Management & Logs",
-    nav_analysis: "📈   Knowledge Analysis Studio",
-    nav_profile: "👤   My Profile",
+    sign_out: "Sign Out",
+    nav_dashboard: "Dashboard",
+    nav_inventory: "Inventory Management",
+    nav_sales: "Point of Sale (POS)",
+    nav_users: "User Management & Logs",
+    nav_analysis: "Knowledge Analysis Studio",
+    nav_profile: "My Profile",
     dash_sub: "Here is how the pharmacy is doing today.",
     refresh_data: "Refresh data",
     sales_today: "Sales Today",
@@ -134,20 +194,20 @@ const I18N = {
     sign_in_sub: "Mag-sign in upang buksan ang iyong workspace",
     username: "Username",
     password: "Password",
-    sign_in_btn: "Mag-sign in sa system  →",
+    sign_in_btn: "Mag-sign in sa system",
     quick_access: "Mabilis na access",
     role_admin: "Administrador",
     role_instructor: "Instruktor",
     role_clerk: "Klerk ng Imbentaryo",
     role_sales: "Kawani ng Benta",
     brand_sub: "Parmasya at Knowledge Studio",
-    sign_out: "⏻  Mag-sign Out",
-    nav_dashboard: "⊞   Dashboard",
-    nav_inventory: "◫   Pamamahala ng Imbentaryo",
-    nav_sales: "💳   Point of Sale (POS)",
-    nav_users: "👥   Mga User at Logs",
-    nav_analysis: "📈   Knowledge Analysis Studio",
-    nav_profile: "👤   Aking Profile",
+    sign_out: "Mag-sign Out",
+    nav_dashboard: "Dashboard",
+    nav_inventory: "Pamamahala ng Imbentaryo",
+    nav_sales: "Point of Sale (POS)",
+    nav_users: "Mga User at Logs",
+    nav_analysis: "Knowledge Analysis Studio",
+    nav_profile: "Aking Profile",
     dash_sub: "Narito ang lagay ng parmasya ngayong araw.",
     refresh_data: "I-refresh ang datos",
     sales_today: "Benta Ngayon",
@@ -191,20 +251,20 @@ const I18N = {
     sign_in_sub: "Inicie sesión para acceder a su espacio de trabajo",
     username: "Usuario",
     password: "Contraseña",
-    sign_in_btn: "Iniciar sesión en el sistema  →",
+    sign_in_btn: "Iniciar sesión en el sistema",
     quick_access: "Acceso rápido",
     role_admin: "Administrador",
     role_instructor: "Instructor",
     role_clerk: "Encargado de Inventario",
     role_sales: "Personal de Ventas",
     brand_sub: "Estudio de Farmacia y Conocimiento",
-    sign_out: "⏻  Cerrar Sesión",
-    nav_dashboard: "⊞   Panel Principal",
-    nav_inventory: "◫   Gestión de Inventario",
-    nav_sales: "💳   Punto de Venta (POS)",
-    nav_users: "👥   Usuarios y Registros",
-    nav_analysis: "📈   Estudio de Analítica",
-    nav_profile: "👤   Mi Perfil",
+    sign_out: "Cerrar Sesión",
+    nav_dashboard: "Panel Principal",
+    nav_inventory: "Gestión de Inventario",
+    nav_sales: "Punto de Venta (POS)",
+    nav_users: "Usuarios y Registros",
+    nav_analysis: "Estudio de Analítica",
+    nav_profile: "Mi Perfil",
     dash_sub: "Así va la farmacia el día de hoy.",
     refresh_data: "Actualizar datos",
     sales_today: "Ventas de Hoy",
@@ -233,182 +293,196 @@ function t(key) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   2. 60-FPS LOGIN BACKGROUND ANIMATION (Matches screens/login.py)
+   3. 60-FPS MOVING MOTION BACKGROUND (Runs on BOTH Login & Inner Workspace!)
    ─────────────────────────────────────────────────────────────────────────── */
-let loginAnimId = null;
-const loginParticles = {
+let bgAnimId = null;
+const bgParticles = {
   phase: 0,
   crosses: [
-    { rx: 0.14, ry: 0.12, size: 11, speed: 0.011, phase: 0.4, sway: 16 },
-    { rx: 0.84, ry: 0.16, size: 14, speed: 0.009, phase: 1.9, sway: 20 },
-    { rx: 0.76, ry: 0.48, size: 10, speed: 0.013, phase: 3.1, sway: 15 },
-    { rx: 0.22, ry: 0.88, size: 13, speed: 0.010, phase: 4.5, sway: 18 },
-    { rx: 0.88, ry: 0.78, size: 9,  speed: 0.014, phase: 5.7, sway: 14 },
+    { rx: 0.12, ry: 0.14, size: 12, speed: 0.011, phase: 0.4, sway: 18 },
+    { rx: 0.84, ry: 0.18, size: 14, speed: 0.009, phase: 1.9, sway: 22 },
+    { rx: 0.72, ry: 0.48, size: 10, speed: 0.013, phase: 3.1, sway: 15 },
+    { rx: 0.24, ry: 0.84, size: 13, speed: 0.010, phase: 4.5, sway: 18 },
+    { rx: 0.88, ry: 0.76, size: 10, speed: 0.014, phase: 5.7, sway: 16 },
+    { rx: 0.46, ry: 0.32, size: 11, speed: 0.010, phase: 2.4, sway: 17 },
+    { rx: 0.54, ry: 0.72, size: 12, speed: 0.012, phase: 3.8, sway: 19 },
   ],
   capsules: [
-    { rx: 0.68, ry: 0.11, len: 24, rad: 6, angle: 0.55, speed: 0.008, rot: 0.35, phase: 0.8 },
+    { rx: 0.68, ry: 0.12, len: 24, rad: 6, angle: 0.55, speed: 0.008, rot: 0.35, phase: 0.8 },
     { rx: 0.89, ry: 0.38, len: 20, rad: 5, angle: -0.4, speed: 0.010, rot: -0.3, phase: 2.3 },
     { rx: 0.62, ry: 0.86, len: 22, rad: 5, angle: 0.75, speed: 0.009, rot: 0.28, phase: 4.1 },
+    { rx: 0.18, ry: 0.55, len: 22, rad: 5, angle: -0.6, speed: 0.009, rot: 0.32, phase: 1.5 },
+    { rx: 0.42, ry: 0.16, len: 20, rad: 5, angle: 0.42, speed: 0.008, rot: -0.25, phase: 5.0 },
   ],
   nodes: [
-    { rx: 0.64, ry: 0.18, ax: 18, ay: 14, sx: 0.55, sy: 0.45, ph: 0.2, r: 3.5 },
-    { rx: 0.78, ry: 0.26, ax: 22, ay: 16, sx: 0.42, sy: 0.52, ph: 1.4, r: 4.2 },
-    { rx: 0.90, ry: 0.20, ax: 15, ay: 18, sx: 0.60, sy: 0.38, ph: 2.7, r: 3.0 },
-    { rx: 0.72, ry: 0.42, ax: 20, ay: 15, sx: 0.48, sy: 0.46, ph: 3.5, r: 3.8 },
-    { rx: 0.86, ry: 0.52, ax: 17, ay: 20, sx: 0.38, sy: 0.56, ph: 4.8, r: 4.2 },
-    { rx: 0.75, ry: 0.68, ax: 21, ay: 14, sx: 0.50, sy: 0.40, ph: 5.4, r: 3.4 },
-    { rx: 0.88, ry: 0.84, ax: 16, ay: 16, sx: 0.44, sy: 0.50, ph: 1.0, r: 3.8 },
+    { rx: 0.16, ry: 0.24, ax: 18, ay: 14, sx: 0.48, sy: 0.42, ph: 0.6, r: 3.4 },
+    { rx: 0.34, ry: 0.18, ax: 20, ay: 15, sx: 0.44, sy: 0.50, ph: 1.8, r: 3.8 },
+    { rx: 0.52, ry: 0.26, ax: 17, ay: 18, sx: 0.52, sy: 0.38, ph: 2.9, r: 3.5 },
+    { rx: 0.68, ry: 0.18, ax: 18, ay: 14, sx: 0.55, sy: 0.45, ph: 0.2, r: 3.5 },
+    { rx: 0.82, ry: 0.28, ax: 22, ay: 16, sx: 0.42, sy: 0.52, ph: 1.4, r: 4.2 },
+    { rx: 0.92, ry: 0.20, ax: 15, ay: 18, sx: 0.60, sy: 0.38, ph: 2.7, r: 3.0 },
+    { rx: 0.74, ry: 0.46, ax: 20, ay: 15, sx: 0.48, sy: 0.46, ph: 3.5, r: 3.8 },
+    { rx: 0.88, ry: 0.54, ax: 17, ay: 20, sx: 0.38, sy: 0.56, ph: 4.8, r: 4.2 },
+    { rx: 0.76, ry: 0.70, ax: 21, ay: 14, sx: 0.50, sy: 0.40, ph: 5.4, r: 3.4 },
+    { rx: 0.89, ry: 0.84, ax: 16, ay: 16, sx: 0.44, sy: 0.50, ph: 1.0, r: 3.8 },
+    { rx: 0.38, ry: 0.68, ax: 19, ay: 15, sx: 0.46, sy: 0.44, ph: 4.2, r: 3.6 },
   ],
 };
 
-function startLoginAnimation() {
-  const canvas = document.getElementById("login-bg-canvas");
+function drawMotionCanvas(canvas, dt) {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth || 800;
+  const h = canvas.clientHeight || 800;
+  if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+  }
+  ctx.save();
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const isDark = STATE.prefs.theme === "dark";
+  const colWave1 = isDark ? "rgba(59, 114, 232, 0.22)" : "rgba(37, 99, 235, 0.16)";
+  const colWave2 = isDark ? "rgba(20, 184, 166, 0.18)" : "rgba(13, 148, 136, 0.14)";
+  const colNode  = isDark ? "rgba(59, 130, 246, 0.34)" : "rgba(37, 99, 235, 0.24)";
+  const colEdge  = isDark ? "rgba(59, 130, 246, 0.15)" : "rgba(37, 99, 235, 0.11)";
+  const colCross = isDark ? "rgba(59, 130, 246, 0.30)" : "rgba(37, 99, 235, 0.21)";
+  const colPill  = isDark ? "rgba(20, 184, 166, 0.28)" : "rgba(37, 99, 235, 0.19)";
+
+  const ph = bgParticles.phase;
+
+  // 1. Dual Stock Pulse Sine Waves at Bottom
+  [
+    { base: 0.90, amp: 15, freq: 2.2, speed: 1.0, col: colWave1, lw: 2 },
+    { base: 0.94, amp: 11, freq: 3.1, speed: -0.75, col: colWave2, lw: 1.6 },
+  ].forEach((wv) => {
+    ctx.beginPath();
+    const baseY = h * wv.base;
+    const steps = 48;
+    for (let i = 0; i <= steps; i++) {
+      const x = (w * i) / steps;
+      const angle = (i / steps) * Math.PI * wv.freq + ph * wv.speed;
+      const y = baseY + Math.sin(angle) * wv.amp + Math.cos(angle * 0.6) * (wv.amp * 0.35);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = wv.col;
+    ctx.lineWidth = wv.lw;
+    ctx.stroke();
+  });
+
+  // 2. Knowledge Analytics Constellation Nodes & Connecting Lines
+  const coords = bgParticles.nodes.map((nd) => ({
+    x: nd.rx * w + Math.sin(ph * nd.sx + nd.ph) * nd.ax,
+    y: nd.ry * h + Math.cos(ph * nd.sy + nd.ph) * nd.ay,
+    r: nd.r + Math.sin(ph * 1.2 + nd.ph) * 0.7,
+  }));
+
+  const maxDistSq = Math.pow(Math.min(w, h) * 0.25, 2);
+  ctx.strokeStyle = colEdge;
+  ctx.lineWidth = 1;
+  for (let i = 0; i < coords.length; i++) {
+    for (let j = i + 1; j < coords.length; j++) {
+      const dx = coords[i].x - coords[j].x;
+      const dy = coords[i].y - coords[j].y;
+      if (dx * dx + dy * dy < maxDistSq) {
+        ctx.beginPath();
+        ctx.moveTo(coords[i].x, coords[i].y);
+        ctx.lineTo(coords[j].x, coords[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  coords.forEach((c) => {
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+    ctx.fillStyle = colNode;
+    ctx.fill();
+  });
+
+  // 3. Drifting Hollow Medical Crosses (✚)
+  ctx.strokeStyle = colCross;
+  ctx.lineWidth = 1.6;
+  bgParticles.crosses.forEach((cr) => {
+    const cx = cr.rx * w + Math.sin(ph * 0.7 + cr.phase) * cr.sway;
+    const cy = cr.ry * h;
+    const s = cr.size;
+    const a = s * 0.36;
+    ctx.beginPath();
+    ctx.moveTo(cx - a, cy - s);
+    ctx.lineTo(cx + a, cy - s);
+    ctx.lineTo(cx + a, cy - a);
+    ctx.lineTo(cx + s, cy - a);
+    ctx.lineTo(cx + s, cy + a);
+    ctx.lineTo(cx + a, cy + a);
+    ctx.lineTo(cx + a, cy + s);
+    ctx.lineTo(cx - a, cy + s);
+    ctx.lineTo(cx - a, cy + a);
+    ctx.lineTo(cx - s, cy + a);
+    ctx.lineTo(cx - s, cy - a);
+    ctx.lineTo(cx - a, cy - a);
+    ctx.closePath();
+    ctx.stroke();
+  });
+
+  // 4. Floating Tilted Pill Capsules
+  ctx.strokeStyle = colPill;
+  ctx.lineWidth = 1.6;
+  bgParticles.capsules.forEach((cp) => {
+    const cx = cp.rx * w + Math.cos(ph * 0.55 + cp.phase) * 15;
+    const cy = cp.ry * h;
+    const ang = cp.angle + Math.sin(ph * cp.rot + cp.phase) * 0.25;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(ang);
+    const hl = cp.len * 0.5;
+    const r = cp.rad;
+    ctx.beginPath();
+    ctx.roundRect(-hl, -r, cp.len, r * 2, r);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.lineTo(0, r);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  ctx.restore();
+}
+
+function startBackgroundMotionLoop() {
+  if (bgAnimId) return;
   let lastTs = performance.now();
 
-  function frame(now) {
-    const loginView = document.getElementById("login-view");
-    if (!loginView || loginView.classList.contains("hidden")) {
-      loginAnimId = null;
-      return;
-    }
+  function tick(now) {
     const dt = Math.min(0.05, Math.max(0.004, (now - lastTs) / 1000));
     lastTs = now;
-    loginParticles.phase += dt * 1.45;
-
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth || 600;
-    const h = canvas.clientHeight || 800;
-    if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-    }
-    ctx.save();
-    ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, w, h);
-
-    const isDark = STATE.prefs.theme === "dark";
-    const colWave1 = isDark ? "rgba(59, 114, 232, 0.24)" : "rgba(37, 99, 235, 0.16)";
-    const colWave2 = isDark ? "rgba(29, 78, 216, 0.18)" : "rgba(96, 165, 250, 0.15)";
-    const colNode  = isDark ? "rgba(59, 130, 246, 0.35)" : "rgba(37, 99, 235, 0.25)";
-    const colEdge  = isDark ? "rgba(59, 130, 246, 0.16)" : "rgba(37, 99, 235, 0.12)";
-    const colCross = isDark ? "rgba(59, 130, 246, 0.32)" : "rgba(37, 99, 235, 0.22)";
-    const colPill  = isDark ? "rgba(96, 165, 250, 0.30)" : "rgba(37, 99, 235, 0.20)";
-
-    const ph = loginParticles.phase;
-
-    // 1. Dual Stock Pulse Sine Waves at Bottom
-    [
-      { base: 0.90, amp: 14, freq: 2.2, speed: 1.0, col: colWave1, lw: 2 },
-      { base: 0.93, amp: 10, freq: 3.1, speed: -0.75, col: colWave2, lw: 1.5 },
-    ].forEach((wv) => {
-      ctx.beginPath();
-      const baseY = h * wv.base;
-      const steps = 42;
-      for (let i = 0; i <= steps; i++) {
-        const x = (w * i) / steps;
-        const angle = (i / steps) * Math.PI * wv.freq + ph * wv.speed;
-        const y = baseY + Math.sin(angle) * wv.amp + Math.cos(angle * 0.6) * (wv.amp * 0.35);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = wv.col;
-      ctx.lineWidth = wv.lw;
-      ctx.stroke();
-    });
-
-    // 2. Knowledge Analytics Constellation Nodes & Edges
-    const coords = loginParticles.nodes.map((nd) => ({
-      x: nd.rx * w + Math.sin(ph * nd.sx + nd.ph) * nd.ax,
-      y: nd.ry * h + Math.cos(ph * nd.sy + nd.ph) * nd.ay,
-      r: nd.r + Math.sin(ph * 1.2 + nd.ph) * 0.7,
-    }));
-
-    const maxDistSq = Math.pow(Math.min(w, h) * 0.26, 2);
-    ctx.strokeStyle = colEdge;
-    ctx.lineWidth = 1;
-    for (let i = 0; i < coords.length; i++) {
-      for (let j = i + 1; j < coords.length; j++) {
-        const dx = coords[i].x - coords[j].x;
-        const dy = coords[i].y - coords[j].y;
-        if (dx * dx + dy * dy < maxDistSq) {
-          ctx.beginPath();
-          ctx.moveTo(coords[i].x, coords[i].y);
-          ctx.lineTo(coords[j].x, coords[j].y);
-          ctx.stroke();
-        }
-      }
-    }
-    coords.forEach((c) => {
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-      ctx.fillStyle = colNode;
-      ctx.fill();
-    });
-
-    // 3. Drifting Hollow Medical Crosses (✚)
-    ctx.strokeStyle = colCross;
-    ctx.lineWidth = 1.6;
-    loginParticles.crosses.forEach((cr) => {
+    bgParticles.phase += dt * 1.45;
+    bgParticles.crosses.forEach((cr) => {
       cr.ry -= cr.speed * dt;
       if (cr.ry < -0.06) cr.ry = 1.06;
-      const cx = cr.rx * w + Math.sin(ph * 0.7 + cr.phase) * cr.sway;
-      const cy = cr.ry * h;
-      const s = cr.size;
-      const a = s * 0.36;
-      ctx.beginPath();
-      ctx.moveTo(cx - a, cy - s);
-      ctx.lineTo(cx + a, cy - s);
-      ctx.lineTo(cx + a, cy - a);
-      ctx.lineTo(cx + s, cy - a);
-      ctx.lineTo(cx + s, cy + a);
-      ctx.lineTo(cx + a, cy + a);
-      ctx.lineTo(cx + a, cy + s);
-      ctx.lineTo(cx - a, cy + s);
-      ctx.lineTo(cx - a, cy + a);
-      ctx.lineTo(cx - s, cy + a);
-      ctx.lineTo(cx - s, cy - a);
-      ctx.lineTo(cx - a, cy - a);
-      ctx.closePath();
-      ctx.stroke();
     });
-
-    // 4. Floating Tilted Pill Capsules
-    ctx.strokeStyle = colPill;
-    ctx.lineWidth = 1.6;
-    loginParticles.capsules.forEach((cp) => {
+    bgParticles.capsules.forEach((cp) => {
       cp.ry -= cp.speed * dt;
       if (cp.ry < -0.06) cp.ry = 1.06;
-      const cx = cp.rx * w + Math.cos(ph * 0.55 + cp.phase) * 14;
-      const cy = cp.ry * h;
-      const ang = cp.angle + Math.sin(ph * cp.rot + cp.phase) * 0.25;
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(ang);
-      const hl = cp.len * 0.5;
-      const r = cp.rad;
-      ctx.beginPath();
-      ctx.roundRect(-hl, -r, cp.len, r * 2, r);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -r);
-      ctx.lineTo(0, r);
-      ctx.stroke();
-      ctx.restore();
     });
 
-    ctx.restore();
-    loginAnimId = requestAnimationFrame(frame);
+    const loginView = document.getElementById("login-view");
+    if (loginView && !loginView.classList.contains("hidden")) {
+      drawMotionCanvas(document.getElementById("login-bg-canvas"), dt);
+    } else {
+      drawMotionCanvas(document.getElementById("inner-bg-canvas"), dt);
+    }
+    bgAnimId = requestAnimationFrame(tick);
   }
 
-  if (!loginAnimId) {
-    loginAnimId = requestAnimationFrame(frame);
-  }
+  bgAnimId = requestAnimationFrame(tick);
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   3. SETTINGS POPOVER & GLOBAL APPEARANCE / TYPOGRAPHY / LANGUAGE
+   4. SETTINGS POPOVER & GLOBAL APPEARANCE / TYPOGRAPHY / LANGUAGE
    ─────────────────────────────────────────────────────────────────────────── */
 function applyPrefsToDOM() {
   const html = document.documentElement;
@@ -416,7 +490,6 @@ function applyPrefsToDOM() {
   html.setAttribute("data-font", STATE.prefs.font || "Inter");
   html.setAttribute("data-size", STATE.prefs.text_size || "M");
 
-  // Update Settings Popover active states
   const btnLight = document.getElementById("btn-theme-light");
   const btnDark = document.getElementById("btn-theme-dark");
   if (btnLight && btnDark) {
@@ -433,13 +506,11 @@ function applyPrefsToDOM() {
     btn.classList.toggle("active", btn.getAttribute("data-size") === STATE.prefs.text_size);
   });
 
-  // Translate static [data-i18n] elements
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
     el.textContent = t(key);
   });
 
-  // Re-render sidebar and active screen if logged in so whole content updates live
   if (STATE.user) {
     renderSidebar();
     renderActiveScreen(false);
@@ -453,9 +524,7 @@ async function syncPrefsToBackend() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(STATE.prefs),
     });
-  } catch (e) {
-    // Non-blocking
-  }
+  } catch (e) {}
 }
 
 function toggleSettingsPopover(context) {
@@ -501,7 +570,7 @@ function setTextSize(sz) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   4. AUTHENTICATION, QUICK ACCESS & RBAC NAVIGATION
+   5. AUTHENTICATION, QUICK ACCESS & RBAC NAVIGATION
    ─────────────────────────────────────────────────────────────────────────── */
 function togglePasswordVisibility() {
   const inp = document.getElementById("login-password");
@@ -509,10 +578,10 @@ function togglePasswordVisibility() {
   if (!inp || !btn) return;
   if (inp.type === "password") {
     inp.type = "text";
-    btn.textContent = "🙈";
+    btn.innerHTML = iconSvg("eye-off", 17);
   } else {
     inp.type = "password";
-    btn.textContent = "👁";
+    btn.innerHTML = iconSvg("eye", 17);
   }
 }
 
@@ -524,7 +593,7 @@ function fillQuickCredentials(username, password, roleLabel) {
   if (p) p.value = password;
   if (msg) {
     msg.style.color = "var(--accent)";
-    msg.textContent = `✓ Loaded ${roleLabel} credentials`;
+    msg.textContent = `Loaded ${roleLabel} credentials`;
   }
 }
 
@@ -591,7 +660,6 @@ async function handleLogout() {
   if (pEl) pEl.value = "";
   const msg = document.getElementById("login-msg");
   if (msg) msg.textContent = "";
-  startLoginAnimation();
 }
 
 function isNavAllowed(key) {
@@ -617,12 +685,12 @@ function renderSidebar() {
   document.getElementById("sidebar-user-role").textContent = STATE.user.role_display;
 
   const navItems = [
-    { key: "dashboard", label: t("nav_dashboard") },
-    { key: "inventory", label: t("nav_inventory") },
-    { key: "sales", label: t("nav_sales") },
-    { key: "users", label: t("nav_users") },
-    { key: "analysis", label: t("nav_analysis") },
-    { key: "profile", label: t("nav_profile") },
+    { key: "dashboard", icon: "dashboard", label: t("nav_dashboard") },
+    { key: "inventory", icon: "inventory", label: t("nav_inventory") },
+    { key: "sales", icon: "sales", label: t("nav_sales") },
+    { key: "users", icon: "users", label: t("nav_users") },
+    { key: "analysis", icon: "analysis", label: t("nav_analysis") },
+    { key: "profile", icon: "profile", label: t("nav_profile") },
   ].filter((item) => isNavAllowed(item.key));
 
   const navEl = document.getElementById("sidebar-nav");
@@ -630,7 +698,8 @@ function renderSidebar() {
     .map(
       (item) => `
       <button type="button" class="nav-item-btn ${STATE.activeScreen === item.key ? "active" : ""}" onclick="navigateTo('${item.key}')">
-        ${escapeHtml(item.label)}
+        ${iconSvg(item.icon, 17)}
+        <span>${escapeHtml(item.label)}</span>
       </button>
     `
     )
@@ -667,7 +736,7 @@ async function renderActiveScreen(fetchFresh = true) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   5. SCREEN 1: EXECUTIVE DASHBOARD (Matches screens/dashboard.py)
+   6. SCREEN 1: EXECUTIVE DASHBOARD (Matches screens/dashboard.py)
    ─────────────────────────────────────────────────────────────────────────── */
 function kpiTileSvg(type, color) {
   if (type === "trend") {
@@ -766,7 +835,7 @@ async function renderDashboardScreen(fetchFresh = true) {
 
   container.innerHTML = `
     <div class="dash-status-line">
-      <span class="status-dot">●</span>
+      <span class="status-dot"></span>
       <span>Database connected (${escapeHtml(STATE.dbName)})  •  User: ${escapeHtml(user.username)} (${escapeHtml(user.role_display)})</span>
     </div>
 
@@ -776,7 +845,10 @@ async function renderDashboardScreen(fetchFresh = true) {
         <p class="dash-greeting-sub">${escapeHtml(t("dash_sub"))}</p>
       </div>
       <div class="dash-header-actions">
-        <button type="button" class="btn-surface" onclick="renderDashboardScreen(true)">${escapeHtml(t("refresh_data"))}</button>
+        <button type="button" class="btn-surface" onclick="renderDashboardScreen(true)">
+          ${iconSvg("refresh", 14)}
+          <span>${escapeHtml(t("refresh_data"))}</span>
+        </button>
         <div class="role-lime-badge">${escapeHtml(roleBadgeLabel)}</div>
       </div>
     </div>
@@ -840,7 +912,6 @@ async function renderDashboardScreen(fetchFresh = true) {
 
     <!-- 4 Analytics Cards Grid -->
     <div class="dash-charts-grid">
-      <!-- Card 1: 14-day sales revenue trend -->
       <div class="dash-chart-card">
         <div class="chart-card-title">${escapeHtml(t("trend_14d"))}</div>
         <div class="trend-canvas-wrap">
@@ -848,13 +919,11 @@ async function renderDashboardScreen(fetchFresh = true) {
         </div>
       </div>
 
-      <!-- Card 2: Top 5 products by quantity sold -->
       <div class="dash-chart-card">
         <div class="chart-card-title">${escapeHtml(t("top_5_prods"))}</div>
         <div class="bar-list">${top5Html}</div>
       </div>
 
-      <!-- Card 3: Sales breakdown by category -->
       <div class="dash-chart-card">
         <div class="chart-card-title">${escapeHtml(t("sales_by_cat"))}</div>
         <div class="donut-layout">
@@ -869,7 +938,6 @@ async function renderDashboardScreen(fetchFresh = true) {
         </div>
       </div>
 
-      <!-- Card 4: Stock health distribution -->
       <div class="dash-chart-card">
         <div class="chart-card-title">${escapeHtml(t("stock_health"))}</div>
         <div class="stock-health-hero">
@@ -898,8 +966,8 @@ function drawDashboardTrendChart(points) {
   ctx.scale(dpr, dpr);
 
   const isDark = STATE.prefs.theme === "dark";
-  const gridCol = isDark ? "#1a2436" : "#f1f5f9";
-  const textCol = isDark ? "#64748b" : "#94a3b8";
+  const gridCol = isDark ? "#1e293b" : "#e2e8f0";
+  const textCol = isDark ? "#94a3b8" : "#64748b";
   const surfaceCol = isDark ? "#131c2e" : "#ffffff";
 
   const padL = 38, padR = 16, padT = 14, padB = 28;
@@ -938,7 +1006,6 @@ function drawDashboardTrendChart(points) {
     label: p.date,
   }));
 
-  // Gradient fill underneath
   ctx.beginPath();
   ctx.moveTo(coords[0].x, padT + plotH);
   coords.forEach((c) => ctx.lineTo(c.x, c.y));
@@ -947,14 +1014,12 @@ function drawDashboardTrendChart(points) {
   ctx.fillStyle = "rgba(20, 184, 166, 0.14)";
   ctx.fill();
 
-  // Line
   ctx.beginPath();
   coords.forEach((c, i) => (i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y)));
   ctx.strokeStyle = "#0d9488";
   ctx.lineWidth = 2.3;
   ctx.stroke();
 
-  // Markers & X labels
   coords.forEach((c) => {
     ctx.beginPath();
     ctx.arc(c.x, c.y, 4.2, 0, Math.PI * 2);
@@ -1009,7 +1074,7 @@ function drawDashboardDonutChart(cats) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   6. SCREEN 2: INVENTORY MANAGEMENT (Matches screens/inventory.py)
+   7. SCREEN 2: INVENTORY MANAGEMENT (Matches screens/inventory.py)
    ─────────────────────────────────────────────────────────────────────────── */
 async function renderInventoryScreen(fetchFresh = true) {
   const container = document.getElementById("screen-container");
@@ -1022,9 +1087,10 @@ async function renderInventoryScreen(fetchFresh = true) {
 
   container.innerHTML = `
     <div class="screen-top-bar">
-      <div>
-        <h1 class="screen-title">Inventory Management</h1>
-      </div>
+      <h1 class="screen-title">
+        <span class="title-icon-badge">${iconSvg("inventory", 18)}</span>
+        <span>Inventory Management</span>
+      </h1>
       <div class="tab-pills-bar">
         <button type="button" class="tab-pill-btn ${STATE.invTab === "catalog" ? "active" : ""}" onclick="switchInvTab('catalog')">Product Catalog</button>
         <button type="button" class="tab-pill-btn ${STATE.invTab === "movements" ? "active" : ""}" onclick="switchInvTab('movements')">Stock Movements</button>
@@ -1033,8 +1099,14 @@ async function renderInventoryScreen(fetchFresh = true) {
       ${
         canEdit
           ? `<div class="action-btns-row">
-               <button type="button" class="btn-surface" onclick="openStockMovementModal()">⇅ Stock In / Out</button>
-               <button type="button" class="btn-lime" onclick="openProductModal()">+ Add Product</button>
+               <button type="button" class="btn-surface" onclick="openStockMovementModal()">
+                 ${iconSvg("arrows", 15)}
+                 <span>Stock In / Out</span>
+               </button>
+               <button type="button" class="btn-lime" onclick="openProductModal()">
+                 ${iconSvg("plus", 15)}
+                 <span>Add Product</span>
+               </button>
              </div>`
           : ""
       }
@@ -1146,8 +1218,8 @@ function renderInvCatalogTab() {
           <td>
             ${
               canEdit
-                ? `<button type="button" class="row-icon-btn" onclick="openProductModal(${p.id})" title="Edit Product">✎</button>
-                   <button type="button" class="row-icon-btn" onclick="openStockMovementModal(${p.id})" title="Adjust Stock">⇅</button>`
+                ? `<button type="button" class="row-icon-btn" onclick="openProductModal(${p.id})" title="Edit Product">${iconSvg("edit", 14)}</button>
+                   <button type="button" class="row-icon-btn" onclick="openStockMovementModal(${p.id})" title="Adjust Stock">${iconSvg("arrows", 14)}</button>`
                 : `<span style="color:var(--text-muted);font-size:0.78rem">View only</span>`
             }
           </td>
@@ -1159,7 +1231,7 @@ function renderInvCatalogTab() {
   body.innerHTML = `
     <div class="filter-toolbar">
       <div class="search-box">
-        <span>🔍</span>
+        ${iconSvg("search", 16)}
         <input type="text" placeholder="Search name, SKU or category" value="${escapeHtml(STATE.invSearch)}" oninput="onInvSearch(this.value)" />
       </div>
       <div class="chip-group">
@@ -1175,10 +1247,10 @@ function renderInvCatalogTab() {
     ${
       selCount > 0
         ? `<div class="filter-toolbar" style="background:var(--surface-alt)">
-             <strong>✓ ${selCount} product(s) selected</strong>
+             <strong style="display:inline-flex;align-items:center;gap:0.4rem">${iconSvg("check", 16)} ${selCount} product(s) selected</strong>
              <div class="action-btns-row">
-               <button type="button" class="btn-surface" onclick="clearInvSelection()">✕ Clear Selection</button>
-               ${canEdit ? `<button type="button" class="btn-danger" onclick="handleBulkDeleteProducts()">🗑 Delete Selected (${selCount})</button>` : ""}
+               <button type="button" class="btn-surface" onclick="clearInvSelection()">${iconSvg("close", 14)} <span>Clear Selection</span></button>
+               ${canEdit ? `<button type="button" class="btn-danger" onclick="handleBulkDeleteProducts()">${iconSvg("trash", 14)} <span>Delete Selected (${selCount})</span></button>` : ""}
              </div>
            </div>`
         : ""
@@ -1209,7 +1281,7 @@ function renderInvCatalogTab() {
         </table>
       </div>
     </div>
-    <div style="display:flex;justify-content:space-between;margin-top:0.6rem;font-size:0.8rem;color:var(--text-muted)">
+    <div style="display:flex;justify-content:space-between;margin-top:0.65rem;font-size:0.8rem;color:var(--text-muted)">
       <span>Showing ${filtered.length} of ${(STATE.invData?.products || []).length} products</span>
       <span>Select rows to delete or edit in bulk</span>
     </div>
@@ -1303,7 +1375,7 @@ async function renderInvMovementsTab() {
   body.innerHTML = `
     <div class="filter-toolbar">
       <strong>Audit History of Inventory Stock Movements</strong>
-      <button type="button" class="btn-surface" onclick="renderInvMovementsTab()">↻ Refresh Log</button>
+      <button type="button" class="btn-surface" onclick="renderInvMovementsTab()">${iconSvg("refresh", 14)} <span>Refresh Log</span></button>
     </div>
     <div class="table-card">
       <div class="table-scroll">
@@ -1336,10 +1408,10 @@ function renderInvMetaTab() {
 
   body.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:1.1rem">
-      <div class="table-card" style="padding:1rem">
+      <div class="table-card" style="padding:1.1rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem">
           <strong>Categories Management</strong>
-          ${canEdit ? `<button type="button" class="btn-lime" onclick="openAddCategoryModal()">+ Add Category</button>` : ""}
+          ${canEdit ? `<button type="button" class="btn-lime" onclick="openAddCategoryModal()">${iconSvg("plus", 14)} <span>Add Category</span></button>` : ""}
         </div>
         <div class="table-scroll" style="max-height:420px">
           <table class="data-table">
@@ -1351,10 +1423,10 @@ function renderInvMetaTab() {
         </div>
       </div>
 
-      <div class="table-card" style="padding:1rem">
+      <div class="table-card" style="padding:1.1rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem">
           <strong>Suppliers Directory</strong>
-          ${canEdit ? `<button type="button" class="btn-lime" onclick="openAddSupplierModal()">+ Add Supplier</button>` : ""}
+          ${canEdit ? `<button type="button" class="btn-lime" onclick="openAddSupplierModal()">${iconSvg("plus", 14)} <span>Add Supplier</span></button>` : ""}
         </div>
         <div class="table-scroll" style="max-height:420px">
           <table class="data-table">
@@ -1394,9 +1466,9 @@ function openProductModal(prodId = null) {
     </div>
     <div class="form-row">
       <label>Cost Price ($) *</label>
-      <div style="display:flex;gap:0.4rem;width:210px">
+      <div style="display:flex;gap:0.4rem;width:215px">
         <input id="m-cost" style="flex:1" value="${existing ? existing.cost_price.toFixed(2) : "1.00"}" />
-        <button type="button" class="btn-surface" style="padding:0.3rem 0.55rem;font-size:0.75rem" onclick="autoGenerateModalPrice()">↻ Auto</button>
+        <button type="button" class="btn-surface" style="padding:0.3rem 0.55rem;font-size:0.75rem" onclick="autoGenerateModalPrice()">${iconSvg("refresh", 12)} Auto</button>
       </div>
     </div>
     <div class="form-row"><label>Selling Price ($) *</label><input id="m-price" value="${existing ? existing.selling_price.toFixed(2) : "2.50"}" /></div>
@@ -1406,7 +1478,7 @@ function openProductModal(prodId = null) {
     <div class="form-row"><label>Unit (piece/box/strip)</label><input id="m-unit" value="${escapeHtml(existing ? existing.unit : "piece")}" /></div>
     <div style="display:flex;justify-content:flex-end;gap:0.6rem;margin-top:1.2rem">
       <button type="button" class="btn-surface" onclick="closeModal()">Cancel</button>
-      <button type="button" class="btn-lime" onclick="saveProductModal(${existing ? existing.id : "null"})">💾 Save Product</button>
+      <button type="button" class="btn-lime" onclick="saveProductModal(${existing ? existing.id : "null"})">${iconSvg("save", 14)} <span>Save Product</span></button>
     </div>
   `);
   if (!existing) autoGenerateModalPrice();
@@ -1482,7 +1554,7 @@ function openStockMovementModal(prodId = null) {
     <div class="form-row"><label>Reference / Reason Note</label><input id="sm-note" value="PO-Replenishment" /></div>
     <div style="display:flex;justify-content:flex-end;gap:0.6rem;margin-top:1.2rem">
       <button type="button" class="btn-surface" onclick="closeModal()">Cancel</button>
-      <button type="button" class="btn-lime" onclick="submitStockMovement(${target.id})">Confirm Movement</button>
+      <button type="button" class="btn-lime" onclick="submitStockMovement(${target.id})">${iconSvg("check", 14)} <span>Confirm Movement</span></button>
     </div>
   `);
 }
@@ -1570,7 +1642,7 @@ async function submitAddSupplier() {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   7. SCREEN 3: POINT OF SALE (POS) & SALES HISTORY (Matches screens/sales.py)
+   8. SCREEN 3: POINT OF SALE (POS) & SALES HISTORY (Matches screens/sales.py)
    ─────────────────────────────────────────────────────────────────────────── */
 async function renderSalesScreen(fetchFresh = true) {
   const container = document.getElementById("screen-container");
@@ -1581,7 +1653,10 @@ async function renderSalesScreen(fetchFresh = true) {
 
   container.innerHTML = `
     <div class="screen-top-bar">
-      <h1 class="screen-title">Point of Sale (POS)</h1>
+      <h1 class="screen-title">
+        <span class="title-icon-badge">${iconSvg("sales", 18)}</span>
+        <span>Point of Sale (POS)</span>
+      </h1>
       <div class="tab-pills-bar">
         <button type="button" class="tab-pill-btn ${STATE.posTab === "pos" ? "active" : ""}" onclick="switchPosTab('pos')">Point of Sale</button>
         <button type="button" class="tab-pill-btn ${STATE.posTab === "history" ? "active" : ""}" onclick="switchPosTab('history')">Sales History</button>
@@ -1610,7 +1685,7 @@ function renderPosTerminalTab() {
       <div class="pos-catalog-pane">
         <div class="filter-toolbar" style="margin-bottom:0.65rem">
           <div class="search-box" style="max-width:100%">
-            <span>🔍</span>
+            ${iconSvg("search", 16)}
             <input id="pos-search-input" type="text" placeholder="Search by name or SKU, or scan a barcode" value="${escapeHtml(STATE.posSearch)}" oninput="onPosSearch(this.value)" />
           </div>
         </div>
@@ -1638,7 +1713,7 @@ function renderPosTerminalTab() {
         </div>
 
         <div style="margin-top:0.55rem">
-          <input id="pos-customer" type="text" placeholder="Walk-in Customer" style="width:100%;padding:0.45rem 0.65rem;border-radius:5px;border:1px solid var(--border);background:var(--surface-alt);color:var(--text-dark);font-size:0.84rem" />
+          <input id="pos-customer" type="text" placeholder="Walk-in Customer" style="width:100%;padding:0.46rem 0.7rem;border-radius:7px;border:1px solid var(--border);background:var(--surface-solid);color:var(--text-dark);font-size:0.84rem" />
         </div>
 
         <div id="pos-cart-items" class="pos-cart-items"></div>
@@ -1678,12 +1753,13 @@ function renderPosTerminalTab() {
         <div id="pos-totals-box" class="pos-summary-box"></div>
 
         <div style="display:flex;gap:0.45rem;margin-bottom:0.55rem">
-          <input id="pos-amount-paid" type="number" step="0.01" placeholder="Amount Paid ($)" oninput="updatePosTotalsUI()" style="flex:1;padding:0.48rem 0.65rem;border-radius:5px;border:1px solid var(--border);background:var(--surface-alt);color:var(--text-dark)" />
+          <input id="pos-amount-paid" type="number" step="0.01" placeholder="Amount Paid ($)" oninput="updatePosTotalsUI()" style="flex:1;padding:0.48rem 0.65rem;border-radius:7px;border:1px solid var(--border);background:var(--surface-solid);color:var(--text-dark)" />
           <button type="button" class="btn-surface" style="padding:0.45rem 0.65rem;font-size:0.78rem" onclick="setExactPosCash()">Exact</button>
         </div>
 
         <button id="btn-pos-checkout" type="button" class="btn-teal" style="width:100%;padding:0.75rem;font-size:0.95rem" onclick="submitPosCheckout()">
-          ✓ Complete Sale
+          ${iconSvg("check", 16)}
+          <span>Complete Sale</span>
         </button>
       </div>
     </div>
@@ -1889,8 +1965,8 @@ async function submitPosCheckout() {
     <h3 style="font-size:1.15rem;font-weight:800">Official Receipt — ${escapeHtml(data.invoice_no)}</h3>
     <pre class="receipt-pre">${escapeHtml(data.receipt_text)}</pre>
     <div style="display:flex;justify-content:flex-end;gap:0.6rem">
-      <button type="button" class="btn-surface" onclick="window.print()">🖨 Print</button>
-      <button type="button" class="btn-teal" onclick="closeModal()">Done &amp; Close</button>
+      <button type="button" class="btn-surface" onclick="window.print()">${iconSvg("print", 14)} <span>Print</span></button>
+      <button type="button" class="btn-teal" onclick="closeModal()">${iconSvg("check", 14)} <span>Done &amp; Close</span></button>
     </div>
   `);
   await renderSalesScreen(true);
@@ -1917,7 +1993,7 @@ async function renderSalesHistoryTab(searchQuery = "") {
         <td><strong>${STATE.currency}${s.total.toFixed(2)}</strong></td>
         <td><span class="cat-badge">${escapeHtml(s.method)}</span></td>
         <td>${STATE.currency}${s.paid.toFixed(2)}</td>
-        <td><button type="button" class="row-icon-btn" onclick="openInvoiceItemsModal(${s.id}, '${escapeHtml(s.invoice_no)}')">👁 Items</button></td>
+        <td><button type="button" class="row-icon-btn" onclick="openInvoiceItemsModal(${s.id}, '${escapeHtml(s.invoice_no)}')">${iconSvg("eye", 13)} <span>Items</span></button></td>
       </tr>
     `
     )
@@ -1926,10 +2002,10 @@ async function renderSalesHistoryTab(searchQuery = "") {
   body.innerHTML = `
     <div class="filter-toolbar">
       <div class="search-box">
-        <span>🔍</span>
+        ${iconSvg("search", 16)}
         <input type="text" placeholder="Search Invoice # or Customer..." value="${escapeHtml(searchQuery)}" oninput="renderSalesHistoryTab(this.value)" />
       </div>
-      <button type="button" class="btn-surface" onclick="renderSalesHistoryTab('')">↻ Refresh</button>
+      <button type="button" class="btn-surface" onclick="renderSalesHistoryTab('')">${iconSvg("refresh", 14)} <span>Refresh</span></button>
     </div>
     <div class="table-card">
       <div class="table-scroll">
@@ -1988,13 +2064,16 @@ async function openInvoiceItemsModal(saleId, invNo) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   8. SCREEN 4: USER ACCOUNTS & SECURITY AUDIT TRAIL (Matches screens/users.py)
+   9. SCREEN 4: USER ACCOUNTS & SECURITY AUDIT TRAIL (Matches screens/users.py)
    ─────────────────────────────────────────────────────────────────────────── */
 async function renderUsersScreen(fetchFresh = true) {
   const container = document.getElementById("screen-container");
   container.innerHTML = `
     <div class="screen-top-bar">
-      <h1 class="screen-title">👥 User Accounts &amp; Security Audit Trail</h1>
+      <h1 class="screen-title">
+        <span class="title-icon-badge">${iconSvg("users", 18)}</span>
+        <span>User Accounts &amp; Security Audit Trail</span>
+      </h1>
       <div class="tab-pills-bar">
         <button type="button" class="tab-pill-btn ${STATE.usersTab === "users" ? "active" : ""}" onclick="switchUsersTab('users')">User Account Management</button>
         <button type="button" class="tab-pill-btn ${STATE.usersTab === "audit" ? "active" : ""}" onclick="switchUsersTab('audit')">Security Audit Logs</button>
@@ -2045,10 +2124,10 @@ async function renderUsersDirectoryTab() {
   body.innerHTML = `
     <div class="filter-toolbar">
       <div class="action-btns-row">
-        <button type="button" class="btn-teal" onclick="openAddUserModal()">+ Add New User</button>
-        <button type="button" class="btn-surface" onclick="openEditUserModal()">✎ Edit User</button>
-        <button type="button" class="btn-surface" onclick="openResetPasswordModal()">🔑 Reset Password</button>
-        <button type="button" class="btn-surface" onclick="handleUnlockSelectedUser()">🔓 Unlock Account</button>
+        <button type="button" class="btn-teal" onclick="openAddUserModal()">${iconSvg("plus", 14)} <span>Add New User</span></button>
+        <button type="button" class="btn-surface" onclick="openEditUserModal()">${iconSvg("edit", 14)} <span>Edit User</span></button>
+        <button type="button" class="btn-surface" onclick="openResetPasswordModal()">${iconSvg("key", 14)} <span>Reset Password</span></button>
+        <button type="button" class="btn-surface" onclick="handleUnlockSelectedUser()">${iconSvg("unlock", 14)} <span>Unlock Account</span></button>
       </div>
       <button type="button" class="btn-danger" onclick="handleToggleSelectedUserActive()">Toggle Active / Inactive</button>
     </div>
@@ -2251,7 +2330,7 @@ async function renderAuditLogsTab() {
           ${actions.map((a) => `<option value="${a}" ${STATE.auditActionFilter === a ? "selected" : ""}>${a}</option>`).join("")}
         </select>
       </div>
-      <button type="button" class="btn-surface" onclick="renderAuditLogsTab()">↻ Refresh Log</button>
+      <button type="button" class="btn-surface" onclick="renderAuditLogsTab()">${iconSvg("refresh", 14)} <span>Refresh Log</span></button>
     </div>
     <div class="table-card">
       <div class="table-scroll">
@@ -2279,7 +2358,7 @@ function setAuditFilter(act) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   9. SCREEN 5: KNOWLEDGE ANALYSIS STUDIO (Matches screens/analysis.py)
+   10. SCREEN 5: KNOWLEDGE ANALYSIS STUDIO (Matches screens/analysis.py)
    ─────────────────────────────────────────────────────────────────────────── */
 async function renderAnalysisScreen(fetchFresh = true) {
   const container = document.getElementById("screen-container");
@@ -2300,13 +2379,16 @@ async function renderAnalysisScreen(fetchFresh = true) {
 
   container.innerHTML = `
     <div class="screen-top-bar">
-      <h1 class="screen-title">${isInstructor ? "🧠 Knowledge Analysis Studio (Instructor Mode)" : "🧠 Knowledge Analysis &amp; Demand Prediction"}</h1>
+      <h1 class="screen-title">
+        <span class="title-icon-badge">${iconSvg("analysis", 18)}</span>
+        <span>${isInstructor ? "Knowledge Analysis Studio (Instructor Mode)" : "Knowledge Analysis &amp; Demand Prediction"}</span>
+      </h1>
       <div style="display:flex;align-items:center;gap:0.65rem">
         <strong>Select Analysis Task:</strong>
         <select class="pop-select" style="width:265px" onchange="onAnalysisTaskChange(this.value)">
           ${tasks.map((tk) => `<option value="${tk.key}" ${STATE.analysisTask === tk.key ? "selected" : ""}>${tk.label}</option>`).join("")}
         </select>
-        ${isInstructor ? `<button type="button" class="btn-teal" onclick="handleRetrainModels()">⚡ Retrain Models</button>` : ""}
+        ${isInstructor ? `<button type="button" class="btn-teal" onclick="handleRetrainModels()">${iconSvg("bolt", 14)} <span>Retrain Models</span></button>` : ""}
       </div>
     </div>
 
@@ -2413,7 +2495,7 @@ function renderAnalysisPredictionTab() {
   body.innerHTML = `
     <div class="analysis-split">
       <div class="analysis-card">
-        <h3 style="font-size:1.05rem;font-weight:800;margin-bottom:0.9rem">⚙ Prediction Parameters</h3>
+        <div class="section-heading-row">${iconSvg("settings", 17)} <span>Prediction Parameters</span></div>
         ${fieldsHtml}
         <div class="form-row" style="margin-top:0.85rem">
           <label>Machine Learning Model:</label>
@@ -2423,12 +2505,13 @@ function renderAnalysisPredictionTab() {
           </select>
         </div>
         <button type="button" class="btn-teal" style="width:100%;padding:0.75rem;margin-top:0.85rem;font-size:0.92rem" onclick="executeAnalysisPrediction()">
-          🚀 Calculate Prediction
+          ${iconSvg("play", 15)}
+          <span>Calculate Prediction</span>
         </button>
       </div>
 
       <div class="analysis-card" style="display:flex;flex-direction:column">
-        <h3 style="font-size:1.05rem;font-weight:800;margin-bottom:0.9rem">📊 Prediction Results &amp; Output Visualizer</h3>
+        <div class="section-heading-row">${iconSvg("chart", 17)} <span>Prediction Results &amp; Output Visualizer</span></div>
         <div class="output-banner">
           <div id="ml-out-primary" class="output-primary" style="color:var(--text-muted);font-size:0.95rem">
             Enter parameters on the left and click 'Calculate Prediction'
@@ -2533,7 +2616,7 @@ function drawPredictionCanvasChart(chart) {
 
       ctx.fillStyle = colMap[chart.colors?.[i]] || "#0d9488";
       ctx.beginPath();
-      ctx.roundRect(x, y, bw, bh, [5, 5, 0, 0]);
+      ctx.roundRect(x, y, bw, bh, [6, 6, 0, 0]);
       ctx.fill();
 
       ctx.font = `bold 11px ${getComputedStyle(document.documentElement).getPropertyValue("--font-family")}`;
@@ -2686,11 +2769,14 @@ function renderAnalysisCompareTab() {
 
   body.innerHTML = `
     <div class="metric-card" style="margin-bottom:1rem">
-      <h3 style="color:var(--secondary);font-size:1.18rem;margin-bottom:0.4rem">🏆 Winning Algorithm: ${escapeHtml(comp.winner || "Random Forest Regression")}</h3>
+      <h3 style="color:var(--secondary);font-size:1.18rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.5rem">
+        ${iconSvg("award", 19)}
+        <span>Winning Algorithm: ${escapeHtml(comp.winner || "Random Forest Regression")}</span>
+      </h3>
       <p style="font-size:0.88rem">${escapeHtml(comp.reason || "")}</p>
     </div>
 
-    <div class="table-card" style="margin-bottom:1rem;padding:1rem">
+    <div class="table-card" style="margin-bottom:1rem;padding:1.1rem">
       <h4 style="margin-bottom:0.75rem">Side-by-Side Algorithmic Performance Comparison</h4>
       <table class="data-table">
         <thead>
@@ -2741,7 +2827,6 @@ function drawScatterDiagnosticChart(scatter) {
   const minV = Math.min(...acts, ...preds);
   const maxV = Math.max(...acts, ...preds) || 1;
 
-  // y = x reference line
   ctx.strokeStyle = "#ef4444";
   ctx.lineWidth = 1.6;
   ctx.setLineDash([5, 4]);
@@ -2801,7 +2886,7 @@ async function handleRetrainModels() {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   10. SCREEN 6: MY PROFILE (Matches ProfileScreen in main.py)
+   11. SCREEN 6: MY PROFILE (Matches ProfileScreen in main.py)
    ─────────────────────────────────────────────────────────────────────────── */
 function renderProfileScreen() {
   const container = document.getElementById("screen-container");
@@ -2814,7 +2899,12 @@ function renderProfileScreen() {
   };
 
   container.innerHTML = `
-    <h1 class="screen-title" style="margin-bottom:1.15rem">My Profile</h1>
+    <div class="screen-top-bar">
+      <h1 class="screen-title">
+        <span class="title-icon-badge">${iconSvg("profile", 18)}</span>
+        <span>My Profile</span>
+      </h1>
+    </div>
 
     <div class="profile-hero">
       <div class="profile-avatar-big">${escapeHtml(getInitials(u.full_name))}</div>
@@ -2873,7 +2963,7 @@ function renderProfileScreen() {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   11. MODAL & TOAST HELPERS + INITIALIZATION
+   12. MODAL & TOAST HELPERS + INITIALIZATION
    ─────────────────────────────────────────────────────────────────────────── */
 function showModal(html) {
   const overlay = document.getElementById("modal-overlay");
@@ -2912,6 +3002,7 @@ function escapeHtml(str) {
 }
 
 async function initApp() {
+  startBackgroundMotionLoop();
   try {
     const res = await fetch("/api/bootstrap");
     const data = await res.json();
@@ -2925,12 +3016,9 @@ async function initApp() {
     if (data.user) {
       STATE.user = data.user;
       enterAppShell();
-    } else {
-      startLoginAnimation();
     }
   } catch (e) {
     applyPrefsToDOM();
-    startLoginAnimation();
   }
 }
 
